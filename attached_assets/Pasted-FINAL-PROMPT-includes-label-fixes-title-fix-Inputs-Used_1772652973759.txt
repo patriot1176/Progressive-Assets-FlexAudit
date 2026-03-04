@@ -1,0 +1,94 @@
+FINAL PROMPT (includes: label fixes + title fix + Inputs Used strip)
+
+Use this exact prompt in Replit. Do not start over. Change nothing else.
+
+Replit Revision Prompt
+
+Make the following targeted updates in the Snapshot tab only.
+Do not modify calculations, score logic, benchmark logic, thresholds, colors, charts, layout structure, or any other components beyond what’s requested.
+
+Change 1 — Fix Performance Scale Labels (text only)
+
+In the Plant Performance Score scale labels under the score bar, set the four zone labels to exactly:
+
+Critical Performance
+
+Needs Improvement
+
+Typical Performance
+
+Best Practice Range
+
+Important:
+
+Remove the word “Range” from “Typical Performance” (only “Best Practice” should use “Range”).
+
+Keep the same score thresholds and colors.
+
+Threshold mapping remains:
+
+0–40 Critical Performance
+
+40–60 Needs Improvement
+
+60–80 Typical Performance
+
+80–100 Best Practice Range
+
+Change 2 — Improve the Score Subtitle (text only)
+
+Replace the subtitle text under the score number:
+
+Replace:
+
+“Operational Setup Efficiency Rating”
+
+With:
+
+“Plant Performance Score”
+
+Do not change font sizes or styling—only the text content.
+
+Change 3 — Add “Inputs Used (Audit Trail)” Card in Snapshot
+
+Directly below the Plant Performance Score card (and above Executive Snapshot), add a compact card titled:
+
+Inputs Used (Audit Trail)
+
+Inside this card, display the current values already entered/selected in the app (read from existing state—no new calculations):
+
+Show these fields (with labels and values):
+
+Operating Mode: {Conservative/Typical/Aggressive}
+
+Presses: {number}
+
+Changeovers/Press/Day: {number}
+
+Setup Min/Changeover: {number}
+
+Shifts/Day: {number}
+
+Hours/Shift: {number}
+
+Days/Year: {number}
+
+Setup Reduction: {percent} (use the slider/quick-pick value)
+
+Then show optional fields only if they are present/non-empty:
+
+Avg Speed (ft/min): {number}
+
+Avg Selling Price ($/ft): {number}
+
+Labor Rate ($/hr): {number}
+
+Formatting requirements:
+
+Keep it clean and minimal, consistent with the existing UI (same card styling).
+
+Use a tight 2–4 column grid layout so it fits on desktop and mobile.
+
+Do not change any other text, layout, or features.
+
+That’s it—no other changes.

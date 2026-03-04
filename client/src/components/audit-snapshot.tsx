@@ -117,7 +117,7 @@ function PerformanceScoreCard({ results }: { results: AuditResults }) {
     <Card data-testid="card-performance-score">
       <CardContent className="p-5 sm:p-6">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Plant Performance Score</h3>
-        <p className="text-[11px] text-muted-foreground mt-0.5 mb-4">Operational Setup Efficiency Rating</p>
+        <p className="text-[11px] text-muted-foreground mt-0.5 mb-4">Plant Performance Score</p>
 
         <div className="flex items-baseline gap-1.5 mb-3">
           <span className="text-4xl font-bold tracking-tight" data-testid="text-score-value">{score}</span>
@@ -150,6 +150,47 @@ function PerformanceScoreCard({ results }: { results: AuditResults }) {
         <p className="text-[11px] text-muted-foreground leading-relaxed">
           This score represents the percentage of total press capacity not consumed by setup activities. Higher scores indicate more efficient setup performance and greater available production capacity.
         </p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function InputsUsedCard({ inputs, mode }: { inputs: AuditInputs; mode: OperatingMode }) {
+  const modeLabel = mode === 'conservative' ? 'Conservative' : mode === 'typical' ? 'Typical' : 'Aggressive';
+
+  const fields: { label: string; value: string }[] = [
+    { label: 'Operating Mode', value: modeLabel },
+    { label: 'Presses', value: String(inputs.presses) },
+    { label: 'Changeovers/Press/Day', value: String(inputs.changeoversPerPressPerDay) },
+    { label: 'Setup Min/Changeover', value: String(inputs.setupMinutesPerChangeover) },
+    { label: 'Shifts/Day', value: String(inputs.shiftsPerDay) },
+    { label: 'Hours/Shift', value: String(inputs.hoursPerShift) },
+    { label: 'Days/Year', value: String(inputs.operatingDaysPerYear) },
+    { label: 'Setup Reduction', value: `${inputs.reductionPct}%` },
+  ];
+
+  if (inputs.pressSpeedFPM !== null) {
+    fields.push({ label: 'Avg Speed (ft/min)', value: String(inputs.pressSpeedFPM) });
+  }
+  if (inputs.pricePerFoot !== null) {
+    fields.push({ label: 'Avg Selling Price ($/ft)', value: String(inputs.pricePerFoot) });
+  }
+  if (inputs.laborRate !== null) {
+    fields.push({ label: 'Labor Rate ($/hr)', value: String(inputs.laborRate) });
+  }
+
+  return (
+    <Card data-testid="card-inputs-used">
+      <CardContent className="p-5 sm:p-6">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Inputs Used (Audit Trail)</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2.5">
+          {fields.map((f, i) => (
+            <div key={i} data-testid={`input-trail-${i}`}>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider leading-tight">{f.label}</p>
+              <p className="text-sm font-semibold mt-0.5">{f.value}</p>
+            </div>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );
@@ -236,6 +277,8 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     <div className="space-y-5">
       <div ref={snapshotRef} className="space-y-4 snapshot-printable" data-testid="snapshot-content">
         <PerformanceScoreCard results={results} />
+
+        <InputsUsedCard inputs={inputs} mode={mode} />
 
         <Card>
           <CardContent className="p-5 sm:p-6">
