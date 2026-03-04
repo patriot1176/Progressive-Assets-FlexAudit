@@ -1,0 +1,173 @@
+Replit Revision Prompt — Fix Mobile Tap + Slider Drag (iOS Safari/Chrome + Android Chrome)
+
+DO NOT START OVER
+
+PASTE INTO REPLIT AI:
+
+Modify the existing Flexo Setup Tax — Capacity Audit app in this Replit project.
+
+DO NOT start over. DO NOT rebuild.
+Do not change calculations, visual layout, navigation, chart, benchmark, or copy/export features. Only fix mobile interaction so inputs and slider can be edited on iPhone (Safari + Chrome) and Android Chrome.
+
+Goal
+
+On mobile:
+
+tapping any input focuses it and opens the keyboard
+
+slider thumb can be dragged
+
+30/40/50 quick buttons work
+
+nothing blocks touch events
+
+1) Identify and Remove Touch-Blocking Overlays (Most Likely Cause)
+
+Inspect the Inputs/Results/Snapshot pages for any element that may be sitting on top of the UI and intercepting taps, including:
+
+absolute/fixed/sticky wrappers
+
+tab navigation container overlay
+
+full-width containers with position: absolute and non-zero z-index
+
+pseudo-elements (::before/::after) used for backgrounds
+
+chart containers that span beyond their visible area
+
+any “glass/blur” layer
+
+Fix rule:
+
+Decorative layers must use pointer-events: none
+
+Interactive elements must use pointer-events: auto and be above backgrounds
+
+Apply this pattern:
+
+For card backgrounds / decorative gradients / pseudo-elements:
+
+pointer-events: none
+
+For the actual content layer inside cards (inputs, buttons, slider):
+
+position: relative; z-index: 1; pointer-events: auto
+
+If any wrapper is unintentionally capturing taps, either:
+
+remove it, OR
+
+set pointer-events: none on it and pointer-events: auto on its interactive children.
+
+2) Fix iOS Touch Handling (Safari/WebKit)
+
+iOS Safari has stricter touch rules and can fail when parents block gestures.
+
+A) Ensure no parent disables touch
+
+Search for and remove/override any of these on main wrappers:
+
+touch-action: none
+
+pointer-events: none applied broadly
+
+overflow: hidden on body/main that prevents interactions
+
+any global user-select: none on large containers
+
+B) Add mobile-safe touch-action defaults
+
+On the main app container (page wrapper), set:
+
+touch-action: manipulation;
+
+On the slider container specifically, set:
+
+touch-action: pan-y;
+(allows vertical scrolling while still enabling horizontal slider drag)
+
+3) Make Inputs Explicitly Focusable on Mobile
+
+For every numeric/text input component:
+
+ensure it is not wrapped by a div/label that sits on top of it
+
+ensure no icon/tooltip overlay covers the input’s tap area
+
+Add to input element (or its immediate wrapper):
+
+position: relative; z-index: 10; pointer-events: auto;
+
+Also ensure the input uses mobile-friendly attributes:
+
+inputMode="numeric" for integer inputs
+
+inputMode="decimal" for price inputs
+
+keep type="number" if you want native numeric behavior, but do NOT let styling disable it
+
+If you are using a custom Input component, confirm it forwards props to the actual <input> (some UI wrappers accidentally render a non-input element).
+
+4) Fix Slider Dragging on Mobile
+
+If you use a component library slider (Radix/shadcn/etc.), confirm:
+
+the slider root/track/thumb all have pointer-events: auto
+
+the slider is not inside a container with pointer-events: none
+
+the thumb has a non-zero size and is above the track (z-index)
+
+Add to the slider root:
+
+touch-action: pan-y;
+
+user-select: none;
+
+-webkit-user-select: none;
+
+If the slider is currently implemented with a div-based drag handler, ensure it listens to pointer events (not only mouse):
+
+use onPointerDown / onPointerMove / onPointerUp instead of onMouseDown etc.
+
+5) Add a Quick Mobile Interaction Self-Test (Dev Only)
+
+Temporarily add a small dev-only check (only in development mode) that logs when taps occur:
+
+On input focus: console log “input focus ok”
+
+On slider pointerdown: console log “slider pointerdown ok”
+
+This confirms events are reaching the components during mobile testing.
+
+Remove or keep behind process.env.NODE_ENV !== "production".
+
+6) Acceptance Tests (Must Pass)
+
+On iPhone Safari and iPhone Chrome:
+
+tapping any input shows the keyboard and allows editing
+
+slider thumb drags and updates value
+
+30/40/50 buttons update scenario
+
+scrolling still works normally
+
+On Android Chrome:
+
+same as above
+
+7) Deliverable
+
+After implementing, respond with:
+
+which element(s) were blocking touch
+
+which files were changed
+
+confirm inputs + slider work on iOS Safari/Chrome and Android Chrome
+
+Notes (Important)
+
+Do not change layout, design, or calculations. Only make CSS/DOM event handling adjustments necessary to restore mobile interaction.

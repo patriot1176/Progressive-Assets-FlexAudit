@@ -40,11 +40,12 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
                 data-testid={`mode-${m.value}`}
                 onClick={() => onModeChange(m.value)}
                 className={cn(
-                  "flex-1 flex flex-col items-center gap-1.5 rounded-sm px-2 py-2.5 text-xs font-medium transition-all cursor-pointer",
+                  "flex-1 flex flex-col items-center gap-1.5 rounded-sm px-2 py-2.5 text-xs font-medium transition-all cursor-pointer relative z-10 pointer-events-auto",
                   mode === m.value
                     ? "bg-background text-foreground shadow-sm"
                     : "text-muted-foreground"
                 )}
+                style={{ touchAction: "manipulation" }}
               >
                 <m.icon className="w-4 h-4" />
                 <span>{m.label}</span>
@@ -235,6 +236,7 @@ function NumberField({ label, value, onChange, min = 0, suffix, prefix, step, te
         )}
         <Input
           type="number"
+          inputMode="numeric"
           min={min}
           step={step}
           value={value}
@@ -242,7 +244,8 @@ function NumberField({ label, value, onChange, min = 0, suffix, prefix, step, te
             const v = e.target.valueAsNumber;
             if (!isNaN(v) && v >= min) onChange(v);
           }}
-          className={cn(prefix && "pl-7", suffix && "pr-16")}
+          className={cn("relative z-10 pointer-events-auto", prefix && "pl-7", suffix && "pr-16")}
+          style={{ touchAction: "manipulation" }}
           data-testid={testId}
         />
         {suffix && (
@@ -262,6 +265,7 @@ function OptionalNumberField({ label, value, onChange, suffix, prefix, step, tes
   step?: number;
   testId: string;
 }) {
+  const isDecimal = step !== undefined && step < 1;
   return (
     <div className="space-y-1.5">
       <Label className="text-sm font-medium">{label}</Label>
@@ -271,6 +275,7 @@ function OptionalNumberField({ label, value, onChange, suffix, prefix, step, tes
         )}
         <Input
           type="number"
+          inputMode={isDecimal ? "decimal" : "numeric"}
           min={0}
           step={step}
           value={value !== null ? String(value) : ''}
@@ -279,7 +284,8 @@ function OptionalNumberField({ label, value, onChange, suffix, prefix, step, tes
             const raw = e.target.value;
             onChange(raw === '' ? null : Math.max(0, Number(raw)));
           }}
-          className={cn(prefix && "pl-7", suffix && "pr-16")}
+          className={cn("relative z-10 pointer-events-auto", prefix && "pl-7", suffix && "pr-16")}
+          style={{ touchAction: "manipulation" }}
           data-testid={testId}
         />
         {suffix && (

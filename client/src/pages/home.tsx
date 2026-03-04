@@ -60,7 +60,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background print:bg-white">
+    <div className="min-h-screen bg-background print:bg-white" style={{ touchAction: "manipulation" }}>
       <header className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50 print:hidden">
         <div className="max-w-4xl mx-auto px-4 py-3 sm:py-4">
           <div className="flex items-center gap-3">
