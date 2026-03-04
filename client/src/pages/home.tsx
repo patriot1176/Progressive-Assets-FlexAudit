@@ -69,7 +69,7 @@ export default function Home() {
             </div>
             <div className="min-w-0">
               <h1 className="text-sm sm:text-lg font-bold tracking-tight leading-tight" data-testid="text-app-title">
-                Flexo Setup Tax &mdash; Capacity Audit
+                Flexo Setup Tax &mdash; Plant Capacity Audit
               </h1>
               <p className="text-[11px] sm:text-xs text-muted-foreground leading-tight">
                 Quantify setup loss. Model recovered capacity.

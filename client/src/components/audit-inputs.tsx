@@ -146,7 +146,7 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               testId="input-speed"
             />
             <OptionalNumberField
-              label="Avg Selling Price"
+              label="Avg Selling Price ($/ft)"
               value={inputs.pricePerFoot}
               onChange={(v) => onInputChange('pricePerFoot', v)}
               prefix="$"
