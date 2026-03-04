@@ -1,0 +1,88 @@
+Replit Revision Prompt (DO NOT START OVER)
+
+PASTE THIS INTO REPLIT AI:
+
+Modify the existing Flexo Setup Tax — Capacity Audit Next.js web app currently in this Replit project.
+
+DO NOT start over. DO NOT rebuild the app.
+Preserve the current layout, step navigation (Inputs / Results / Snapshot), calculations, chart, share link, PDF export, and buttons.
+
+Implement ONLY the following targeted changes:
+
+1) Rename “Revenue Capacity” Label Everywhere (Credibility Fix)
+
+Replace the label text “Revenue Capacity” with:
+
+“Potential Production Revenue Capacity”
+
+Do this in all places it appears, including:
+
+Results card label
+
+Snapshot metric label
+
+Any helper/subtitle text where “Revenue Capacity” is used
+
+Keep the existing number formatting (e.g., $4.10M) and calculations exactly the same.
+
+2) Improve “What This Means” Text (Operational Language)
+
+In the Snapshot tab’s “WHAT THIS MEANS” paragraph, adjust the opening phrase to say press hours and setup activities.
+
+Current style:
+“This plant is losing 17,067 hours/year to setup…”
+
+Update to this structure (keeping the same values dynamically inserted):
+“This plant is losing {setupHoursLost} press hours per year to setup activities (~{percentLost}% of available press time), equivalent to {pressEquivalent} presses and {fteEquivalent} FTEs. At {scenarioPct}% setup reduction, the plant could recover {recoveredHours} hours/year, unlocking {recoveredFeet} feet and approximately {revenueCapacity} of potential production revenue capacity.”
+
+Keep it concise (1–2 sentences max)
+
+Use existing formatted values already shown in the UI (commas, %, $)
+
+Do not change any formulas—only the narrative copy.
+
+3) Add an Expandable “Assumptions Used” Section on Snapshot (Trust Builder)
+
+Below the “WHAT THIS MEANS” box on the Snapshot tab, add a collapsed-by-default expandable section titled:
+
+Assumptions Used
+
+When expanded, show three bullet points:
+
+FTE equivalent assumes 2,000 working hours per employee per year
+
+Press capacity benchmark assumes ~6,500 operating hours per press per year
+
+Potential production revenue capacity reflects production potential at the current $/ft input (not guaranteed sales)
+
+Keep styling consistent with the current UI (simple, clean, neutral). Default state is collapsed.
+
+4) Keep Everything Else Unchanged
+
+Do NOT change:
+
+any input fields, defaults, or validation
+
+the operating mode toggle behavior
+
+calculations
+
+chart design
+
+Copy Summary Text / Copy AM Follow-Up Email
+
+Share Link
+
+Export PDF
+
+Start Over button
+
+Only implement the changes above.
+
+Deliverable
+
+After changes, provide:
+
+a brief summary of what you changed
+
+the specific files edited and what sections were modified

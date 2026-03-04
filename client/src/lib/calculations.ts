@@ -149,13 +149,13 @@ export function decodeParamsToInputs(search: string): { inputs: Partial<AuditInp
 }
 
 export function generateWhatThisMeans(inputs: AuditInputs, results: AuditResults): string {
-  let text = `This plant is losing ${formatNumber(results.setupHoursPerYear)} hours/year to setup (~${formatPercent(results.pctPressTimeLostToSetup)} of available press time), equivalent to ${formatNumber(results.pressEquivalentLost, 1)} presses and ${formatNumber(results.fteEquivalent, 1)} FTEs.`;
+  let text = `This plant is losing ${formatNumber(results.setupHoursPerYear)} press hours per year to setup activities (~${formatPercent(results.pctPressTimeLostToSetup)} of available press time), equivalent to ${formatNumber(results.pressEquivalentLost, 1)} presses and ${formatNumber(results.fteEquivalent, 1)} FTEs.`;
   text += ` At ${inputs.reductionPct}% setup reduction, the plant could recover ${formatNumber(results.recoveredHours)} hours/year`;
   if (results.recoveredLinearFeet !== null) {
     text += `, unlocking ${formatNumber(results.recoveredLinearFeet)} feet`;
   }
   if (results.potentialRevenueCapacity !== null) {
-    text += ` and approximately ${formatCurrency(results.potentialRevenueCapacity)} of production revenue capacity`;
+    text += ` and approximately ${formatCurrency(results.potentialRevenueCapacity)} of potential production revenue capacity`;
   }
   text += '.';
   return text;
@@ -177,7 +177,7 @@ export function generateSummaryText(inputs: AuditInputs, results: AuditResults):
     text += `Recovered Linear Feet: ${formatNumber(results.recoveredLinearFeet)}\n`;
   }
   if (results.potentialRevenueCapacity !== null) {
-    text += `Potential Revenue Capacity: ${formatCurrency(results.potentialRevenueCapacity)}\n`;
+    text += `Potential Production Revenue Capacity: ${formatCurrency(results.potentialRevenueCapacity)}\n`;
   }
   text += `\n${generateWhatThisMeans(inputs, results)}`;
   return text;

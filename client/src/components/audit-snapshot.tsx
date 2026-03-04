@@ -2,8 +2,10 @@ import { type RefObject } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Mail, Link2, FileDown, RotateCcw, Check } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Copy, Mail, Link2, FileDown, RotateCcw, Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import {
   type AuditInputs,
@@ -62,6 +64,38 @@ function CopyButton({ label, textFn, icon: Icon, testId }: {
   );
 }
 
+function AssumptionsSection() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Card>
+      <CardContent className="p-0">
+        <Collapsible open={open} onOpenChange={setOpen}>
+          <CollapsibleTrigger
+            className="flex items-center justify-between w-full p-5 sm:p-6 cursor-pointer"
+            data-testid="btn-assumptions-toggle"
+          >
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Assumptions Used</h3>
+            <ChevronDown className={cn(
+              "w-4 h-4 text-muted-foreground transition-transform duration-200",
+              open && "rotate-180"
+            )} />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-0">
+              <ul className="space-y-2.5 text-sm text-foreground/80 list-disc pl-4" data-testid="list-assumptions">
+                <li>FTE equivalent assumes 2,000 working hours per employee per year</li>
+                <li>Press capacity benchmark assumes ~6,500 operating hours per press per year</li>
+                <li>Potential production revenue capacity reflects production potential at the current $/ft input (not guaranteed sales)</li>
+              </ul>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snapshotRef }: Props) {
   const { toast } = useToast();
 
@@ -109,7 +143,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   }
 
   if (results.potentialRevenueCapacity !== null) {
-    metrics.push({ label: 'Revenue Capacity', value: formatCurrency(results.potentialRevenueCapacity) });
+    metrics.push({ label: 'Potential Production Revenue Capacity', value: formatCurrency(results.potentialRevenueCapacity) });
   }
 
   return (
@@ -138,6 +172,8 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             </p>
           </CardContent>
         </Card>
+
+        <AssumptionsSection />
       </div>
 
       <Separator className="print:hidden" />

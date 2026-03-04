@@ -128,9 +128,9 @@ export function AuditResultsSection({ inputs, results }: Props) {
         {results.potentialRevenueCapacity !== null && (
           <MetricCard
             icon={Banknote}
-            label="Revenue Capacity"
+            label="Potential Production Revenue Capacity"
             value={formatCurrency(results.potentialRevenueCapacity)}
-            description="production revenue potential"
+            description="at current $/ft input"
             accent="recovery"
             testId="card-revenue"
           />
