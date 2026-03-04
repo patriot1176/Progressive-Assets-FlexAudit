@@ -106,11 +106,11 @@ function PerformanceScoreCard({ results }: { results: AuditResults }) {
   if (score >= 80) {
     band = { label: 'Best Practice Range', color: 'text-emerald-700 dark:text-emerald-400', barColor: 'bg-emerald-500' };
   } else if (score >= 60) {
-    band = { label: 'Typical Performance Range', color: 'text-amber-600 dark:text-amber-400', barColor: 'bg-amber-500' };
+    band = { label: 'Typical Performance', color: 'text-amber-600 dark:text-amber-400', barColor: 'bg-amber-500' };
   } else if (score >= 40) {
-    band = { label: 'Improvement Needed', color: 'text-orange-600 dark:text-orange-400', barColor: 'bg-orange-500' };
+    band = { label: 'Needs Improvement', color: 'text-orange-600 dark:text-orange-400', barColor: 'bg-orange-500' };
   } else {
-    band = { label: 'Critical', color: 'text-red-700 dark:text-red-400', barColor: 'bg-red-500' };
+    band = { label: 'Critical Performance', color: 'text-red-700 dark:text-red-400', barColor: 'bg-red-500' };
   }
 
   return (
@@ -139,10 +139,10 @@ function PerformanceScoreCard({ results }: { results: AuditResults }) {
         </div>
 
         <div className="flex justify-between text-[9px] text-muted-foreground mb-3">
-          <span>Critical</span>
-          <span>Improvement</span>
-          <span>Typical</span>
-          <span>Best Practice</span>
+          <span>Critical Performance</span>
+          <span>Needs Improvement</span>
+          <span>Typical Performance</span>
+          <span>Best Practice Range</span>
         </div>
 
         <p className={cn("text-sm font-semibold mb-3", band.color)} data-testid="text-score-band">{band.label}</p>
