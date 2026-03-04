@@ -14,7 +14,8 @@ A client-side PWA (Progressive Web App) that quantifies flexo press setup time l
 - `client/src/pages/home.tsx` — Main page with tabs (Inputs / Results / Snapshot), state management
 - `client/src/components/audit-inputs.tsx` — Input form with operating mode toggle, number fields, reduction slider
 - `client/src/components/audit-results.tsx` — Result metric cards + recharts bar chart
-- `client/src/components/audit-snapshot.tsx` — Executive snapshot with summary text, copy/share/export actions
+- `client/src/components/audit-snapshot.tsx` — Executive snapshot with Key Findings, What This Means, Assumptions, copy/share/export actions
+- `client/src/components/benchmark-panel.tsx` — Directional benchmark panel (shared between Results and Snapshot)
 - `client/public/manifest.json` — PWA manifest
 - `client/public/sw.js` — Service worker for offline caching
 
@@ -23,6 +24,11 @@ A client-side PWA (Progressive Web App) that quantifies flexo press setup time l
 - Operating Mode Toggle (Conservative / Typical / Aggressive) with preset multipliers
 - Auto-calculating results from inputs
 - Bar chart comparing Setup Hours Lost vs Recovered Hours
+- Directional Benchmark panel comparing % Press Time Lost, Setup Hours/Press/Year, Changeovers/Press/Day against typical ranges
+- Show Benchmark toggle (default ON) to show/hide benchmark panel
+- Key Findings section on Snapshot with 3 auto-generated consulting-style bullet insights
+- Plant Capacity Diagnostic framing label on Executive Snapshot
+- Expandable Assumptions Used section (collapsed by default)
 - Copy Summary Text / Copy AM Follow-Up Email
 - Share Link (encodes all inputs as URL query parameters)
 - Export PDF via browser print dialog

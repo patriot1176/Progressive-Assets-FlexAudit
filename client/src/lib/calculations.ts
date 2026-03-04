@@ -97,6 +97,48 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
   };
 }
 
+export type BenchmarkBand = 'below-typical' | 'typical' | 'above-typical';
+
+export interface BenchmarkMetric {
+  label: string;
+  value: string;
+  band: BenchmarkBand;
+}
+
+export interface BenchmarkResult {
+  metrics: BenchmarkMetric[];
+  overall: BenchmarkBand;
+}
+
+export function getBenchmarks(inputs: AuditInputs, results: AuditResults): BenchmarkResult {
+  const pctLost = results.pctPressTimeLostToSetup * 100;
+  const setupHoursPerPress = results.setupHoursPerYear / inputs.presses;
+  const changeoversPerDay = inputs.changeoversPerPressPerDay;
+
+  const pctBand: BenchmarkBand = pctLost < 20 ? 'below-typical' : pctLost <= 35 ? 'typical' : 'above-typical';
+  const hoursBand: BenchmarkBand = setupHoursPerPress < 900 ? 'below-typical' : setupHoursPerPress <= 1500 ? 'typical' : 'above-typical';
+  const changeoverBand: BenchmarkBand = changeoversPerDay < 4 ? 'below-typical' : changeoversPerDay <= 8 ? 'typical' : 'above-typical';
+
+  const metrics: BenchmarkMetric[] = [
+    { label: '% Press Time Lost', value: `${pctLost.toFixed(1)}%`, band: pctBand },
+    { label: 'Setup Hours Lost / Press / Year', value: formatNumber(Math.round(setupHoursPerPress)), band: hoursBand },
+    { label: 'Changeovers / Press / Day', value: String(changeoversPerDay), band: changeoverBand },
+  ];
+
+  const bands = [pctBand, hoursBand, changeoverBand];
+  const overall: BenchmarkBand = bands.includes('above-typical') ? 'above-typical' : bands.includes('typical') ? 'typical' : 'below-typical';
+
+  return { metrics, overall };
+}
+
+export function bandLabel(band: BenchmarkBand): string {
+  switch (band) {
+    case 'below-typical': return 'Below Typical';
+    case 'typical': return 'Typical';
+    case 'above-typical': return 'Above Typical';
+  }
+}
+
 export function formatNumber(n: number, decimals = 0): string {
   return n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 }

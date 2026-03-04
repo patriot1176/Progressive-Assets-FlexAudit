@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { AuditInputsSection } from "@/components/audit-inputs";
 import { AuditResultsSection } from "@/components/audit-results";
 import { AuditSnapshotSection } from "@/components/audit-snapshot";
@@ -17,6 +19,7 @@ export default function Home() {
   const [inputs, setInputs] = useState<AuditInputs>(DEFAULT_INPUTS);
   const [mode, setMode] = useState<OperatingMode>('typical');
   const [activeTab, setActiveTab] = useState('inputs');
+  const [showBenchmark, setShowBenchmark] = useState(true);
   const snapshotRef = useRef<HTMLDivElement>(null);
 
   const results = useMemo(() => calculate(inputs, mode), [inputs, mode]);
@@ -84,6 +87,17 @@ export default function Home() {
 
       <main className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <div className="flex items-center justify-end gap-2 mb-3 print:hidden">
+            <Switch
+              id="benchmark-toggle"
+              checked={showBenchmark}
+              onCheckedChange={setShowBenchmark}
+              data-testid="toggle-benchmark"
+            />
+            <Label htmlFor="benchmark-toggle" className="text-xs text-muted-foreground cursor-pointer" data-testid="label-benchmark-toggle">
+              Show Benchmark
+            </Label>
+          </div>
           <TabsList className="grid w-full grid-cols-3 print:hidden" data-testid="tab-list">
             <TabsTrigger value="inputs" data-testid="tab-inputs">Inputs</TabsTrigger>
             <TabsTrigger value="results" data-testid="tab-results">Results</TabsTrigger>
@@ -101,7 +115,7 @@ export default function Home() {
               />
             </TabsContent>
             <TabsContent value="results" className="mt-0 print:hidden">
-              <AuditResultsSection inputs={inputs} results={results} />
+              <AuditResultsSection inputs={inputs} results={results} showBenchmark={showBenchmark} />
             </TabsContent>
             <TabsContent value="snapshot" className="mt-0">
               <AuditSnapshotSection
@@ -110,6 +124,7 @@ export default function Home() {
                 mode={mode}
                 onStartOver={handleStartOver}
                 snapshotRef={snapshotRef}
+                showBenchmark={showBenchmark}
               />
             </TabsContent>
           </div>

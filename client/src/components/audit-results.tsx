@@ -3,10 +3,12 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, 
 import { Clock, Percent, Layers, Users, DollarSign, TrendingUp, Ruler, Banknote, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type AuditInputs, type AuditResults, formatNumber, formatCurrency, formatPercent } from "@/lib/calculations";
+import { BenchmarkPanel } from "@/components/benchmark-panel";
 
 interface Props {
   inputs: AuditInputs;
   results: AuditResults;
+  showBenchmark: boolean;
 }
 
 type AccentType = 'loss' | 'recovery' | 'neutral';
@@ -55,7 +57,7 @@ function MetricCard({ icon: Icon, label, value, description, accent = 'neutral',
 
 const chartLabelFormatter = (v: number) => formatNumber(v);
 
-export function AuditResultsSection({ inputs, results }: Props) {
+export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
   const chartData = [
     { name: 'Setup Hours Lost', hours: Math.round(results.setupHoursPerYear) },
     { name: 'Recovered Hours', hours: Math.round(results.recoveredHours) },
@@ -83,9 +85,9 @@ export function AuditResultsSection({ inputs, results }: Props) {
         />
         <MetricCard
           icon={Layers}
-          label="Press Capacity Lost"
+          label="Equivalent Flexo Press Capacity Lost"
           value={formatNumber(results.pressEquivalentLost, 1)}
-          description="equivalent presses"
+          description="presses"
           accent="loss"
           testId="card-press-equiv"
         />
@@ -109,9 +111,8 @@ export function AuditResultsSection({ inputs, results }: Props) {
         )}
         <MetricCard
           icon={TrendingUp}
-          label="Recovered Hours"
+          label={`Recovered Production Hours (${inputs.reductionPct}% Setup Reduction)`}
           value={formatNumber(results.recoveredHours)}
-          description={`at ${inputs.reductionPct}% reduction`}
           accent="recovery"
           testId="card-recovered-hours"
         />
@@ -136,6 +137,8 @@ export function AuditResultsSection({ inputs, results }: Props) {
           />
         )}
       </div>
+
+      {showBenchmark && <BenchmarkPanel inputs={inputs} results={results} />}
 
       <Card>
         <CardContent className="p-5">

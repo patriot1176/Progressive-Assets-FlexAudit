@@ -1,0 +1,211 @@
+FINAL REVISION PROMPT FOR REPLIT (DO NOT START OVER)
+
+Modify the existing Flexo Setup Tax — Capacity Audit web application in this Replit project.
+
+Do NOT start over and do NOT rebuild the application.
+Preserve the current UI layout, calculations, navigation (Inputs / Results / Snapshot), chart, export features, and sharing functionality.
+
+Only implement the following targeted improvements.
+
+PART 1 — Improve Press Capacity Metric Label
+
+Locate the metric currently labeled:
+
+PRESS EQUIVALENT LOST
+
+Change the label to:
+
+Equivalent Flexo Press Capacity Lost
+
+Apply this change in:
+
+• Results screen
+• Executive Snapshot screen
+
+Do not modify the calculation or formatting.
+The value should continue displaying like:
+
+2.0 presses
+
+PART 2 — Improve Recovered Hours Label
+
+On the Results screen, locate the metric currently labeled:
+
+Recovered Hours
+with small subtext “at X% reduction”
+
+Update the metric label to:
+
+Recovered Production Hours ({scenarioPct}% Setup Reduction)
+
+Remove the small subtext “at X% reduction”.
+
+Do not modify the calculations.
+
+PART 3 — Ensure Correct Revenue Label
+
+Ensure the metric label appears exactly as:
+
+Potential Production Revenue Capacity
+
+Keep the existing helper text:
+
+at current $/ft input
+
+Do not modify the calculation or formatting.
+
+PART 4 — Improve Snapshot Narrative Language
+
+Ensure the What This Means paragraph begins using operational language.
+
+Use this structure:
+
+“This plant is losing {setupHoursLost} press hours per year to setup activities (~{percentLost}% of available press time), equivalent to {pressEquivalent} presses and {fteEquivalent} FTEs. At {scenarioPct}% setup reduction, the plant could recover {recoveredHours} hours/year, unlocking {recoveredFeet} feet and approximately {revenueCapacity} of potential production revenue capacity.”
+
+Do not change the formulas.
+
+PART 5 — Add Diagnostic Framing Line
+
+Under the Executive Snapshot heading add a descriptive line:
+
+Label Plant Capacity Diagnostic
+
+The layout should appear as:
+
+Executive Snapshot
+Label Plant Capacity Diagnostic
+
+[metrics grid appears below]
+
+Style the line similar to the subtitle used under the app title.
+
+PART 6 — Preserve Assumptions Section
+
+Keep the Assumptions Used expandable section unchanged.
+
+Ensure it contains:
+
+• FTE equivalent assumes 2,000 working hours per employee per year
+• Press capacity benchmark assumes ~6,500 operating hours per press per year
+• Potential production revenue capacity reflects production potential at the current $/ft input (not guaranteed sales)
+
+Collapsed by default.
+
+PART 7 — Add Benchmark Panel (Directional Benchmarking)
+
+Add a new section titled:
+
+Benchmark (Directional)
+
+Place it on:
+
+• Results screen
+• Executive Snapshot screen
+
+Use the following built-in benchmark ranges.
+
+Benchmark Metrics
+
+1️⃣ % Press Time Lost to Setup
+
+Below Typical: < 20%
+Typical: 20–35%
+Above Typical: > 35%
+
+2️⃣ Setup Hours Lost per Press per Year
+
+Below Typical: < 900 hrs
+Typical: 900–1500 hrs
+Above Typical: > 1500 hrs
+
+3️⃣ Changeovers per Press per Day
+
+Below Typical: < 4
+Typical: 4–8
+Above Typical: > 8
+
+Display
+
+Calculate:
+
+setupHoursLostPerPress = setupHoursLost / presses
+
+Show:
+
+Overall Benchmark Status
+(Based on the worst metric band)
+
+Example display:
+
+% Press Time Lost: 36.7% → Above Typical
+Setup Hours Lost / Press / Year: 1,833 → Above Typical
+Changeovers / Press / Day: 8 → Typical
+
+Add a small note below the benchmark section:
+
+“Benchmarks are directional and vary by mix and SKU complexity.”
+
+PART 8 — Benchmark Toggle
+
+Add a simple toggle:
+
+Show Benchmark
+
+Default = ON.
+
+If OFF, hide the benchmark panel completely.
+
+Do not store any data remotely.
+
+PART 9 — Add McKinsey-Style “Key Findings” Section
+
+On the Executive Snapshot screen, add a new section titled:
+
+Key Findings
+
+Place this section between the metrics grid and the “What This Means” paragraph.
+
+Display three automatically generated bullet insights using the calculated values.
+
+Structure:
+
+• Setup activities currently consume {percentLost}% of total available press time.
+• This represents the equivalent capacity of {pressEquivalent} flexo presses.
+• A {scenarioPct}% reduction in setup time would unlock approximately {revenueCapacity} in potential production revenue capacity at current pricing.
+
+Formatting:
+
+• Bold the numbers
+• Maximum three bullet points
+• Match styling of existing Snapshot sections
+
+Do not modify calculations.
+
+PART 10 — Do Not Modify Anything Else
+
+Do not change:
+
+• existing formulas
+• input defaults
+• scenario slider
+• operating mode toggle
+• chart
+• Copy Summary Text
+• Copy AM Follow-Up Email
+• Share Link
+• Export PDF
+• Reset / Start Over behavior
+• UI layout
+
+Only apply the improvements listed above.
+
+Expected Result
+
+The revised tool should present the results as a consulting-style operational diagnostic, including:
+
+• Capacity Diagnostic framing
+• Directional Benchmark comparison
+• Key Findings insight summary
+• Executive-ready narrative explanation
+
+Return a short summary describing the files modified.
