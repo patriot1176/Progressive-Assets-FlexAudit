@@ -154,7 +154,24 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
         <Card>
           <CardContent className="p-5 sm:p-6">
             <h2 className="text-base font-semibold" data-testid="text-snapshot-title">Executive Snapshot</h2>
-            <p className="text-xs text-muted-foreground mt-0.5 mb-5" data-testid="text-diagnostic-label">Plant Capacity Diagnostic</p>
+            <p className="text-xs text-muted-foreground mt-0.5" data-testid="text-diagnostic-label">Plant Capacity Diagnostic</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Key Findings</h3>
+            <ul className="space-y-2.5 text-sm leading-relaxed text-foreground/90 list-disc pl-4" data-testid="list-key-findings">
+              <li>Setup activities currently consume <span className="font-bold">{formatPercent(results.pctPressTimeLostToSetup)}</span> of total available press time.</li>
+              <li>This represents the equivalent capacity of <span className="font-bold">{formatNumber(results.pressEquivalentLost, 1)}</span> flexo presses.</li>
+              <li>A <span className="font-bold">{inputs.reductionPct}%</span> reduction in setup time would unlock approximately <span className="font-bold">{results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</span> in potential production revenue capacity at current pricing.</li>
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-5">Core Metrics</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-5">
               {metrics.map((m, i) => (
                 <div key={i} data-testid={`snapshot-metric-${i}`}>
@@ -168,17 +185,6 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
         </Card>
 
         {showBenchmark && <BenchmarkPanel inputs={inputs} results={results} />}
-
-        <Card>
-          <CardContent className="p-5 sm:p-6">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Key Findings</h3>
-            <ul className="space-y-2.5 text-sm leading-relaxed text-foreground/90 list-disc pl-4" data-testid="list-key-findings">
-              <li>Setup activities currently consume <span className="font-bold">{formatPercent(results.pctPressTimeLostToSetup)}</span> of total available press time.</li>
-              <li>This represents the equivalent capacity of <span className="font-bold">{formatNumber(results.pressEquivalentLost, 1)}</span> flexo presses.</li>
-              <li>A <span className="font-bold">{inputs.reductionPct}%</span> reduction in setup time would unlock approximately <span className="font-bold">{results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</span> in potential production revenue capacity at current pricing.</li>
-            </ul>
-          </CardContent>
-        </Card>
 
         <Card>
           <CardContent className="p-5 sm:p-6">

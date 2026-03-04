@@ -16,10 +16,10 @@ interface Props {
   onReset: () => void;
 }
 
-const modes: { value: OperatingMode; label: string; icon: typeof Shield; desc: string }[] = [
-  { value: 'conservative', label: 'Conservative', icon: Shield, desc: 'Setup time \u00d71.2, reduction 30%' },
-  { value: 'typical', label: 'Typical', icon: Target, desc: 'Setup time as entered, reduction 40%' },
-  { value: 'aggressive', label: 'Aggressive', icon: Zap, desc: 'Setup time \u00d70.85, reduction 50%' },
+const modes: { value: OperatingMode; label: string; icon: typeof Shield; subtitle: string; desc: string }[] = [
+  { value: 'conservative', label: 'Conservative', icon: Shield, subtitle: 'Slow Setup Environment', desc: 'Assumes setups take ~20% longer; sets reduction target to 30%.' },
+  { value: 'typical', label: 'Typical', icon: Target, subtitle: 'Current Operation', desc: 'Uses your entered setup time; sets reduction target to 40%.' },
+  { value: 'aggressive', label: 'Aggressive', icon: Zap, subtitle: 'Best-Practice Setup', desc: 'Assumes disciplined setups (~15% faster); sets reduction target to 50%.' },
 ];
 
 export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, onReset }: Props) {
@@ -31,6 +31,9 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Operating Mode</CardTitle>
+          <p className="text-[11px] text-muted-foreground mt-1" data-testid="text-operating-reality">
+            <span className="font-medium text-foreground/70">Operating Reality</span> — Adjusts the assumed setup efficiency before modeling improvement scenarios.
+          </p>
         </CardHeader>
         <CardContent className="pt-0">
           <div className="flex bg-muted/60 rounded-md p-1 gap-1">
@@ -52,9 +55,18 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               </button>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground text-center mt-2.5" data-testid="text-mode-desc">
-            {modes.find((m) => m.value === mode)?.desc}
-          </p>
+          <div className="mt-3 space-y-1.5" data-testid="text-mode-descriptions">
+            {modes.map((m) => (
+              <p key={m.value} className={cn(
+                "text-[11px] leading-snug",
+                mode === m.value ? "text-foreground/80" : "text-muted-foreground/60"
+              )}>
+                <span className="font-semibold">{m.label}</span>{' '}
+                <span className="text-muted-foreground">({m.subtitle})</span>{' '}
+                <span className="italic">{m.desc}</span>
+              </p>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
@@ -90,7 +102,7 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               />
               {mode !== 'typical' && (
                 <p className="text-xs text-muted-foreground pl-0.5" data-testid="text-adjusted-time">
-                  Adjusted: <span className="font-medium text-foreground">{formatNumber(effectiveSetupTime, 1)} min</span>
+                  Adjusted Setup Time: <span className="font-medium text-foreground">{formatNumber(effectiveSetupTime, 1)} min</span>
                   {' '}({mode === 'conservative' ? '\u00d71.2' : '\u00d70.85'})
                 </p>
               )}

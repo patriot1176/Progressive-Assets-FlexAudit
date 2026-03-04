@@ -1,0 +1,102 @@
+REPLIT REVISION PROMPT (DO NOT START OVER / CHANGE NOTHING ELSE)
+
+Modify the existing Flexo Setup Tax — Capacity Audit app in this Replit project.
+
+DO NOT start over. DO NOT rebuild.
+Do not change calculations, metric values, formulas, chart logic, share/export buttons, navigation steps, defaults, or existing features.
+Only apply the UI text + section ordering changes described below.
+
+1) Improve “Operating Mode” Description (Clarity)
+
+On the Inputs screen, the “Operating Mode” control currently has Conservative / Typical / Aggressive.
+
+Keep the three options and their behavior exactly the same. Do not change multipliers or default reduction values.
+
+Add a short description block directly under the Operating Mode selector:
+
+Title (small, subtle)
+
+Operating Reality
+
+One-line explanation (subtle helper text)
+
+“Adjusts the assumed setup efficiency before modeling improvement scenarios.”
+
+Then, under the three mode buttons, add a short per-mode description (small text, 1 line each). Use EXACT text:
+
+Conservative (Slow Setup Environment)
+“Assumes setups take ~20% longer; sets reduction target to 30%.”
+
+Typical (Current Operation)
+“Uses your entered setup time; sets reduction target to 40%.”
+
+Aggressive (Best-Practice Setup)
+“Assumes disciplined setups (~15% faster); sets reduction target to 50%.”
+
+Also, keep and display the existing “Adjusted Setup Time: X min” line (if present). If the label is currently “Adjusted:”, change it to:
+
+Adjusted Setup Time: {value} min
+
+Do not change any functionality—text only.
+
+2) Apply “Consulting Dashboard” Layout on Executive Snapshot
+
+On the Executive Snapshot screen only, reorganize content into this order:
+
+Executive Snapshot header
+
+“Label Plant Capacity Diagnostic” line (keep)
+
+Key Findings section (keep existing bullets and logic)
+
+Core Metrics (the metrics grid/cards you already show)
+
+Benchmark (Directional) section (keep existing toggle + content)
+
+What This Means narrative paragraph (keep text and logic)
+
+Assumptions Used expandable section (keep)
+
+Important:
+
+Do not change any calculations or values.
+
+Do not remove the benchmark toggle; keep it and make it control the benchmark section visibility as it does now.
+
+Do not change the copy inside Key Findings, What This Means, or Assumptions (unless needed to fit the new structure). Only move sections.
+
+Add one small section label above the metrics grid:
+
+Core Metrics
+
+Style it like other section headings (same typography weight as “Key Findings”).
+
+3) Do Not Change Anything Else
+
+Do NOT modify:
+
+Inputs fields, defaults, validation
+
+Any metric formulas or formatting
+
+Scenario slider behavior
+
+Operating mode behavior
+
+Chart logic/design
+
+Copy Summary Text / Copy AM Follow-Up Email / Share Link / Export PDF
+
+Start Over button
+
+Overall styling theme (only add small helper text and headings consistent with existing UI)
+
+Deliverable
+
+After implementing, summarize:
+
+which files were edited
+
+confirm only text additions and section re-ordering occurred
+
+confirm calculations and outputs remain unchanged
