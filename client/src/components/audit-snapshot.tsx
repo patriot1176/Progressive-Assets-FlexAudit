@@ -117,7 +117,7 @@ function PerformanceScoreCard({ results }: { results: AuditResults }) {
     <Card data-testid="card-performance-score">
       <CardContent className="p-5 sm:p-6">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Plant Performance Score</h3>
-        <p className="text-[11px] text-muted-foreground mt-0.5 mb-4">Plant Performance Score</p>
+        <p className="text-[11px] text-muted-foreground mt-0.5 mb-4">Operational Setup Efficiency Rating</p>
 
         <div className="flex items-baseline gap-1.5 mb-3">
           <span className="text-4xl font-bold tracking-tight" data-testid="text-score-value">{score}</span>
