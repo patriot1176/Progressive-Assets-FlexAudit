@@ -98,6 +98,90 @@ function AssumptionsSection() {
   );
 }
 
+function PerformanceScoreCard({ results }: { results: AuditResults }) {
+  const pctLost = results.pctPressTimeLostToSetup * 100;
+  const score = Math.max(0, Math.min(100, Math.round(100 - pctLost)));
+
+  let band: { label: string; color: string; barColor: string };
+  if (score >= 80) {
+    band = { label: 'Best Practice Range', color: 'text-emerald-700 dark:text-emerald-400', barColor: 'bg-emerald-500' };
+  } else if (score >= 60) {
+    band = { label: 'Typical Performance Range', color: 'text-amber-600 dark:text-amber-400', barColor: 'bg-amber-500' };
+  } else if (score >= 40) {
+    band = { label: 'Improvement Needed', color: 'text-orange-600 dark:text-orange-400', barColor: 'bg-orange-500' };
+  } else {
+    band = { label: 'Critical', color: 'text-red-700 dark:text-red-400', barColor: 'bg-red-500' };
+  }
+
+  return (
+    <Card data-testid="card-performance-score">
+      <CardContent className="p-5 sm:p-6">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Plant Performance Score</h3>
+        <p className="text-[11px] text-muted-foreground mt-0.5 mb-4">Operational Setup Efficiency Rating</p>
+
+        <div className="flex items-baseline gap-1.5 mb-3">
+          <span className="text-4xl font-bold tracking-tight" data-testid="text-score-value">{score}</span>
+          <span className="text-lg text-muted-foreground font-medium">/ 100</span>
+        </div>
+
+        <div className="relative w-full h-3 rounded-full bg-muted overflow-hidden mb-2">
+          <div
+            className={cn("absolute inset-y-0 left-0 rounded-full transition-all duration-500", band.barColor)}
+            style={{ width: `${score}%` }}
+            data-testid="bar-performance-score"
+          />
+          <div className="absolute inset-0 flex">
+            <div className="w-[40%] border-r border-background/50" />
+            <div className="w-[20%] border-r border-background/50" />
+            <div className="w-[20%] border-r border-background/50" />
+            <div className="w-[20%]" />
+          </div>
+        </div>
+
+        <div className="flex justify-between text-[9px] text-muted-foreground mb-3">
+          <span>Critical</span>
+          <span>Improvement</span>
+          <span>Typical</span>
+          <span>Best Practice</span>
+        </div>
+
+        <p className={cn("text-sm font-semibold mb-3", band.color)} data-testid="text-score-band">{band.label}</p>
+
+        <p className="text-[11px] text-muted-foreground leading-relaxed">
+          This score represents the percentage of total press capacity not consumed by setup activities. Higher scores indicate more efficient setup performance and greater available production capacity.
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function BenchmarkInterpretation() {
+  return (
+    <Card data-testid="card-benchmark-interpretation">
+      <CardContent className="p-5 sm:p-6">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Benchmark Interpretation</h3>
+        <p className="text-sm text-foreground/80 mb-3">
+          These benchmark indicators compare your results to typical flexographic printing operations with similar press configurations.
+        </p>
+        <div className="space-y-2.5">
+          <div>
+            <p className="text-sm font-semibold text-red-700 dark:text-red-400">Above Typical</p>
+            <p className="text-[12px] text-foreground/70 leading-relaxed">Indicates performance that is worse than typical industry ranges, such as higher setup time, higher setup frequency, or greater press capacity lost to changeovers than most plants.</p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">Typical</p>
+            <p className="text-[12px] text-foreground/70 leading-relaxed">Indicates performance within normal industry operating ranges.</p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">Below Typical</p>
+            <p className="text-[12px] text-foreground/70 leading-relaxed">Indicates performance that is better than typical industry ranges, such as fewer changeovers or lower setup-related capacity loss.</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snapshotRef, showBenchmark }: Props) {
   const { toast } = useToast();
 
@@ -151,10 +235,24 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   return (
     <div className="space-y-5">
       <div ref={snapshotRef} className="space-y-4 snapshot-printable" data-testid="snapshot-content">
+        <PerformanceScoreCard results={results} />
+
         <Card>
           <CardContent className="p-5 sm:p-6">
             <h2 className="text-base font-semibold" data-testid="text-snapshot-title">Executive Snapshot</h2>
-            <p className="text-xs text-muted-foreground mt-0.5" data-testid="text-diagnostic-label">Plant Capacity Diagnostic</p>
+            <p className="text-xs text-muted-foreground mt-0.5 mb-4" data-testid="text-diagnostic-label">Plant Capacity Diagnostic</p>
+            <div className="space-y-3 text-sm leading-relaxed text-foreground/80" data-testid="text-executive-narrative">
+              <p>This analysis estimates the operational capacity currently lost to press setup activities.</p>
+              <p>
+                Based on the inputs provided, this plant is losing approximately <span className="font-semibold text-foreground">{formatNumber(results.setupHoursPerYear)}</span> press hours per year to changeovers, representing <span className="font-semibold text-foreground">{formatPercent(results.pctPressTimeLostToSetup)}</span> of total available press capacity. This loss is equivalent to removing about <span className="font-semibold text-foreground">{formatNumber(results.pressEquivalentLost, 1)}</span> flexo presses from production.
+              </p>
+              <p>
+                At the modeled improvement scenario of <span className="font-semibold text-foreground">{inputs.reductionPct}%</span> setup reduction, the plant could recover approximately <span className="font-semibold text-foreground">{formatNumber(results.recoveredHours)}</span> press hours annually.
+                {results.recoveredLinearFeet !== null && <>{' '}This recovered capacity could unlock roughly <span className="font-semibold text-foreground">{formatNumber(results.recoveredLinearFeet)}</span> additional linear feet of production</>}
+                {results.potentialRevenueCapacity !== null && <>{' '}and approximately <span className="font-semibold text-foreground">{formatCurrency(results.potentialRevenueCapacity)}</span> in potential revenue capacity at the current selling price</>}.
+              </p>
+              <p>These results illustrate the operational impact of setup efficiency on plant throughput and highlight the potential value of reducing changeover time.</p>
+            </div>
           </CardContent>
         </Card>
 
@@ -185,6 +283,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
         </Card>
 
         {showBenchmark && <BenchmarkPanel inputs={inputs} results={results} />}
+        {showBenchmark && <BenchmarkInterpretation />}
 
         <Card>
           <CardContent className="p-5 sm:p-6">

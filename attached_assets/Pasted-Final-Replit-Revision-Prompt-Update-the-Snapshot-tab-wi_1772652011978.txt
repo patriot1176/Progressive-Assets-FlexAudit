@@ -1,0 +1,132 @@
+Final Replit Revision Prompt
+
+Update the Snapshot tab with three enhancements.
+Do not change calculations, layout structure, tabs, or existing metrics.
+
+Only add the following:
+
+Executive Snapshot summary text
+
+Benchmark Interpretation explanation
+
+A new Plant Performance Score diagnostic indicator
+
+1️⃣ Populate Executive Snapshot
+
+Replace the empty Executive Snapshot area with the following dynamic diagnostic narrative using the model’s calculated values.
+
+Executive Snapshot — Plant Capacity Diagnostic
+
+This analysis estimates the operational capacity currently lost to press setup activities.
+
+Based on the inputs provided, this plant is losing approximately {setup_hours_lost} press hours per year to changeovers, representing {press_time_lost}% of total available press capacity. This loss is equivalent to removing about {press_equivalent_lost} flexo presses from production.
+
+At the modeled improvement scenario of {setup_reduction_percent}% setup reduction, the plant could recover approximately {recovered_hours} press hours annually. This recovered capacity could unlock roughly {recovered_linear_feet} additional linear feet of production and approximately ${potential_revenue_capacity} in potential revenue capacity at the current selling price.
+
+These results illustrate the operational impact of setup efficiency on plant throughput and highlight the potential value of reducing changeover time.
+
+Use existing calculated values for:
+
+{setup_hours_lost}
+{press_time_lost}
+{press_equivalent_lost}
+{setup_reduction_percent}
+{recovered_hours}
+{recovered_linear_feet}
+{potential_revenue_capacity}
+
+Formatting rules:
+
+Keep the same card layout used throughout Snapshot
+
+Maintain consulting-style tone
+
+Paragraph format (not bullet points)
+
+2️⃣ Add Benchmark Interpretation Card
+
+Add a new card directly below the Benchmark (Directional) section titled:
+
+Benchmark Interpretation
+
+Insert the following explanation text:
+
+These benchmark indicators compare your results to typical flexographic printing operations with similar press configurations.
+
+Above Typical
+Indicates performance that is worse than typical industry ranges, such as higher setup time, higher setup frequency, or greater press capacity lost to changeovers than most plants.
+
+Typical
+Indicates performance within normal industry operating ranges.
+
+Below Typical
+Indicates performance that is better than typical industry ranges, such as fewer changeovers or lower setup-related capacity loss.
+
+Formatting rules:
+
+Use same container style as other Snapshot cards
+
+Keep spacing consistent with existing sections
+
+3️⃣ Add “Plant Performance Score” Diagnostic
+
+Add a new card above the Executive Snapshot section titled:
+
+Plant Performance Score
+Operational Setup Efficiency Rating
+
+This should provide a visual diagnostic score from 0–100 based on setup performance relative to benchmarks.
+
+Score logic:
+
+Score = 100 − (% Press Time Lost)
+
+Example:
+
+Press Time Lost = 36%
+Score = 64
+
+Display the score using a horizontal performance bar:
+
+0–40   = Critical (Red)
+40–60  = Improvement Needed (Orange)
+60–80  = Typical Performance (Yellow)
+80–100 = Best Practice Range (Green)
+
+Display example:
+
+Plant Performance Score
+64 / 100
+Typical Performance Range
+
+Include a short explanation below the score:
+
+This score represents the percentage of total press capacity not consumed by setup activities. Higher scores indicate more efficient setup performance and greater available production capacity.
+
+Formatting rules:
+
+Use a visual progress bar
+
+Match the color style already used in the benchmark labels
+
+Keep the design clean and consistent with the dashboard
+
+Important
+
+Do NOT modify:
+
+calculations
+
+benchmark logic
+
+inputs
+
+tabs
+
+charts
+
+layout structure
+
+existing cards
+
+Only add the three new elements above.
