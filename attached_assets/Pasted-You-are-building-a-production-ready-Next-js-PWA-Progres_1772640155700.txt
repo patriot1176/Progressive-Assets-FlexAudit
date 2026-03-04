@@ -1,0 +1,236 @@
+You are building a production-ready Next.js PWA (Progressive Web App) that is a responsive web app installable via “Add to Home Screen” on iOS/Android and hosted from a public URL. Build and run it entirely inside Replit, and ensure it’s deployable to Vercel without changes.
+
+App Identity (Neutral)
+
+Name: Flexo Setup Tax — Capacity Audit
+Subtitle: “Quantify setup loss. Model recovered capacity.”
+No mention of HP, Indigo, V12, or any vendor.
+
+Hard Constraints
+
+No login
+
+No backend / no data storage (everything client-side)
+
+Must be mobile-first and iPad-friendly
+
+Must support Export PDF
+
+Must support Copy Summary Text
+
+Must support Copy AM Follow-Up Email
+
+Must support Share Link that encodes inputs in query parameters (prefilled audit)
+
+Tech Stack
+
+Next.js latest (App Router) + TypeScript
+
+Tailwind CSS
+
+PWA support: manifest + service worker
+
+Chart: use a lightweight React chart library or simple SVG bars (must look good on mobile)
+
+PDF export: use react-to-print (preferred) or jspdf (must work on mobile Safari)
+
+Information Architecture (single page with stepper OR 3 pages)
+
+Inputs
+
+Results
+
+Executive Snapshot
+
+Inputs (with defaults)
+
+Number of flexo presses (default 5)
+
+Avg changeovers per press per day (default 8)
+
+Typical setup time per changeover in minutes (default 55)
+Tooltip: “Include washups, plate mounting, and registration.”
+
+Shifts per day (default 2)
+
+Hours per shift (default 10)
+
+Operating days per year (default 250)
+Optional:
+
+Avg press speed (ft/min) (default 200)
+
+Avg selling price ($/ft) (default 0.05)
+
+Avg operator labor rate ($/hr) (default 30)
+
+Setup reduction assumption % (default 50) + quick buttons 30/40/50 + slider
+
+Buttons:
+
+Reset to defaults
+
+Calculate (or auto-update)
+
+Validation:
+
+no negatives; reduction % 0–100
+
+if optional fields are blank, hide dependent outputs (don’t show $0)
+
+NEW Micro-Feature: Operating Mode Toggle
+
+Add a 3-state toggle at top of Inputs:
+Conservative / Typical / Aggressive
+
+Presets:
+
+Conservative: setup time = entered/default * 1.20, reduction = 30%
+
+Typical: setup time unchanged, reduction = 40%
+
+Aggressive: setup time = entered/default * 0.85, reduction = 50%
+
+When toggle changes:
+
+update the setup time field (or apply a multiplier internally but show “adjusted”)
+
+set the scenario slider accordingly
+
+recalc instantly
+
+Calculations (exact)
+
+totalChangeoversPerDay = presses * changeoversPerPressPerDay
+
+setupMinutesPerDay = totalChangeoversPerDay * setupMinutesPerChangeover
+
+setupHoursPerDay = setupMinutesPerDay / 60
+
+setupHoursPerYear = setupHoursPerDay * operatingDaysPerYear
+
+Availability / % loss (shifts/hours MUST matter here):
+
+availableHoursPerYearPerPress = shiftsPerDay * hoursPerShift * operatingDaysPerYear
+
+totalAvailablePlantPressHoursPerYear = availableHoursPerYearPerPress * presses
+
+pctPressTimeLostToSetup = setupHoursPerYear / totalAvailablePlantPressHoursPerYear
+
+Operational:
+
+fteEquivalent = setupHoursPerYear / 2000
+
+pressEquivalentLost = setupHoursPerYear / 6500
+
+Cost (if labor provided):
+
+annualSetupLaborCost = setupHoursPerYear * laborRate
+
+Scenario:
+
+recoveredHours = setupHoursPerYear * (reductionPct/100)
+
+Capacity (if press speed provided):
+
+recoveredLinearFeet = recoveredHours * 60 * pressSpeedFPM
+
+Revenue (if price/ft provided):
+
+potentialRevenueCapacity = recoveredLinearFeet * pricePerFoot
+
+Results UI (cards)
+
+Show big cards for:
+
+Annual Setup Hours Lost (largest)
+
+% Press Time Lost to Setup
+
+Equivalent Flexo Press Capacity Lost
+
+FTE Equivalent
+
+Annual Setup Labor Cost (if provided)
+
+Scenario recovered hours
+
+Recovered linear feet (if available)
+
+Potential production revenue capacity (if available)
+
+Chart
+
+Mobile-friendly bar chart titled:
+Annual Press Time Lost to Setup
+Bars: Setup Hours Lost vs Recovered Hours (scenario)
+
+Executive Snapshot
+
+Show:
+
+Setup hours lost
+
+% press time lost
+
+press-equivalent lost
+
+recovered hours @ scenario %
+
+recovered feet (if available)
+
+revenue capacity (if available)
+
+labor cost (if available)
+Plus a generated “What this means” paragraph:
+“This plant is losing ___ hours/year to setup (~___% of available press time), equivalent to ___ presses and ___ FTEs. At % setup reduction, the plant could recover ___ hours/year, unlocking ___ feet and approximately $ of production revenue capacity.”
+
+Actions:
+
+Copy Summary Text
+
+Copy AM Follow-Up Email
+(copies a ready-to-send message with bullet outputs + 1 question)
+
+Share Link
+Copy URL containing all inputs in query params so the audit opens prefilled.
+
+Export PDF of Executive Snapshot only (neutral, no logo)
+
+Start Over
+
+PWA Requirements
+
+Implement:
+
+public/manifest.json with name “Flexo Setup Tax — Capacity Audit”, short_name “Setup Tax”, display “standalone”, start_url “/”
+
+icons 192 and 512 (simple neutral generated icons)
+
+service worker registration (minimal) so it’s installable
+
+ensure it works with iOS Add to Home Screen (standalone)
+
+Replit Requirements
+
+Make sure npm run dev works in Replit
+
+Expose the webview correctly
+
+Provide the exact commands to run and how to deploy to Vercel (git push -> Vercel)
+
+Deliverables
+
+Create the full project in the Replit workspace with a clear file structure.
+
+After implementation, summarize:
+
+how to run
+
+how to build
+
+how to deploy to Vercel
+
+how to test Add to Home Screen on iPhone/iPad
+
+Build it now.
