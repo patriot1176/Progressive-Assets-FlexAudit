@@ -167,6 +167,7 @@ function InputsUsedCard({ inputs, mode }: { inputs: AuditInputs; mode: Operating
     { label: 'Hours/Shift', value: String(inputs.hoursPerShift) },
     { label: 'Days/Year', value: String(inputs.operatingDaysPerYear) },
     { label: 'Setup Reduction', value: `${inputs.reductionPct}%` },
+    { label: 'Annual Changeovers Modeled', value: `${formatNumber(inputs.presses * inputs.changeoversPerPressPerDay * inputs.operatingDaysPerYear)} / year` },
   ];
 
   if (inputs.pressSpeedFPM !== null) {
@@ -206,7 +207,8 @@ function PressCapacityUtilizationBar({ results }: { results: AuditResults }) {
   return (
     <Card data-testid="card-capacity-utilization">
       <CardContent className="p-5 sm:p-6">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Press Capacity Utilization (Annual)</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Press Capacity Utilization (Annual)</h3>
+        <p className="text-[11px] text-muted-foreground mt-0.5 mb-4">Share of Total Available Press Hours</p>
 
         <div className="w-full h-8 rounded-md overflow-hidden flex" data-testid="bar-capacity-utilization">
           <div
@@ -299,7 +301,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   const metrics: { label: string; value: string; unit?: string }[] = [
     { label: 'Setup Hours Lost', value: formatNumber(results.setupHoursPerYear), unit: 'hrs/year' },
     { label: '% Press Time Lost', value: formatPercent(results.pctPressTimeLostToSetup) },
-    { label: 'Equivalent Flexo Press Capacity Lost', value: formatNumber(results.pressEquivalentLost, 1), unit: 'presses' },
+    { label: 'Press Capacity Lost to Setup', value: formatNumber(results.pressEquivalentLost, 1), unit: 'presses' },
     { label: 'FTE Equivalent', value: formatNumber(results.fteEquivalent, 1) },
   ];
 
@@ -336,7 +338,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             <h2 className="text-base font-semibold" data-testid="text-snapshot-title">Executive Snapshot</h2>
             <p className="text-xs text-muted-foreground mt-0.5 mb-4" data-testid="text-diagnostic-label">Plant Capacity Diagnostic</p>
             <div className="space-y-3 text-sm leading-relaxed text-foreground/80" data-testid="text-executive-narrative">
-              <p>This analysis estimates the operational capacity currently lost to press setup activities.</p>
+              <p>This plant is currently giving up meaningful press capacity to setup activity.</p>
               <p>
                 Based on the inputs provided, this plant is losing approximately <span className="font-semibold text-foreground">{formatNumber(results.setupHoursPerYear)}</span> press hours per year to changeovers, representing <span className="font-semibold text-foreground">{formatPercent(results.pctPressTimeLostToSetup)}</span> of total available press capacity. This loss is equivalent to removing about <span className="font-semibold text-foreground">{formatNumber(results.pressEquivalentLost, 1)}</span> flexo presses from production.
               </p>

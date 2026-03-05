@@ -85,7 +85,7 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
         />
         <MetricCard
           icon={Layers}
-          label="Equivalent Flexo Press Capacity Lost"
+          label="Press Capacity Lost to Setup"
           value={formatNumber(results.pressEquivalentLost, 1)}
           description="presses"
           accent="loss"
