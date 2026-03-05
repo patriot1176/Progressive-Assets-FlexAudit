@@ -77,7 +77,7 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     : 0;
 
   const fteEquivalent = setupHoursPerYear / 2000;
-  const pressEquivalentLost = setupHoursPerYear / 6500;
+  const pressEquivalentLost = pctPressTimeLostToSetup * inputs.presses;
 
   const annualSetupLaborCost = inputs.laborRate !== null ? setupHoursPerYear * inputs.laborRate : null;
 

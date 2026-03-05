@@ -1,0 +1,108 @@
+Fix the following issues in the Flexo Setup Tax — Plant Capacity Audit tool.
+Do **not change layout, styling, formatting, or structure.** Only apply the logic corrections below.
+
+---
+
+1. **Fix Press Capacity Lost Calculation**
+
+The metric **“Press Capacity Lost to Setup”** in the Results tab is currently incorrect.
+
+Current output example:
+1.4 presses
+
+Correct formula:
+
+Press Capacity Lost = Number of Presses × (% Press Time Lost / 100)
+
+Example with current inputs:
+Presses = 5
+% Press Time Lost = 36.7%
+
+Correct result:
+5 × 0.367 = 1.84 → display **1.8 presses**
+
+Update the calculation so the Results tab always matches the Snapshot and PDF values.
+
+---
+
+2. **Confirm Material Waste Formula**
+
+Ensure material waste is calculated using:
+
+Waste Cost per Changeover =
+(Setup Waste (ft) × Web Width (in) × Material Cost ($/MSI)) / 1000
+
+Example validation:
+
+Setup Waste = 1000 ft
+Web Width = 13 in
+Material Cost = $0.40 / MSI
+
+Waste per changeover ≈ **$62**
+
+Annual Waste:
+
+Annual Waste = Waste per Changeover × Annual Changeovers
+
+Example:
+$62 × 10,000 changeovers = ≈ **$624,000**
+
+This logic should already exist — verify it remains correct.
+
+---
+
+3. **Ensure Total Setup Cost Logic**
+
+Total Setup Cost must equal:
+
+Total Setup Cost =
+Annual Setup Labor Cost + Annual Setup Material Waste Cost
+
+Example:
+
+Labor Cost = $275,000
+Material Waste = $624,000
+
+Total Setup Cost = **$899,000**
+
+---
+
+4. **Ensure Total Setup Impact Calculation**
+
+Total Setup Impact =
+
+Total Setup Cost + Opportunity Cost (Unused Production Capacity)
+
+Example:
+
+Total Setup Cost = $899,000
+Opportunity Cost = $2.75M
+
+Total Setup Impact = **$3.65M**
+
+Ensure this matches across:
+
+• Results tab
+• Snapshot tab
+• PDF export
+
+---
+
+5. **Verify Consistency Across All Outputs**
+
+The following metrics must always match in:
+
+Inputs → Results → Snapshot → PDF
+
+• Setup Hours Lost
+• % Press Time Lost
+• Press Capacity Lost
+• Total Setup Cost
+• Opportunity Cost
+• Total Setup Impact
+
+No formatting or design changes should be made.
+
+---
+
+End of fixes.
