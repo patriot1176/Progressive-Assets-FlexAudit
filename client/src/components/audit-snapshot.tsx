@@ -557,9 +557,10 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
                 {results.recoveredLinearFeet !== null && <>{' '}This recovered capacity could unlock roughly <span className="font-semibold text-foreground">{formatNumber(results.recoveredLinearFeet)}</span> additional linear feet of production</>}
                 {results.potentialRevenueCapacity !== null && <>{' '}and approximately <span className="font-semibold text-foreground">{formatCurrency(results.potentialRevenueCapacity)}</span> in opportunity cost (unused production capacity) at the current selling price</>}.
               </p>
-              <p>These results illustrate the operational impact of setup efficiency on plant throughput and highlight the potential value of reducing changeover time.</p>
-              {results.totalSetupImpact !== null && (
+              {results.totalSetupImpact !== null ? (
                 <p>Combined, these factors represent an estimated total operational impact of approximately <span className="font-semibold text-foreground">{formatCurrency(results.totalSetupImpact)}</span> annually when both direct setup costs and unrealized production capacity are considered.</p>
+              ) : (
+                <p>These results illustrate the operational impact of setup efficiency on plant throughput and highlight the potential value of reducing changeover time.</p>
               )}
             </div>
           </CardContent>
@@ -573,7 +574,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
               <li>This represents the equivalent capacity of approximately <span className="font-bold">{formatNumber(results.pctPressTimeLostToSetup * inputs.presses, 1)}</span> presses currently consumed by setup activity.</li>
               <li>A <span className="font-bold">{inputs.reductionPct}%</span> reduction in setup time would unlock approximately <span className="font-bold">{results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</span> in opportunity cost (unused production capacity) at current pricing.</li>
               {results.annualSetupMaterialWasteCost !== null && results.wasteCostPerSetup !== null && (
-                <li>Modeled setup material waste is approximately <span className="font-bold">{formatCurrency(results.annualSetupMaterialWasteCost)}</span> per year (<span className="font-bold">{formatCurrency(results.wasteCostPerSetup)}</span>/changeover based on setup waste length, web width, and material cost per MSI).</li>
+                <li>Modeled setup material waste is approximately <span className="font-bold">{formatCurrency(results.annualSetupMaterialWasteCost)}</span> per year (≈ <span className="font-bold">{formatCurrency(results.wasteCostPerSetup)}</span> per changeover based on setup waste length, press web width, and material cost per MSI).</li>
               )}
             </ul>
 
@@ -610,7 +611,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             )}
             {(results.totalSetupCost !== null || results.potentialRevenueCapacity !== null) && (
               <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
-                Direct setup costs represent labor and material waste during press setup, while opportunity cost reflects unrealized production capacity caused by setup downtime.
+                Direct setup costs include labor and substrate waste during press setup. Opportunity cost represents unrealized production capacity caused by setup downtime.
               </p>
             )}
           </CardContent>

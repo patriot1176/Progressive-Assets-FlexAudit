@@ -1,0 +1,80 @@
+DO NOT START OVER.
+
+Do not change any calculations, formulas, or inputs. 
+Only make small clarity and layout improvements to improve executive readability.
+
+--------------------------------------------------
+
+1) REORDER RESULTS METRICS
+
+Reorder the results cards so the story flows logically from operational loss to financial impact.
+
+Use the following order:
+
+Operational Loss
+• Annual Setup Hours Lost
+• % Press Time Lost
+• Press Capacity Lost to Setup
+
+Direct Cost
+• Annual Setup Labor Cost
+• Waste Cost per Setup
+• Annual Setup Material Waste Cost
+
+Combined Direct Cost
+• Total Setup Cost
+
+Operational Efficiency
+• Setup Tax per Changeover
+
+Opportunity Cost
+• Opportunity Cost (Unused Production Capacity)
+
+Final Executive Impact
+• TOTAL SETUP IMPACT
+
+Place TOTAL SETUP IMPACT as the final card in the grid so it reads as the conclusion.
+
+Do not change the styling of any cards.
+
+--------------------------------------------------
+
+2) UPDATE EXECUTIVE SNAPSHOT WORDING
+
+Replace the final paragraph with the following clearer version:
+
+"Combined, these factors represent an estimated total operational impact of approximately ${Total Setup Impact} annually when both direct setup costs and unrealized production capacity are considered."
+
+--------------------------------------------------
+
+3) IMPROVE KEY FINDINGS WASTE STATEMENT
+
+Replace the existing waste statement with the following wording for clarity:
+
+"Modeled setup material waste is approximately ${Annual Setup Material Waste Cost} per year (≈ ${Waste Cost per Setup} per changeover based on setup waste length, press web width, and material cost per MSI)."
+
+--------------------------------------------------
+
+4) ADD CLARITY NOTE UNDER CORE METRICS
+
+Below the financial metrics add this explanatory line:
+
+"Direct setup costs include labor and substrate waste during press setup. Opportunity cost represents unrealized production capacity caused by setup downtime."
+
+--------------------------------------------------
+
+5) DO NOT MODIFY ANY OTHER TOOL BEHAVIOR
+
+Specifically do NOT change:
+
+• Setup hour calculations  
+• Press capacity calculations  
+• Revenue capacity calculations  
+• Waste formulas  
+• Press fleet equivalents  
+• Benchmarks  
+• Charts  
+• Inputs  
+• Layout structure  
+
+Only apply the clarity improvements listed above.
