@@ -510,7 +510,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
 <!-- 6. Capacity Opportunity / Press Fleet Equivalents -->
 <div class="section">
   <div class="section-title">Capacity Opportunity — Press Fleet Equivalents</div>
-  <p class="narrative" style="margin-bottom:10px;">Based on the modeled inputs, the plant's <strong>${inputs.presses}</strong> installed presses currently deliver the effective production capacity of approximately <strong>${formatNumber(effectiveToday, 1)}</strong> fully utilized presses due to setup activity.</p>
+  <p class="narrative" style="margin-bottom:10px;">Based on the modeled inputs, the plant's <strong>${inputs.presses}</strong> installed presses currently operate with the effective production capacity of approximately <strong>${formatNumber(effectiveToday, 1)}</strong> fully utilized presses due to setup activity.</p>
   <div class="fleet-row">
     <div class="fleet-label"><span class="name">Installed Presses</span><span class="val">${formatNumber(installed, 0)} presses</span></div>
     <div class="fleet-bar"><div class="fleet-bar-fill" style="width:100%;background:#94a3b8;"></div></div>
@@ -532,7 +532,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     <div class="metric-block"><div class="label">Setup Hours Lost</div><div class="value">${formatNumber(results.setupHoursPerYear)}</div><div class="unit">hrs / year</div></div>
     <div class="metric-block"><div class="label">% Press Time Lost</div><div class="value">${formatPercent(results.pctPressTimeLostToSetup)}</div><div class="unit">&nbsp;</div></div>
     <div class="metric-block"><div class="label">FTE Equivalent</div><div class="value">${formatNumber(results.fteEquivalent, 1)}</div><div class="unit">&nbsp;</div></div>
-    <div class="metric-block"><div class="label">Hidden Press Capacity</div><div class="value">${formatNumber(hiddenPC, 1)}</div><div class="unit">presses</div></div>
+    <div class="metric-block"><div class="label">Press Capacity Consumed by Setup</div><div class="value">${formatNumber(hiddenPC, 1)}</div><div class="unit">presses</div></div>
     ${results.annualSetupLaborCost !== null ? `<div class="metric-block"><div class="label">Setup Labor Cost</div><div class="value">${formatCurrency(results.annualSetupLaborCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.wasteCostPerSetup !== null ? `<div class="metric-block"><div class="label">Waste Cost per Setup</div><div class="value">${formatCurrency(results.wasteCostPerSetup)}</div><div class="unit">&nbsp;</div></div>` : ''}
     ${results.annualSetupMaterialWasteCost !== null ? `<div class="metric-block"><div class="label">Annual Setup Material Waste</div><div class="value">${formatCurrency(results.annualSetupMaterialWasteCost)}</div><div class="unit">/ year</div></div>` : ''}
@@ -601,7 +601,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   ];
 
   const hiddenPressCapacity = results.pctPressTimeLostToSetup * inputs.presses;
-  metrics.push({ label: 'Hidden Press Capacity', value: formatNumber(hiddenPressCapacity, 1), unit: 'presses' });
+  metrics.push({ label: 'Press Capacity Consumed by Setup', value: formatNumber(hiddenPressCapacity, 1), unit: 'presses' });
 
   if (results.annualSetupLaborCost !== null) {
     metrics.push({ label: 'Setup Labor Cost', value: formatCurrency(results.annualSetupLaborCost), unit: '/year' });
@@ -682,7 +682,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             <div className="mt-5 pt-4 border-t border-border/50">
               <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Capacity Opportunity</h4>
               <p className="text-sm leading-relaxed text-foreground/90" data-testid="text-capacity-opportunity">
-                Based on the modeled inputs, the plant's <span className="font-bold">{inputs.presses}</span> installed presses currently deliver the effective production capacity of approximately <span className="font-bold">{formatNumber(inputs.presses * (1 - results.pctPressTimeLostToSetup), 1)}</span> fully utilized presses due to setup activity.
+                Based on the modeled inputs, the plant's <span className="font-bold">{inputs.presses}</span> installed presses currently operate with the effective production capacity of approximately <span className="font-bold">{formatNumber(inputs.presses * (1 - results.pctPressTimeLostToSetup), 1)}</span> fully utilized presses due to setup activity.
               </p>
             </div>
           </CardContent>
@@ -703,7 +703,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
               ))}
             </div>
             <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
-              Hidden Press Capacity: Equivalent press capacity currently consumed by setup activities.
+              Press Capacity Consumed by Setup: Equivalent press capacity currently consumed by setup activities.
             </p>
             {results.annualSetupMaterialWasteCost !== null && (
               <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
