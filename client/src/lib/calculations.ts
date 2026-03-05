@@ -45,9 +45,9 @@ export const DEFAULT_INPUTS: AuditInputs = {
   pressSpeedFPM: 200,
   pricePerFoot: 0.05,
   laborRate: 30,
-  setupWasteFt: null,
-  avgWebWidthIn: null,
-  materialCostPerMSI: null,
+  setupWasteFt: 100,
+  avgWebWidthIn: 13,
+  materialCostPerMSI: 0.40,
   reductionPct: 50,
 };
 
