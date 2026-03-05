@@ -249,11 +249,11 @@ export function generateWhatThisMeans(inputs: AuditInputs, results: AuditResults
   let text = `This plant is losing ${formatNumber(results.setupHoursPerYear)} press hours per year to setup activities (~${formatPercent(results.pctPressTimeLostToSetup)} of available press time), equivalent to roughly ${formatNumber(hiddenPressCapacity, 1)} presses worth of plant capacity currently consumed by setup activity and approximately ${formatNumber(results.fteEquivalent, 1)} FTEs.`;
   text += ` At ${inputs.reductionPct}% setup reduction, the plant could recover ${formatNumber(results.recoveredHours)} hours/year`;
   if (results.recoveredLinearFeet !== null && results.potentialRevenueCapacity !== null) {
-    text += `, unlocking approximately ${formatNumber(results.recoveredLinearFeet)} additional linear feet of recoverable production capacity and representing roughly ${formatCurrency(results.potentialRevenueCapacity)} in unrealized annual production value`;
+    text += `, unlocking approximately ${formatNumber(results.recoveredLinearFeet)} additional linear feet of recoverable production capacity and representing roughly ${formatCurrency(results.potentialRevenueCapacity)} in unrealized annual production revenue`;
   } else if (results.recoveredLinearFeet !== null) {
     text += `, unlocking approximately ${formatNumber(results.recoveredLinearFeet)} additional linear feet of recoverable production capacity`;
   } else if (results.potentialRevenueCapacity !== null) {
-    text += `, representing roughly ${formatCurrency(results.potentialRevenueCapacity)} in unrealized annual production value`;
+    text += `, representing roughly ${formatCurrency(results.potentialRevenueCapacity)} in unrealized annual production revenue`;
   }
   text += '.';
   return text;

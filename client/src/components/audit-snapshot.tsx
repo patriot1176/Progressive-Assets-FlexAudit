@@ -387,7 +387,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
       narrativeP2 += ` This recovered capacity could unlock roughly ${formatNumber(results.recoveredLinearFeet)} additional linear feet of recoverable production capacity.`;
     }
     if (results.potentialRevenueCapacity !== null) {
-      narrativeP2 += ` At the current selling price, the unused capacity caused by setup activity represents approximately ${formatCurrency(results.potentialRevenueCapacity)} in unrealized annual production value.`;
+      narrativeP2 += ` At the current selling price, the unused capacity caused by setup activity represents approximately ${formatCurrency(results.potentialRevenueCapacity)} in unrealized annual production revenue.`;
     }
     let narrativeP3 = '';
     if (results.totalSetupImpact !== null) {
@@ -398,7 +398,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
 
     let keyFindings = `<li>Setup activities currently consume <strong>${formatPercent(results.pctPressTimeLostToSetup)}</strong> of total available press time.</li>`;
     keyFindings += `<li>This represents the equivalent capacity of approximately <strong>${formatNumber(hiddenPC, 1)}</strong> presses currently consumed by setup activity.</li>`;
-    keyFindings += `<li>The current setup environment represents approximately <strong>${results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</strong> in unrealized annual production value due to lost press capacity.</li>`;
+    keyFindings += `<li>The current setup environment represents approximately <strong>${results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</strong> in unrealized annual production revenue due to lost press capacity.</li>`;
     if (results.annualSetupMaterialWasteCost !== null && results.wasteCostPerSetup !== null) {
       keyFindings += `<li>Modeled setup material waste is approximately <strong>${formatCurrency(results.annualSetupMaterialWasteCost)}</strong> per year (≈ <strong>${formatCurrency(results.wasteCostPerSetup)}</strong> per changeover based on setup waste length, press web width, and material cost per MSI).</li>`;
     }
@@ -657,7 +657,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
               <p>
                 At the modeled improvement scenario of <span className="font-semibold text-foreground">{inputs.reductionPct}%</span> setup reduction, the plant could recover approximately <span className="font-semibold text-foreground">{formatNumber(results.recoveredHours)}</span> press hours annually.
                 {results.recoveredLinearFeet !== null && <>{' '}This recovered capacity could unlock roughly <span className="font-semibold text-foreground">{formatNumber(results.recoveredLinearFeet)}</span> additional linear feet of recoverable production capacity.</>}
-                {results.potentialRevenueCapacity !== null && <>{' '}At the current selling price, the unused capacity caused by setup activity represents approximately <span className="font-semibold text-foreground">{formatCurrency(results.potentialRevenueCapacity)}</span> in unrealized annual production value.</>}
+                {results.potentialRevenueCapacity !== null && <>{' '}At the current selling price, the unused capacity caused by setup activity represents approximately <span className="font-semibold text-foreground">{formatCurrency(results.potentialRevenueCapacity)}</span> in unrealized annual production revenue.</>}
               </p>
               {results.totalSetupImpact !== null ? (
                 <p>Combined, these factors represent an estimated total operational impact of approximately <span className="font-semibold text-foreground">{formatCurrency(results.totalSetupImpact)}</span> annually when both direct setup costs and unrealized production value are considered.</p>
@@ -674,7 +674,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             <ul className="space-y-2.5 text-sm leading-relaxed text-foreground/90 list-disc pl-4" data-testid="list-key-findings">
               <li>Setup activities currently consume <span className="font-bold">{formatPercent(results.pctPressTimeLostToSetup)}</span> of total available press time.</li>
               <li>This represents the equivalent capacity of approximately <span className="font-bold">{formatNumber(results.pctPressTimeLostToSetup * inputs.presses, 1)}</span> presses currently consumed by setup activity.</li>
-              <li>The current setup environment represents approximately <span className="font-bold">{results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</span> in unrealized annual production value due to lost press capacity.</li>
+              <li>The current setup environment represents approximately <span className="font-bold">{results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</span> in unrealized annual production revenue due to lost press capacity.</li>
               {results.annualSetupMaterialWasteCost !== null && results.wasteCostPerSetup !== null && (
                 <li>Modeled setup material waste is approximately <span className="font-bold">{formatCurrency(results.annualSetupMaterialWasteCost)}</span> per year (≈ <span className="font-bold">{formatCurrency(results.wasteCostPerSetup)}</span> per changeover based on setup waste length, press web width, and material cost per MSI).</li>
               )}

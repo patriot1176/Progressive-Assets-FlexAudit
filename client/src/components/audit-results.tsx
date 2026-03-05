@@ -181,7 +181,7 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
             icon={AlertTriangle}
             label="Total Setup Impact"
             value={formatCurrency(results.totalSetupImpact)}
-            description="Direct setup costs plus unrealized production value resulting from press capacity lost to setup activity."
+            description="Direct setup costs plus unrealized production revenue resulting from press capacity lost to setup activity."
             accent="loss"
             testId="card-total-setup-impact"
             large
