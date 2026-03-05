@@ -1,0 +1,111 @@
+DO NOT START OVER.
+
+The current Export PDF feature is generating a compressed 1-page summary using the Results dashboard layout. This is incorrect.
+
+Revert the PDF export to the previous structured report format used earlier in the tool.
+
+PDF should be generated from the Snapshot report layout, not the Results card grid.
+
+--------------------------------
+
+PDF STRUCTURE
+
+The PDF should follow this structure:
+
+1. Title
+Flexo Setup Tax — Plant Capacity Audit
+
+2. Plant Performance Score
+Include the score bar and performance category.
+
+3. Inputs Used (Audit Trail)
+
+Display the modeled inputs in table format including:
+Operating Mode
+Number of Presses
+Changeovers per Press per Day
+Setup Minutes per Changeover
+Shifts per Day
+Hours per Shift
+Operating Days per Year
+Avg Press Speed
+Avg Selling Price
+Labor Rate
+Setup Waste
+Web Width
+Material Cost
+
+4. Executive Snapshot
+Include the full narrative paragraph explaining:
+
+• Setup hours lost
+• % press time lost
+• press capacity lost
+• recovered hours scenario
+• recovered linear feet
+• opportunity cost
+• total setup impact
+
+5. Key Findings
+
+• % press time lost
+• press fleet equivalent capacity consumed by setup
+• opportunity cost of unused capacity
+• modeled setup material waste cost
+
+6. Capacity Opportunity
+
+Display:
+
+Installed Presses
+Effective Press Capacity Today
+Effective Press Capacity After Improvement
+
+Use the same visual bars used in Snapshot.
+
+7. Core Metrics
+
+Display the financial metrics table including:
+
+Setup Hours Lost
+% Press Time Lost
+FTE Equivalent
+Hidden Press Capacity
+Setup Labor Cost
+Waste Cost per Setup
+Annual Setup Material Waste Cost
+Total Setup Cost
+Setup Tax per Changeover
+Recovered Hours
+Recovered Feet
+Opportunity Cost
+Total Setup Impact
+
+8. Capacity Utilization Chart
+Include the press time utilization bar chart.
+
+9. Benchmark Section
+Include the benchmark comparison and interpretation.
+
+10. What This Means
+Include the summary explanation.
+
+--------------------------------
+
+FORMAT REQUIREMENTS
+
+The PDF must:
+
+• Use vertical section layout
+• Allow natural page breaks (do NOT force 1 page)
+• Maintain spacing between sections
+• Preserve headings and hierarchy
+• Render charts cleanly
+
+--------------------------------
+
+IMPORTANT
+
+Do not use the Results dashboard layout for PDF export.
+
+The PDF must render from the Snapshot report structure instead.

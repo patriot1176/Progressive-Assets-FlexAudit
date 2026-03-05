@@ -19,6 +19,8 @@ import {
   generateSummaryText,
   generateFollowUpEmail,
   encodeInputsToParams,
+  getBenchmarks,
+  bandLabel,
 } from "@/lib/calculations";
 
 interface Props {
@@ -361,80 +363,191 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
 
     const modeLabel = mode === 'conservative' ? 'Conservative' : mode === 'typical' ? 'Typical' : 'Aggressive';
 
+    const pctLost = results.pctPressTimeLostToSetup * 100;
+    const perfScore = Math.max(0, Math.min(100, Math.round(100 - pctLost)));
+    let perfLabel: string;
+    let perfColor: string;
+    if (perfScore >= 80) { perfLabel = 'Best Practice Range'; perfColor = '#16a34a'; }
+    else if (perfScore >= 60) { perfLabel = 'Typical Performance'; perfColor = '#d97706'; }
+    else if (perfScore >= 40) { perfLabel = 'Needs Improvement'; perfColor = '#ea580c'; }
+    else { perfLabel = 'Critical Performance'; perfColor = '#dc2626'; }
+
+    const installed = inputs.presses;
+    const effectiveToday = inputs.presses * (1 - results.pctPressTimeLostToSetup);
+    const recoveredPressEquiv = totalHours > 0 ? (results.recoveredHours / totalHours) * inputs.presses : 0;
+    const effectiveAfter = Math.min(effectiveToday + recoveredPressEquiv, installed);
+    const todayPct = installed > 0 ? (effectiveToday / installed) * 100 : 0;
+    const afterPct = installed > 0 ? Math.min((effectiveAfter / installed) * 100, 100) : 0;
+
+    const benchmarks = getBenchmarks(inputs, results);
+    const bandColor = (b: string) => b === 'below-typical' ? '#16a34a' : b === 'typical' ? '#d97706' : '#dc2626';
+
+    let narrativeP2 = `At the modeled improvement scenario of ${inputs.reductionPct}% setup reduction, the plant could recover approximately ${formatNumber(results.recoveredHours)} press hours annually.`;
+    if (results.recoveredLinearFeet !== null) {
+      narrativeP2 += ` This recovered capacity could unlock roughly ${formatNumber(results.recoveredLinearFeet)} additional linear feet of recoverable production capacity.`;
+    }
+    if (results.potentialRevenueCapacity !== null) {
+      narrativeP2 += ` At the current selling price, the unused capacity caused by setup activity represents approximately ${formatCurrency(results.potentialRevenueCapacity)} in unrealized annual production value.`;
+    }
+    let narrativeP3 = '';
+    if (results.totalSetupImpact !== null) {
+      narrativeP3 = `Combined, these factors represent an estimated total operational impact of approximately ${formatCurrency(results.totalSetupImpact)} annually when both direct setup costs and unrealized production capacity are considered.`;
+    } else {
+      narrativeP3 = 'These results illustrate the operational impact of setup efficiency on plant throughput and highlight the potential value of reducing changeover time.';
+    }
+
+    let keyFindings = `<li>Setup activities currently consume <strong>${formatPercent(results.pctPressTimeLostToSetup)}</strong> of total available press time.</li>`;
+    keyFindings += `<li>This represents the equivalent capacity of approximately <strong>${formatNumber(hiddenPC, 1)}</strong> presses currently consumed by setup activity.</li>`;
+    keyFindings += `<li>The current setup environment represents approximately <strong>${results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</strong> in unrealized annual production value due to lost press capacity.</li>`;
+    if (results.annualSetupMaterialWasteCost !== null && results.wasteCostPerSetup !== null) {
+      keyFindings += `<li>Modeled setup material waste is approximately <strong>${formatCurrency(results.annualSetupMaterialWasteCost)}</strong> per year (≈ <strong>${formatCurrency(results.wasteCostPerSetup)}</strong> per changeover based on setup waste length, press web width, and material cost per MSI).</li>`;
+    }
+
     const html = `<!DOCTYPE html>
 <html><head><title>Flexo Setup Tax — Plant Capacity Audit</title>
 <style>
   @page { size: letter; margin: 0.5in 0.6in; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1a1a1a; font-size: 10px; line-height: 1.4; }
-  .header { text-align: center; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 12px; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1a1a1a; font-size: 10px; line-height: 1.5; }
+  .header { text-align: center; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 16px; }
   .header h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
   .header h2 { font-size: 11px; font-weight: 600; color: #555; margin-top: 2px; }
-  .header p { font-size: 9px; color: #777; margin-top: 2px; }
-  .section { margin-bottom: 12px; }
-  .section-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #555; border-bottom: 1px solid #ddd; padding-bottom: 3px; margin-bottom: 8px; }
+  .section { margin-bottom: 18px; page-break-inside: avoid; }
+  .section-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #555; border-bottom: 1px solid #ddd; padding-bottom: 3px; margin-bottom: 10px; }
+  .score-bar-container { position: relative; height: 14px; background: #e5e7eb; border-radius: 7px; overflow: hidden; margin: 8px 0; }
+  .score-bar-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 7px; }
+  .score-labels { display: flex; justify-content: space-between; font-size: 8px; color: #999; }
+  .inputs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 16px; }
+  .input-item { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #f0f0f0; }
+  .input-item .lbl { color: #555; font-size: 9px; }
+  .input-item .val { font-weight: 600; font-size: 9px; }
+  .narrative { font-size: 10px; line-height: 1.6; color: #333; margin-bottom: 6px; }
+  .findings-list { font-size: 10px; line-height: 1.6; color: #333; padding-left: 18px; }
+  .findings-list li { margin-bottom: 4px; }
+  .fleet-row { margin-bottom: 8px; }
+  .fleet-label { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 2px; }
+  .fleet-label .name { color: #555; }
+  .fleet-label .val { font-weight: 700; }
+  .fleet-bar { height: 14px; border-radius: 7px; overflow: hidden; background: #e5e7eb; }
+  .fleet-bar-fill { height: 100%; border-radius: 7px; }
   .metrics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
   .metric-block { background: #f7f7f7; border-radius: 4px; padding: 8px 10px; text-align: center; }
   .metric-block .label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; font-weight: 600; }
-  .metric-block .value { font-size: 18px; font-weight: 700; margin-top: 2px; }
+  .metric-block .value { font-size: 16px; font-weight: 700; margin-top: 2px; }
   .metric-block .unit { font-size: 8px; color: #888; }
   .util-bar { display: flex; height: 20px; border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
   .util-bar .setup { background: #ef4444; display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; font-weight: 600; }
   .util-bar .productive { background: #22c55e; display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; font-weight: 600; }
   .util-legend { display: flex; gap: 24px; font-size: 9px; }
   .util-legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
-  .narrative { font-size: 10px; line-height: 1.5; color: #333; }
-  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
-  .scenario-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #eee; }
-  .scenario-row .lbl { color: #555; font-size: 9px; }
-  .scenario-row .val { font-weight: 700; font-size: 10px; }
-  .inputs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 16px; }
-  .input-item { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid #f0f0f0; }
-  .input-item .lbl { color: #555; font-size: 9px; }
-  .input-item .val { font-weight: 600; font-size: 9px; }
-  .footnote { font-size: 8px; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 6px; margin-top: 12px; }
+  .benchmark-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
+  .benchmark-row .metric-label { font-size: 10px; color: #333; }
+  .benchmark-row .metric-value { font-size: 10px; font-weight: 600; margin-right: 8px; }
+  .band-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 9px; font-weight: 600; }
+  .interpretation-block { margin-bottom: 4px; }
+  .interpretation-block .title { font-size: 10px; font-weight: 600; }
+  .interpretation-block .desc { font-size: 9px; color: #555; line-height: 1.4; }
+  .footnote { font-size: 8px; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 8px; margin-top: 16px; }
 </style></head><body>
 
+<!-- 1. Title -->
 <div class="header">
   <h1>Flexo Setup Tax — Plant Capacity Audit</h1>
   <h2>Operational Diagnostic Summary</h2>
-  <p>Quantifying press capacity consumed by setup activity.</p>
 </div>
 
+<!-- 2. Performance Score -->
 <div class="section">
-  <div class="section-title">Key Metrics</div>
+  <div class="section-title">Plant Performance Score</div>
+  <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;">
+    <span style="font-size:28px;font-weight:700;">${perfScore}</span>
+    <span style="font-size:14px;color:#888;">/ 100</span>
+  </div>
+  <div class="score-bar-container">
+    <div class="score-bar-fill" style="width:${perfScore}%;background:${perfColor};"></div>
+  </div>
+  <div class="score-labels">
+    <span>Critical</span><span>Needs Improvement</span><span>Typical</span><span>Best Practice</span>
+  </div>
+  <p style="font-size:10px;font-weight:600;color:${perfColor};margin-top:6px;">${perfLabel}</p>
+</div>
+
+<!-- 3. Inputs Used -->
+<div class="section">
+  <div class="section-title">Inputs Used (Audit Trail)</div>
+  <div class="inputs-grid">
+    <div class="input-item"><span class="lbl">Operating Mode</span><span class="val">${modeLabel}</span></div>
+    <div class="input-item"><span class="lbl">Number of Presses</span><span class="val">${inputs.presses}</span></div>
+    <div class="input-item"><span class="lbl">Changeovers / Press / Day</span><span class="val">${inputs.changeoversPerPressPerDay}</span></div>
+    <div class="input-item"><span class="lbl">Setup Minutes / Changeover</span><span class="val">${inputs.setupMinutesPerChangeover}</span></div>
+    <div class="input-item"><span class="lbl">Shifts per Day</span><span class="val">${inputs.shiftsPerDay}</span></div>
+    <div class="input-item"><span class="lbl">Hours per Shift</span><span class="val">${inputs.hoursPerShift}</span></div>
+    <div class="input-item"><span class="lbl">Operating Days / Year</span><span class="val">${inputs.operatingDaysPerYear}</span></div>
+    ${inputs.pressSpeedFPM !== null ? `<div class="input-item"><span class="lbl">Avg Press Speed</span><span class="val">${inputs.pressSpeedFPM} ft/min</span></div>` : ''}
+    ${inputs.pricePerFoot !== null ? `<div class="input-item"><span class="lbl">Avg Selling Price</span><span class="val">$${inputs.pricePerFoot}/ft</span></div>` : ''}
+    ${inputs.laborRate !== null ? `<div class="input-item"><span class="lbl">Labor Rate</span><span class="val">$${inputs.laborRate}/hr</span></div>` : ''}
+    ${inputs.setupWasteFt !== null ? `<div class="input-item"><span class="lbl">Setup Waste</span><span class="val">${inputs.setupWasteFt} ft/chg</span></div>` : ''}
+    ${inputs.avgWebWidthIn !== null ? `<div class="input-item"><span class="lbl">Web Width</span><span class="val">${inputs.avgWebWidthIn} in</span></div>` : ''}
+    ${inputs.materialCostPerMSI !== null ? `<div class="input-item"><span class="lbl">Material Cost</span><span class="val">$${inputs.materialCostPerMSI}/MSI</span></div>` : ''}
+  </div>
+</div>
+
+<!-- 4. Executive Snapshot -->
+<div class="section">
+  <div class="section-title">Executive Snapshot</div>
+  <p class="narrative">This plant is currently giving up meaningful press capacity to setup activity.</p>
+  <p class="narrative">Based on the inputs provided, this plant is losing approximately <strong>${formatNumber(results.setupHoursPerYear)}</strong> press hours per year to changeovers, representing <strong>${formatPercent(results.pctPressTimeLostToSetup)}</strong> of total available press capacity. This loss is equivalent to roughly <strong>${formatNumber(hiddenPC, 1)}</strong> presses worth of plant capacity currently consumed by setup activity.</p>
+  <p class="narrative">${narrativeP2}</p>
+  <p class="narrative">${narrativeP3}</p>
+</div>
+
+<!-- 5. Key Findings -->
+<div class="section">
+  <div class="section-title">Key Findings</div>
+  <ul class="findings-list">${keyFindings}</ul>
+</div>
+
+<!-- 6. Capacity Opportunity / Press Fleet Equivalents -->
+<div class="section">
+  <div class="section-title">Capacity Opportunity — Press Fleet Equivalents</div>
+  <p class="narrative" style="margin-bottom:10px;">Based on the modeled inputs, the plant's <strong>${inputs.presses}</strong> installed presses currently deliver the effective production capacity of approximately <strong>${formatNumber(effectiveToday, 1)}</strong> fully utilized presses due to setup activity.</p>
+  <div class="fleet-row">
+    <div class="fleet-label"><span class="name">Installed Presses</span><span class="val">${formatNumber(installed, 0)} presses</span></div>
+    <div class="fleet-bar"><div class="fleet-bar-fill" style="width:100%;background:#94a3b8;"></div></div>
+  </div>
+  <div class="fleet-row">
+    <div class="fleet-label"><span class="name">Effective Presses Today</span><span class="val">${formatNumber(effectiveToday, 1)} presses</span></div>
+    <div class="fleet-bar"><div class="fleet-bar-fill" style="width:${Math.max(todayPct, 1)}%;background:#f59e0b;"></div></div>
+  </div>
+  <div class="fleet-row">
+    <div class="fleet-label"><span class="name">Effective Presses After Improvement (${inputs.reductionPct}% Reduction)</span><span class="val">${formatNumber(effectiveAfter, 1)} presses</span></div>
+    <div class="fleet-bar"><div class="fleet-bar-fill" style="width:${Math.max(afterPct, 1)}%;background:#22c55e;"></div></div>
+  </div>
+</div>
+
+<!-- 7. Core Metrics -->
+<div class="section">
+  <div class="section-title">Core Metrics</div>
   <div class="metrics-grid">
-    <div class="metric-block">
-      <div class="label">Setup Hours Lost</div>
-      <div class="value">${formatNumber(results.setupHoursPerYear)}</div>
-      <div class="unit">hrs / year</div>
-    </div>
-    <div class="metric-block">
-      <div class="label">% Press Time Lost</div>
-      <div class="value">${formatPercent(results.pctPressTimeLostToSetup)}</div>
-      <div class="unit">&nbsp;</div>
-    </div>
-    <div class="metric-block">
-      <div class="label">Hidden Press Capacity</div>
-      <div class="value">${formatNumber(hiddenPC, 1)}</div>
-      <div class="unit">presses</div>
-    </div>
-    <div class="metric-block">
-      <div class="label">Recovered Production Hours</div>
-      <div class="value">${formatNumber(results.recoveredHours)}</div>
-      <div class="unit">hrs / year</div>
-    </div>
+    <div class="metric-block"><div class="label">Setup Hours Lost</div><div class="value">${formatNumber(results.setupHoursPerYear)}</div><div class="unit">hrs / year</div></div>
+    <div class="metric-block"><div class="label">% Press Time Lost</div><div class="value">${formatPercent(results.pctPressTimeLostToSetup)}</div><div class="unit">&nbsp;</div></div>
+    <div class="metric-block"><div class="label">FTE Equivalent</div><div class="value">${formatNumber(results.fteEquivalent, 1)}</div><div class="unit">&nbsp;</div></div>
+    <div class="metric-block"><div class="label">Hidden Press Capacity</div><div class="value">${formatNumber(hiddenPC, 1)}</div><div class="unit">presses</div></div>
+    ${results.annualSetupLaborCost !== null ? `<div class="metric-block"><div class="label">Setup Labor Cost</div><div class="value">${formatCurrency(results.annualSetupLaborCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.wasteCostPerSetup !== null ? `<div class="metric-block"><div class="label">Waste Cost per Setup</div><div class="value">${formatCurrency(results.wasteCostPerSetup)}</div><div class="unit">&nbsp;</div></div>` : ''}
     ${results.annualSetupMaterialWasteCost !== null ? `<div class="metric-block"><div class="label">Annual Setup Material Waste</div><div class="value">${formatCurrency(results.annualSetupMaterialWasteCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.totalSetupCost !== null ? `<div class="metric-block"><div class="label">Total Setup Cost</div><div class="value">${formatCurrency(results.totalSetupCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.setupTaxPerChangeover !== null ? `<div class="metric-block"><div class="label">Setup Tax per Changeover</div><div class="value">${formatCurrency(results.setupTaxPerChangeover)}</div><div class="unit">&nbsp;</div></div>` : ''}
+    <div class="metric-block"><div class="label">Recovered Hours @ ${inputs.reductionPct}%</div><div class="value">${formatNumber(results.recoveredHours)}</div><div class="unit">hrs / year</div></div>
+    ${results.recoveredLinearFeet !== null ? `<div class="metric-block"><div class="label">Recovered Feet</div><div class="value">${formatNumber(results.recoveredLinearFeet)}</div><div class="unit">ft / year</div></div>` : ''}
     ${results.potentialRevenueCapacity !== null ? `<div class="metric-block"><div class="label">Opportunity Cost</div><div class="value">${formatCurrency(results.potentialRevenueCapacity)}</div><div class="unit">unused capacity</div></div>` : ''}
     ${results.totalSetupImpact !== null ? `<div class="metric-block"><div class="label">Total Setup Impact</div><div class="value">${formatCurrency(results.totalSetupImpact)}</div><div class="unit">/ year</div></div>` : ''}
   </div>
 </div>
 
+<!-- 8. Capacity Utilization -->
 <div class="section">
-  <div class="section-title">Press Capacity Utilization</div>
+  <div class="section-title">Press Capacity Utilization (Annual)</div>
   <div class="util-bar">
     <div class="setup" style="width:${Math.max(setupPctVal, 2)}%">${setupPctVal.toFixed(1)}%</div>
     <div class="productive" style="width:${Math.max(productivePctVal, 2)}%">${productivePctVal.toFixed(1)}%</div>
@@ -445,38 +558,26 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   </div>
 </div>
 
+<!-- 9. Benchmarks -->
 <div class="section">
-  <div class="section-title">Operational Impact</div>
-  <p class="narrative">This plant is currently losing approximately ${formatNumber(results.setupHoursPerYear)} press hours annually to changeovers, representing ${formatPercent(results.pctPressTimeLostToSetup)} of total available press capacity. This is equivalent to roughly ${formatNumber(hiddenPC, 1)} presses worth of plant capacity currently consumed by setup activity.</p>
-</div>
-
-<div class="section">
-  <div class="section-title">Improvement Scenario</div>
-  <div class="scenario-grid">
-    <div class="scenario-row"><span class="lbl">Setup Reduction Modeled</span><span class="val">${inputs.reductionPct}%</span></div>
-    <div class="scenario-row"><span class="lbl">Recovered Production Hours</span><span class="val">${formatNumber(results.recoveredHours)} hrs/yr</span></div>
-    ${results.recoveredLinearFeet !== null ? `<div class="scenario-row"><span class="lbl">Recovered Linear Feet</span><span class="val">${formatNumber(results.recoveredLinearFeet)} ft</span></div>` : ''}
-    ${results.potentialRevenueCapacity !== null ? `<div class="scenario-row"><span class="lbl">Opportunity Cost (Unused Production Capacity)</span><span class="val">${formatCurrency(results.potentialRevenueCapacity)}</span></div>` : ''}
+  <div class="section-title">Benchmark (Directional)</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <span style="font-size:9px;color:#888;">Overall:</span>
+    <span class="band-badge" style="background:${bandColor(benchmarks.overall)}20;color:${bandColor(benchmarks.overall)};">${bandLabel(benchmarks.overall)}</span>
+  </div>
+  ${benchmarks.metrics.map(m => `<div class="benchmark-row"><div><span class="metric-label">${m.label}: </span><span class="metric-value">${m.value}</span></div><span class="band-badge" style="background:${bandColor(m.band)}20;color:${bandColor(m.band)};">${bandLabel(m.band)}</span></div>`).join('')}
+  <p style="font-size:9px;color:#888;font-style:italic;margin-top:8px;">Benchmarks are directional and vary by mix and SKU complexity.</p>
+  <div style="margin-top:10px;">
+    <div class="interpretation-block"><p class="title" style="color:#dc2626;">Above Typical</p><p class="desc">Indicates performance that is worse than typical industry ranges.</p></div>
+    <div class="interpretation-block"><p class="title" style="color:#d97706;">Typical</p><p class="desc">Indicates performance within normal industry operating ranges.</p></div>
+    <div class="interpretation-block"><p class="title" style="color:#16a34a;">Below Typical</p><p class="desc">Indicates performance that is better than typical industry ranges.</p></div>
   </div>
 </div>
 
+<!-- 10. What This Means -->
 <div class="section">
-  <div class="section-title">Audit Inputs</div>
-  <div class="inputs-grid">
-    <div class="input-item"><span class="lbl">Operating Mode</span><span class="val">${modeLabel}</span></div>
-    <div class="input-item"><span class="lbl">Number of Presses</span><span class="val">${inputs.presses}</span></div>
-    <div class="input-item"><span class="lbl">Changeovers / Press / Day</span><span class="val">${inputs.changeoversPerPressPerDay}</span></div>
-    <div class="input-item"><span class="lbl">Setup Minutes per Changeover</span><span class="val">${inputs.setupMinutesPerChangeover}</span></div>
-    <div class="input-item"><span class="lbl">Shifts per Day</span><span class="val">${inputs.shiftsPerDay}</span></div>
-    <div class="input-item"><span class="lbl">Hours per Shift</span><span class="val">${inputs.hoursPerShift}</span></div>
-    <div class="input-item"><span class="lbl">Operating Days per Year</span><span class="val">${inputs.operatingDaysPerYear}</span></div>
-    ${inputs.pressSpeedFPM !== null ? `<div class="input-item"><span class="lbl">Average Press Speed</span><span class="val">${inputs.pressSpeedFPM} ft/min</span></div>` : ''}
-    ${inputs.pricePerFoot !== null ? `<div class="input-item"><span class="lbl">Average Selling Price</span><span class="val">$${inputs.pricePerFoot}/ft</span></div>` : ''}
-    ${inputs.laborRate !== null ? `<div class="input-item"><span class="lbl">Operator Labor Rate</span><span class="val">$${inputs.laborRate}/hr</span></div>` : ''}
-    ${inputs.setupWasteFt !== null ? `<div class="input-item"><span class="lbl">Avg Setup Waste</span><span class="val">${inputs.setupWasteFt} ft/chg</span></div>` : ''}
-    ${inputs.avgWebWidthIn !== null ? `<div class="input-item"><span class="lbl">Avg Web Width</span><span class="val">${inputs.avgWebWidthIn} in</span></div>` : ''}
-    ${inputs.materialCostPerMSI !== null ? `<div class="input-item"><span class="lbl">Material Cost</span><span class="val">$${inputs.materialCostPerMSI}/MSI</span></div>` : ''}
-  </div>
+  <div class="section-title">What This Means</div>
+  <p class="narrative">${generateWhatThisMeans(inputs, results)}</p>
 </div>
 
 <div class="footnote">Benchmarks are directional and may vary by product mix, SKU complexity, and operating practices.</div>
