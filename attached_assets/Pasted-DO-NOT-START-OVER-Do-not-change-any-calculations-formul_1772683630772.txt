@@ -1,0 +1,93 @@
+DO NOT START OVER.
+
+Do not change any calculations, formulas, or existing layout structure.
+
+Apply the following improvements only.
+
+--------------------------------------------------
+
+1. Ensure the "Inputs Used (Audit Trail)" values dynamically match the Inputs tab.
+
+The following fields must reflect the exact user inputs:
+
+• Setup Waste (FT/CHG)
+• Avg Web Width (IN)
+• Material Cost ($/MSI)
+
+The Audit Trail must display the actual values entered in the Inputs tab.
+
+--------------------------------------------------
+
+2. Improve wording in the Executive Snapshot.
+
+Replace the phrase:
+
+"unrealized production capacity"
+
+with:
+
+"unrealized production value"
+
+Final sentence should read:
+
+"Combined, these factors represent an estimated total operational impact of approximately ${Total Setup Impact} annually when both direct setup costs and unrealized production value are considered."
+
+--------------------------------------------------
+
+3. Add a clarifying description under the "Press Fleet Equivalents" section.
+
+Directly under the section header add this sentence:
+
+"Press equivalents translate setup-related capacity loss into the number of presses effectively removed from production."
+
+Do not modify the bar chart or calculations.
+
+--------------------------------------------------
+
+4. Improve clarity of the Waste Cost metric.
+
+Change the label:
+
+"Waste Cost Per Setup"
+
+to:
+
+"Material Waste Cost per Changeover"
+
+This better matches the terminology used in the Inputs section.
+
+--------------------------------------------------
+
+5. Improve the description under Total Setup Impact.
+
+Current text:
+
+"direct setup costs plus unrealized production value from lost capacity"
+
+Replace with:
+
+"Direct setup costs plus unrealized production value resulting from press capacity lost to setup activity."
+
+--------------------------------------------------
+
+6. Update the Benchmark section description to clarify context.
+
+Replace:
+
+"Benchmarks are directional and may vary by mix and SKU complexity."
+
+with:
+
+"Benchmarks are directional estimates and may vary depending on product mix, SKU complexity, and plant operating practices."
+
+--------------------------------------------------
+
+Do not change:
+
+• any formulas
+• any calculations
+• any charts
+• any numerical outputs
+• any layout sections
+
+Only apply the wording and labeling improvements listed above.

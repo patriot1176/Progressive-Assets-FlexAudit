@@ -535,7 +535,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     <div class="metric-block"><div class="label">FTE Equivalent</div><div class="value">${formatNumber(results.fteEquivalent, 1)}</div><div class="unit">&nbsp;</div></div>
     <div class="metric-block"><div class="label">Press Capacity Consumed by Setup</div><div class="value">${formatNumber(hiddenPC, 1)}</div><div class="unit">presses</div></div>
     ${results.annualSetupLaborCost !== null ? `<div class="metric-block"><div class="label">Setup Labor Cost</div><div class="value">${formatCurrency(results.annualSetupLaborCost)}</div><div class="unit">/ year</div></div>` : ''}
-    ${results.wasteCostPerSetup !== null ? `<div class="metric-block"><div class="label">Waste Cost per Setup</div><div class="value">${formatCurrency(results.wasteCostPerSetup)}</div><div class="unit">&nbsp;</div></div>` : ''}
+    ${results.wasteCostPerSetup !== null ? `<div class="metric-block"><div class="label">Material Waste Cost per Changeover</div><div class="value">${formatCurrency(results.wasteCostPerSetup)}</div><div class="unit">&nbsp;</div></div>` : ''}
     ${results.annualSetupMaterialWasteCost !== null ? `<div class="metric-block"><div class="label">Annual Setup Material Waste</div><div class="value">${formatCurrency(results.annualSetupMaterialWasteCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.totalSetupCost !== null ? `<div class="metric-block"><div class="label">Total Setup Cost</div><div class="value">${formatCurrency(results.totalSetupCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.setupTaxPerChangeover !== null ? `<div class="metric-block"><div class="label">Setup Tax per Changeover</div><div class="value">${formatCurrency(results.setupTaxPerChangeover)}</div><div class="unit">&nbsp;</div></div>` : ''}
@@ -567,7 +567,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     <span class="band-badge" style="background:${bandColor(benchmarks.overall)}20;color:${bandColor(benchmarks.overall)};">${bandLabel(benchmarks.overall)}</span>
   </div>
   ${benchmarks.metrics.map(m => `<div class="benchmark-row"><div><span class="metric-label">${m.label}: </span><span class="metric-value">${m.value}</span></div><span class="band-badge" style="background:${bandColor(m.band)}20;color:${bandColor(m.band)};">${bandLabel(m.band)}</span></div>`).join('')}
-  <p style="font-size:8px;color:#888;font-style:italic;margin-top:6px;">Benchmarks are directional and vary by mix and SKU complexity.</p>
+  <p style="font-size:8px;color:#888;font-style:italic;margin-top:6px;">Benchmarks are directional estimates and may vary depending on product mix, SKU complexity, and plant operating practices.</p>
   <div style="margin-top:6px;">
     <div class="interpretation-block"><p class="title" style="color:#dc2626;">Above Typical</p><p class="desc">Performance worse than typical industry ranges.</p></div>
     <div class="interpretation-block"><p class="title" style="color:#d97706;">Typical</p><p class="desc">Performance within normal industry ranges.</p></div>
@@ -581,7 +581,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   <p class="narrative">${generateWhatThisMeans(inputs, results)}</p>
 </div>
 
-<div class="footnote">Benchmarks are directional and may vary by product mix, SKU complexity, and operating practices.</div>
+<div class="footnote">Benchmarks are directional estimates and may vary depending on product mix, SKU complexity, and plant operating practices.</div>
 
 </body></html>`;
 
@@ -609,7 +609,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   }
 
   if (results.wasteCostPerSetup !== null) {
-    metrics.push({ label: 'Waste Cost per Setup', value: formatCurrency(results.wasteCostPerSetup) });
+    metrics.push({ label: 'Material Waste Cost per Changeover', value: formatCurrency(results.wasteCostPerSetup) });
   }
   if (results.annualSetupMaterialWasteCost !== null) {
     metrics.push({ label: 'Annual Setup Material Waste Cost', value: formatCurrency(results.annualSetupMaterialWasteCost), unit: '/year' });

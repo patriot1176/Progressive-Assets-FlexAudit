@@ -53,7 +53,7 @@ export function BenchmarkPanel({ inputs, results }: Props) {
         </div>
 
         <p className="text-[11px] text-muted-foreground mt-4 italic">
-          Benchmarks are directional and vary by mix and SKU complexity.
+          Benchmarks are directional estimates and may vary depending on product mix, SKU complexity, and plant operating practices.
         </p>
       </CardContent>
     </Card>

@@ -112,7 +112,7 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
         {results.wasteCostPerSetup !== null && (
           <MetricCard
             icon={Trash2}
-            label="Waste Cost per Setup"
+            label="Material Waste Cost per Changeover"
             value={formatCurrency(results.wasteCostPerSetup)}
             description="per changeover"
             accent="loss"
@@ -181,7 +181,7 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
             icon={AlertTriangle}
             label="Total Setup Impact"
             value={formatCurrency(results.totalSetupImpact)}
-            description="direct setup costs plus unrealized production value from lost capacity"
+            description="Direct setup costs plus unrealized production value resulting from press capacity lost to setup activity."
             accent="loss"
             testId="card-total-setup-impact"
             large
