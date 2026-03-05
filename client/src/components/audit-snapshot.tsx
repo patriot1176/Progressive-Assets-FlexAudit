@@ -406,48 +406,48 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     const html = `<!DOCTYPE html>
 <html><head><title>Flexo Setup Tax — Plant Capacity Audit</title>
 <style>
-  @page { size: letter; margin: 0.5in 0.6in; }
+  @page { size: letter; margin: 0.6in 0.65in; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1a1a1a; font-size: 10px; line-height: 1.5; }
-  .header { text-align: center; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 16px; }
-  .header h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
-  .header h2 { font-size: 11px; font-weight: 600; color: #555; margin-top: 2px; }
-  .section { margin-bottom: 18px; page-break-inside: avoid; }
-  .section-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #555; border-bottom: 1px solid #ddd; padding-bottom: 3px; margin-bottom: 10px; }
-  .score-bar-container { position: relative; height: 14px; background: #e5e7eb; border-radius: 7px; overflow: hidden; margin: 8px 0; }
-  .score-bar-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 7px; }
-  .score-labels { display: flex; justify-content: space-between; font-size: 8px; color: #999; }
-  .inputs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 16px; }
-  .input-item { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #f0f0f0; }
-  .input-item .lbl { color: #555; font-size: 9px; }
-  .input-item .val { font-weight: 600; font-size: 9px; }
-  .narrative { font-size: 10px; line-height: 1.6; color: #333; margin-bottom: 6px; }
-  .findings-list { font-size: 10px; line-height: 1.6; color: #333; padding-left: 18px; }
-  .findings-list li { margin-bottom: 4px; }
-  .fleet-row { margin-bottom: 8px; }
-  .fleet-label { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 2px; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1a1a1a; font-size: 9.5px; line-height: 1.45; max-width: 7.2in; margin: 0 auto; overflow-wrap: break-word; word-wrap: break-word; }
+  .header { text-align: center; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 14px; }
+  .header h1 { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+  .header h2 { font-size: 10px; font-weight: 600; color: #555; margin-top: 2px; }
+  .section { margin-bottom: 14px; page-break-inside: avoid; }
+  .section-title { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: #555; border-bottom: 1px solid #ddd; padding-bottom: 3px; margin-bottom: 8px; }
+  .score-bar-container { position: relative; height: 12px; background: #e5e7eb; border-radius: 6px; overflow: hidden; margin: 6px 0; }
+  .score-bar-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 6px; }
+  .score-labels { display: flex; justify-content: space-between; font-size: 7.5px; color: #999; }
+  .inputs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px 12px; }
+  .input-item { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid #f0f0f0; }
+  .input-item .lbl { color: #555; font-size: 8.5px; }
+  .input-item .val { font-weight: 600; font-size: 8.5px; text-align: right; white-space: nowrap; }
+  .narrative { font-size: 9.5px; line-height: 1.55; color: #333; margin-bottom: 5px; }
+  .findings-list { font-size: 9.5px; line-height: 1.55; color: #333; padding-left: 16px; }
+  .findings-list li { margin-bottom: 3px; }
+  .fleet-row { margin-bottom: 6px; }
+  .fleet-label { display: flex; justify-content: space-between; font-size: 8.5px; margin-bottom: 2px; }
   .fleet-label .name { color: #555; }
-  .fleet-label .val { font-weight: 700; }
-  .fleet-bar { height: 14px; border-radius: 7px; overflow: hidden; background: #e5e7eb; }
-  .fleet-bar-fill { height: 100%; border-radius: 7px; }
-  .metrics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
-  .metric-block { background: #f7f7f7; border-radius: 4px; padding: 8px 10px; text-align: center; }
-  .metric-block .label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; font-weight: 600; }
-  .metric-block .value { font-size: 16px; font-weight: 700; margin-top: 2px; }
-  .metric-block .unit { font-size: 8px; color: #888; }
-  .util-bar { display: flex; height: 20px; border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
-  .util-bar .setup { background: #ef4444; display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; font-weight: 600; }
-  .util-bar .productive { background: #22c55e; display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; font-weight: 600; }
-  .util-legend { display: flex; gap: 24px; font-size: 9px; }
-  .util-legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
-  .benchmark-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
-  .benchmark-row .metric-label { font-size: 10px; color: #333; }
-  .benchmark-row .metric-value { font-size: 10px; font-weight: 600; margin-right: 8px; }
-  .band-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 9px; font-weight: 600; }
-  .interpretation-block { margin-bottom: 4px; }
-  .interpretation-block .title { font-size: 10px; font-weight: 600; }
-  .interpretation-block .desc { font-size: 9px; color: #555; line-height: 1.4; }
-  .footnote { font-size: 8px; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 8px; margin-top: 16px; }
+  .fleet-label .val { font-weight: 700; white-space: nowrap; }
+  .fleet-bar { height: 12px; border-radius: 6px; overflow: hidden; background: #e5e7eb; }
+  .fleet-bar-fill { height: 100%; border-radius: 6px; }
+  .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .metric-block { background: #f7f7f7; border-radius: 4px; padding: 6px 6px; text-align: center; overflow: hidden; }
+  .metric-block .label { font-size: 7px; text-transform: uppercase; letter-spacing: 0.3px; color: #666; font-weight: 600; line-height: 1.3; }
+  .metric-block .value { font-size: 14px; font-weight: 700; margin-top: 1px; white-space: nowrap; }
+  .metric-block .unit { font-size: 7px; color: #888; }
+  .util-bar { display: flex; height: 18px; border-radius: 4px; overflow: hidden; margin-bottom: 5px; }
+  .util-bar .setup { background: #ef4444; display: flex; align-items: center; justify-content: center; color: white; font-size: 7.5px; font-weight: 600; }
+  .util-bar .productive { background: #22c55e; display: flex; align-items: center; justify-content: center; color: white; font-size: 7.5px; font-weight: 600; }
+  .util-legend { display: flex; gap: 20px; font-size: 8.5px; }
+  .util-legend .dot { display: inline-block; width: 7px; height: 7px; border-radius: 2px; margin-right: 3px; vertical-align: middle; }
+  .benchmark-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid #f0f0f0; }
+  .benchmark-row .metric-label { font-size: 9px; color: #333; }
+  .benchmark-row .metric-value { font-size: 9px; font-weight: 600; margin-right: 6px; }
+  .band-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 8px; font-weight: 600; white-space: nowrap; }
+  .interpretation-block { margin-bottom: 3px; }
+  .interpretation-block .title { font-size: 9px; font-weight: 600; }
+  .interpretation-block .desc { font-size: 8.5px; color: #555; line-height: 1.35; }
+  .footnote { font-size: 7.5px; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 6px; margin-top: 12px; }
 </style></head><body>
 
 <!-- 1. Title -->
@@ -460,8 +460,8 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
 <div class="section">
   <div class="section-title">Plant Performance Score</div>
   <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;">
-    <span style="font-size:28px;font-weight:700;">${perfScore}</span>
-    <span style="font-size:14px;color:#888;">/ 100</span>
+    <span style="font-size:24px;font-weight:700;">${perfScore}</span>
+    <span style="font-size:12px;color:#888;">/ 100</span>
   </div>
   <div class="score-bar-container">
     <div class="score-bar-fill" style="width:${perfScore}%;background:${perfColor};"></div>
@@ -566,11 +566,11 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     <span class="band-badge" style="background:${bandColor(benchmarks.overall)}20;color:${bandColor(benchmarks.overall)};">${bandLabel(benchmarks.overall)}</span>
   </div>
   ${benchmarks.metrics.map(m => `<div class="benchmark-row"><div><span class="metric-label">${m.label}: </span><span class="metric-value">${m.value}</span></div><span class="band-badge" style="background:${bandColor(m.band)}20;color:${bandColor(m.band)};">${bandLabel(m.band)}</span></div>`).join('')}
-  <p style="font-size:9px;color:#888;font-style:italic;margin-top:8px;">Benchmarks are directional and vary by mix and SKU complexity.</p>
-  <div style="margin-top:10px;">
-    <div class="interpretation-block"><p class="title" style="color:#dc2626;">Above Typical</p><p class="desc">Indicates performance that is worse than typical industry ranges.</p></div>
-    <div class="interpretation-block"><p class="title" style="color:#d97706;">Typical</p><p class="desc">Indicates performance within normal industry operating ranges.</p></div>
-    <div class="interpretation-block"><p class="title" style="color:#16a34a;">Below Typical</p><p class="desc">Indicates performance that is better than typical industry ranges.</p></div>
+  <p style="font-size:8px;color:#888;font-style:italic;margin-top:6px;">Benchmarks are directional and vary by mix and SKU complexity.</p>
+  <div style="margin-top:6px;">
+    <div class="interpretation-block"><p class="title" style="color:#dc2626;">Above Typical</p><p class="desc">Performance worse than typical industry ranges.</p></div>
+    <div class="interpretation-block"><p class="title" style="color:#d97706;">Typical</p><p class="desc">Performance within normal industry ranges.</p></div>
+    <div class="interpretation-block"><p class="title" style="color:#16a34a;">Below Typical</p><p class="desc">Performance better than typical industry ranges.</p></div>
   </div>
 </div>
 
