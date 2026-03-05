@@ -191,7 +191,8 @@ export function decodeParamsToInputs(search: string): { inputs: Partial<AuditInp
 }
 
 export function generateWhatThisMeans(inputs: AuditInputs, results: AuditResults): string {
-  let text = `This plant is losing ${formatNumber(results.setupHoursPerYear)} press hours per year to setup activities (~${formatPercent(results.pctPressTimeLostToSetup)} of available press time), equivalent to ${formatNumber(results.pressEquivalentLost, 1)} presses and ${formatNumber(results.fteEquivalent, 1)} FTEs.`;
+  const hiddenPressCapacity = results.pctPressTimeLostToSetup * inputs.presses;
+  let text = `This plant is losing ${formatNumber(results.setupHoursPerYear)} press hours per year to setup activities (~${formatPercent(results.pctPressTimeLostToSetup)} of available press time), equivalent to roughly ${formatNumber(hiddenPressCapacity, 1)} presses worth of plant capacity currently consumed by setup activity and approximately ${formatNumber(results.fteEquivalent, 1)} FTEs.`;
   text += ` At ${inputs.reductionPct}% setup reduction, the plant could recover ${formatNumber(results.recoveredHours)} hours/year`;
   if (results.recoveredLinearFeet !== null) {
     text += `, unlocking ${formatNumber(results.recoveredLinearFeet)} feet`;
