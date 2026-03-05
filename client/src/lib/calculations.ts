@@ -33,6 +33,8 @@ export interface AuditResults {
   wasteCostPerSetup: number | null;
   annualSetupMaterialWasteCost: number | null;
   totalSetupCost: number | null;
+  setupTaxPerChangeover: number | null;
+  totalSetupImpact: number | null;
 }
 
 export const DEFAULT_INPUTS: AuditInputs = {
@@ -110,6 +112,17 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     totalSetupCost = annualSetupLaborCost + annualSetupMaterialWasteCost;
   }
 
+  let setupTaxPerChangeover: number | null = null;
+  if (annualSetupLaborCost !== null && wasteCostPerSetup !== null && annualChangeovers > 0) {
+    const laborPerChangeover = annualSetupLaborCost / annualChangeovers;
+    setupTaxPerChangeover = laborPerChangeover + wasteCostPerSetup;
+  }
+
+  let totalSetupImpact: number | null = null;
+  if (totalSetupCost !== null && potentialRevenueCapacity !== null) {
+    totalSetupImpact = totalSetupCost + potentialRevenueCapacity;
+  }
+
   return {
     totalChangeoversPerDay,
     setupMinutesPerDay,
@@ -127,6 +140,8 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     wasteCostPerSetup,
     annualSetupMaterialWasteCost,
     totalSetupCost,
+    setupTaxPerChangeover,
+    totalSetupImpact,
   };
 }
 
@@ -237,7 +252,7 @@ export function generateWhatThisMeans(inputs: AuditInputs, results: AuditResults
     text += `, unlocking ${formatNumber(results.recoveredLinearFeet)} feet`;
   }
   if (results.potentialRevenueCapacity !== null) {
-    text += ` and approximately ${formatCurrency(results.potentialRevenueCapacity)} of potential production revenue capacity`;
+    text += ` and approximately ${formatCurrency(results.potentialRevenueCapacity)} in opportunity cost (unused production capacity)`;
   }
   text += '.';
   return text;
@@ -259,7 +274,7 @@ export function generateSummaryText(inputs: AuditInputs, results: AuditResults):
     text += `Recovered Linear Feet: ${formatNumber(results.recoveredLinearFeet)}\n`;
   }
   if (results.potentialRevenueCapacity !== null) {
-    text += `Potential Production Revenue Capacity: ${formatCurrency(results.potentialRevenueCapacity)}\n`;
+    text += `Opportunity Cost (Unused Production Capacity): ${formatCurrency(results.potentialRevenueCapacity)}\n`;
   }
   text += `\n${generateWhatThisMeans(inputs, results)}`;
   return text;
@@ -283,7 +298,7 @@ export function generateFollowUpEmail(inputs: AuditInputs, results: AuditResults
     email += `\u2022 Recovered linear feet: ${formatNumber(results.recoveredLinearFeet)}\n`;
   }
   if (results.potentialRevenueCapacity !== null) {
-    email += `\u2022 Potential production revenue capacity: ${formatCurrency(results.potentialRevenueCapacity)}\n`;
+    email += `\u2022 Opportunity cost (unused production capacity): ${formatCurrency(results.potentialRevenueCapacity)}\n`;
   }
   email += `\nWould it make sense to schedule 30 minutes to walk through these numbers together and discuss what a realistic improvement path could look like for your operation?\n\n`;
   email += `Best regards`;

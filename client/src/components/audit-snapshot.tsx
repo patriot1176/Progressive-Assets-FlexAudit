@@ -427,6 +427,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     ${results.wasteCostPerSetup !== null ? `<div class="metric-block"><div class="label">Waste Cost per Setup</div><div class="value">${formatCurrency(results.wasteCostPerSetup)}</div><div class="unit">&nbsp;</div></div>` : ''}
     ${results.annualSetupMaterialWasteCost !== null ? `<div class="metric-block"><div class="label">Annual Setup Material Waste</div><div class="value">${formatCurrency(results.annualSetupMaterialWasteCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.totalSetupCost !== null ? `<div class="metric-block"><div class="label">Total Setup Cost</div><div class="value">${formatCurrency(results.totalSetupCost)}</div><div class="unit">/ year</div></div>` : ''}
+    ${results.setupTaxPerChangeover !== null ? `<div class="metric-block"><div class="label">Setup Tax per Changeover</div><div class="value">${formatCurrency(results.setupTaxPerChangeover)}</div><div class="unit">&nbsp;</div></div>` : ''}
+    ${results.potentialRevenueCapacity !== null ? `<div class="metric-block"><div class="label">Opportunity Cost</div><div class="value">${formatCurrency(results.potentialRevenueCapacity)}</div><div class="unit">unused capacity</div></div>` : ''}
+    ${results.totalSetupImpact !== null ? `<div class="metric-block"><div class="label">Total Setup Impact</div><div class="value">${formatCurrency(results.totalSetupImpact)}</div><div class="unit">/ year</div></div>` : ''}
   </div>
 </div>
 
@@ -453,7 +456,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     <div class="scenario-row"><span class="lbl">Setup Reduction Modeled</span><span class="val">${inputs.reductionPct}%</span></div>
     <div class="scenario-row"><span class="lbl">Recovered Production Hours</span><span class="val">${formatNumber(results.recoveredHours)} hrs/yr</span></div>
     ${results.recoveredLinearFeet !== null ? `<div class="scenario-row"><span class="lbl">Recovered Linear Feet</span><span class="val">${formatNumber(results.recoveredLinearFeet)} ft</span></div>` : ''}
-    ${results.potentialRevenueCapacity !== null ? `<div class="scenario-row"><span class="lbl">Potential Revenue Capacity</span><span class="val">${formatCurrency(results.potentialRevenueCapacity)}</span></div>` : ''}
+    ${results.potentialRevenueCapacity !== null ? `<div class="scenario-row"><span class="lbl">Opportunity Cost (Unused Production Capacity)</span><span class="val">${formatCurrency(results.potentialRevenueCapacity)}</span></div>` : ''}
   </div>
 </div>
 
@@ -512,6 +515,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   if (results.totalSetupCost !== null) {
     metrics.push({ label: 'Total Setup Cost', value: formatCurrency(results.totalSetupCost), unit: '/year' });
   }
+  if (results.setupTaxPerChangeover !== null) {
+    metrics.push({ label: 'Setup Tax per Changeover', value: formatCurrency(results.setupTaxPerChangeover) });
+  }
 
   metrics.push({
     label: `Recovered Hours @ ${inputs.reductionPct}%`,
@@ -524,7 +530,10 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   }
 
   if (results.potentialRevenueCapacity !== null) {
-    metrics.push({ label: 'Potential Production Revenue Capacity', value: formatCurrency(results.potentialRevenueCapacity) });
+    metrics.push({ label: 'Opportunity Cost (Unused Production Capacity)', value: formatCurrency(results.potentialRevenueCapacity) });
+  }
+  if (results.totalSetupImpact !== null) {
+    metrics.push({ label: 'Total Setup Impact', value: formatCurrency(results.totalSetupImpact), unit: '/year' });
   }
 
   return (
@@ -546,9 +555,12 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
               <p>
                 At the modeled improvement scenario of <span className="font-semibold text-foreground">{inputs.reductionPct}%</span> setup reduction, the plant could recover approximately <span className="font-semibold text-foreground">{formatNumber(results.recoveredHours)}</span> press hours annually.
                 {results.recoveredLinearFeet !== null && <>{' '}This recovered capacity could unlock roughly <span className="font-semibold text-foreground">{formatNumber(results.recoveredLinearFeet)}</span> additional linear feet of production</>}
-                {results.potentialRevenueCapacity !== null && <>{' '}and approximately <span className="font-semibold text-foreground">{formatCurrency(results.potentialRevenueCapacity)}</span> in potential revenue capacity at the current selling price</>}.
+                {results.potentialRevenueCapacity !== null && <>{' '}and approximately <span className="font-semibold text-foreground">{formatCurrency(results.potentialRevenueCapacity)}</span> in opportunity cost (unused production capacity) at the current selling price</>}.
               </p>
               <p>These results illustrate the operational impact of setup efficiency on plant throughput and highlight the potential value of reducing changeover time.</p>
+              {results.totalSetupImpact !== null && (
+                <p>Combined, these factors represent an estimated total operational impact of approximately <span className="font-semibold text-foreground">{formatCurrency(results.totalSetupImpact)}</span> annually when both direct setup costs and unrealized production capacity are considered.</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -559,7 +571,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             <ul className="space-y-2.5 text-sm leading-relaxed text-foreground/90 list-disc pl-4" data-testid="list-key-findings">
               <li>Setup activities currently consume <span className="font-bold">{formatPercent(results.pctPressTimeLostToSetup)}</span> of total available press time.</li>
               <li>This represents the equivalent capacity of approximately <span className="font-bold">{formatNumber(results.pctPressTimeLostToSetup * inputs.presses, 1)}</span> presses currently consumed by setup activity.</li>
-              <li>A <span className="font-bold">{inputs.reductionPct}%</span> reduction in setup time would unlock approximately <span className="font-bold">{results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</span> in potential production revenue capacity at current pricing.</li>
+              <li>A <span className="font-bold">{inputs.reductionPct}%</span> reduction in setup time would unlock approximately <span className="font-bold">{results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</span> in opportunity cost (unused production capacity) at current pricing.</li>
               {results.annualSetupMaterialWasteCost !== null && results.wasteCostPerSetup !== null && (
                 <li>Modeled setup material waste is approximately <span className="font-bold">{formatCurrency(results.annualSetupMaterialWasteCost)}</span> per year (<span className="font-bold">{formatCurrency(results.wasteCostPerSetup)}</span>/changeover based on setup waste length, web width, and material cost per MSI).</li>
               )}
@@ -594,6 +606,11 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             {results.annualSetupMaterialWasteCost !== null && (
               <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
                 Material waste during press setup is estimated using setup waste length, average press web width, and substrate cost per MSI.
+              </p>
+            )}
+            {(results.totalSetupCost !== null || results.potentialRevenueCapacity !== null) && (
+              <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
+                Direct setup costs represent labor and material waste during press setup, while opportunity cost reflects unrealized production capacity caused by setup downtime.
               </p>
             )}
           </CardContent>

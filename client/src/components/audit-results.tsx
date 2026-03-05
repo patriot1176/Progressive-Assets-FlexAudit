@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, LabelList, Tooltip } from "recharts";
-import { Clock, Percent, Layers, Users, DollarSign, TrendingUp, Ruler, Banknote, Trash2, type LucideIcon } from "lucide-react";
+import { Clock, Percent, Layers, Users, DollarSign, TrendingUp, Ruler, Banknote, Trash2, AlertTriangle, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type AuditInputs, type AuditResults, formatNumber, formatCurrency, formatPercent } from "@/lib/calculations";
 import { BenchmarkPanel } from "@/components/benchmark-panel";
@@ -139,6 +139,16 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
             testId="card-total-setup-cost"
           />
         )}
+        {results.setupTaxPerChangeover !== null && (
+          <MetricCard
+            icon={DollarSign}
+            label="Setup Tax per Changeover"
+            value={formatCurrency(results.setupTaxPerChangeover)}
+            description="average labor + material cost per changeover"
+            accent="loss"
+            testId="card-setup-tax-per-changeover"
+          />
+        )}
         <MetricCard
           icon={TrendingUp}
           label={`Recovered Production Hours (${inputs.reductionPct}% Setup Reduction)`}
@@ -159,11 +169,22 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
         {results.potentialRevenueCapacity !== null && (
           <MetricCard
             icon={Banknote}
-            label="Potential Production Revenue Capacity"
+            label="Opportunity Cost (Unused Production Capacity)"
             value={formatCurrency(results.potentialRevenueCapacity)}
             description="at current $/ft input"
             accent="recovery"
             testId="card-revenue"
+          />
+        )}
+        {results.totalSetupImpact !== null && (
+          <MetricCard
+            icon={AlertTriangle}
+            label="Total Setup Impact"
+            value={formatCurrency(results.totalSetupImpact)}
+            description="direct setup cost plus unrealized production capacity"
+            accent="loss"
+            testId="card-total-setup-impact"
+            large
           />
         )}
       </div>

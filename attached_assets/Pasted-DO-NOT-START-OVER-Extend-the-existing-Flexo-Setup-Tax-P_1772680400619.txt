@@ -1,0 +1,102 @@
+DO NOT START OVER.
+
+Extend the existing Flexo Setup Tax — Plant Capacity Audit tool with a few additional executive insight metrics.
+
+Do not modify any existing calculations, layouts, charts, or narrative text. Only add the new metrics described below.
+
+--------------------------------------------------
+
+1) ADD: SETUP TAX PER CHANGEOVER
+
+Add a new calculated metric.
+
+Formula:
+
+Setup Labor per Changeover =
+Annual Setup Labor Cost ÷ Annual Changeovers Modeled
+
+Setup Tax per Changeover =
+Setup Labor per Changeover + Waste Cost per Setup
+
+Display the result in the Results section.
+
+Title:
+
+SETUP TAX PER CHANGEOVER
+
+Subtext:
+
+Average labor + material cost per changeover.
+
+--------------------------------------------------
+
+2) ADD: OPPORTUNITY COST
+
+Use the existing calculated value:
+
+Potential Production Revenue Capacity
+
+Rename the descriptive label in narrative references to:
+
+Opportunity Cost (Unused Production Capacity)
+
+Do not change the underlying calculation.
+
+--------------------------------------------------
+
+3) ADD: TOTAL SETUP IMPACT
+
+Add a new calculated metric.
+
+Formula:
+
+Total Setup Impact =
+Total Setup Cost + Potential Production Revenue Capacity
+
+Where:
+
+Total Setup Cost = Setup Labor Cost + Annual Setup Material Waste Cost
+
+Display this metric as a highlighted card in the Results section.
+
+Title:
+
+TOTAL SETUP IMPACT
+
+Subtext:
+
+Direct setup cost plus unrealized production capacity.
+
+--------------------------------------------------
+
+4) UPDATE EXECUTIVE SNAPSHOT NARRATIVE
+
+Add one additional sentence at the end of the Executive Snapshot section:
+
+"Combined, these factors represent an estimated total operational impact of approximately ${Total Setup Impact} annually when both direct setup costs and unrealized production capacity are considered."
+
+--------------------------------------------------
+
+5) ADD OPTIONAL NOTE UNDER CORE METRICS
+
+Add a small explanatory line below the financial metrics:
+
+"Direct setup costs represent labor and material waste during press setup, while opportunity cost reflects unrealized production capacity caused by setup downtime."
+
+--------------------------------------------------
+
+IMPORTANT CONSTRAINTS
+
+Do NOT change:
+
+• Existing setup hour calculations  
+• Press capacity calculations  
+• Revenue capacity calculations  
+• Press fleet equivalents  
+• Benchmarks  
+• Capacity Opportunity section  
+• Charts  
+• Inputs  
+• Layout
+
+Only add the new metrics and explanatory text described above.
