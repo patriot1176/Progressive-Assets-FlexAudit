@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, LabelList, Tooltip } from "recharts";
-import { Clock, Percent, Layers, Users, DollarSign, TrendingUp, Ruler, Banknote, type LucideIcon } from "lucide-react";
+import { Clock, Percent, Layers, Users, DollarSign, TrendingUp, Ruler, Banknote, Trash2, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type AuditInputs, type AuditResults, formatNumber, formatCurrency, formatPercent } from "@/lib/calculations";
 import { BenchmarkPanel } from "@/components/benchmark-panel";
@@ -134,6 +134,26 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
             description="at current $/ft input"
             accent="recovery"
             testId="card-revenue"
+          />
+        )}
+        {results.annualSetupMaterialWasteCost !== null && (
+          <MetricCard
+            icon={Trash2}
+            label="Annual Setup Material Waste Cost"
+            value={formatCurrency(results.annualSetupMaterialWasteCost)}
+            description="waste cost / year"
+            accent="loss"
+            testId="card-material-waste"
+          />
+        )}
+        {results.materialWasteSavings !== null && (
+          <MetricCard
+            icon={Trash2}
+            label={`Material Waste Savings (@ ${inputs.reductionPct}%)`}
+            value={formatCurrency(results.materialWasteSavings)}
+            description="modeled savings / year"
+            accent="recovery"
+            testId="card-waste-savings"
           />
         )}
       </div>

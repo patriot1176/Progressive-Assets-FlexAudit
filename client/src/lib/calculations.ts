@@ -10,6 +10,7 @@ export interface AuditInputs {
   pressSpeedFPM: number | null;
   pricePerFoot: number | null;
   laborRate: number | null;
+  setupMaterialWaste: number | null;
   reductionPct: number;
 }
 
@@ -27,6 +28,8 @@ export interface AuditResults {
   recoveredHours: number;
   recoveredLinearFeet: number | null;
   potentialRevenueCapacity: number | null;
+  annualSetupMaterialWasteCost: number | null;
+  materialWasteSavings: number | null;
 }
 
 export const DEFAULT_INPUTS: AuditInputs = {
@@ -39,6 +42,7 @@ export const DEFAULT_INPUTS: AuditInputs = {
   pressSpeedFPM: 200,
   pricePerFoot: 0.05,
   laborRate: 30,
+  setupMaterialWaste: null,
   reductionPct: 50,
 };
 
@@ -80,6 +84,14 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     ? recoveredLinearFeet * inputs.pricePerFoot
     : null;
 
+  const annualChangeovers = inputs.presses * inputs.changeoversPerPressPerDay * inputs.operatingDaysPerYear;
+  const annualSetupMaterialWasteCost = inputs.setupMaterialWaste !== null && inputs.setupMaterialWaste > 0
+    ? annualChangeovers * inputs.setupMaterialWaste
+    : null;
+  const materialWasteSavings = annualSetupMaterialWasteCost !== null
+    ? annualSetupMaterialWasteCost * (inputs.reductionPct / 100)
+    : null;
+
   return {
     totalChangeoversPerDay,
     setupMinutesPerDay,
@@ -94,6 +106,8 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     recoveredHours,
     recoveredLinearFeet,
     potentialRevenueCapacity,
+    annualSetupMaterialWasteCost,
+    materialWasteSavings,
   };
 }
 
@@ -167,6 +181,7 @@ export function encodeInputsToParams(inputs: AuditInputs, mode: OperatingMode): 
   if (inputs.pressSpeedFPM !== null) params.set('spd', String(inputs.pressSpeedFPM));
   if (inputs.pricePerFoot !== null) params.set('prc', String(inputs.pricePerFoot));
   if (inputs.laborRate !== null) params.set('lr', String(inputs.laborRate));
+  if (inputs.setupMaterialWaste !== null) params.set('smw', String(inputs.setupMaterialWaste));
   return params.toString();
 }
 
@@ -185,6 +200,7 @@ export function decodeParamsToInputs(search: string): { inputs: Partial<AuditInp
   if (params.has('spd')) result.pressSpeedFPM = Number(params.get('spd'));
   if (params.has('prc')) result.pricePerFoot = Number(params.get('prc'));
   if (params.has('lr')) result.laborRate = Number(params.get('lr'));
+  if (params.has('smw')) result.setupMaterialWaste = Number(params.get('smw'));
 
   const mode = params.get('m') as OperatingMode | null;
   return { inputs: result, mode: mode ?? undefined };

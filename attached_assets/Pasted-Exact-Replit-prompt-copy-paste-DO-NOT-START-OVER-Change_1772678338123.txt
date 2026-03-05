@@ -1,0 +1,64 @@
+Exact Replit prompt (copy/paste)
+
+DO NOT START OVER. Change nothing else in the tool.
+
+Add setup material waste as a CFO-facing dollar metric (no conversion to minutes).
+
+Inputs (add 1 optional field)
+
+In the Inputs tab, within the existing section “OPTIONAL — FINANCIAL & SPEED”, add a new numeric input:
+
+Label: Avg Setup Material Waste ($/changeover)
+
+Helper text: Dollar value of substrate/ink waste generated during a typical changeover (color match, register, impression, etc.).
+
+Allow decimals, minimum 0.
+
+Default behavior: if blank or 0, treat as “not provided”.
+
+Calculations (add-only; do not modify existing calculations)
+Using the tool’s existing computed Annual Changeovers Modeled:
+
+annualChangeovers = presses * changeoversPerPressPerDay * operatingDaysPerYear
+
+Add:
+
+annualSetupMaterialWasteCost = annualChangeovers * avgSetupMaterialWastePerChangeover
+
+materialWasteSavingsAtScenario = annualSetupMaterialWasteCost * (setupReductionPercent/100)
+
+Formatting:
+
+Show dollars with commas, no decimals (e.g., $125,000).
+
+If the input is blank/0, do not show waste metrics anywhere (avoid showing $0).
+
+Results tab (add 1–2 cards, only if provided)
+Add a new card in the Results KPI grid (only when the waste input > 0):
+
+Title: ANNUAL SETUP MATERIAL WASTE COST
+
+Value: $X
+
+Subtitle: waste cost / year
+
+Add a second card (also only if provided):
+
+Title: MATERIAL WASTE SAVINGS (@ {Setup Reduction %})
+
+Value: $Y
+
+Subtitle: modeled savings / year
+
+Do not rearrange existing cards—append these in the next available slots.
+
+Snapshot tab (add one short section, only if provided)
+Under Key Findings, add a new single bullet (only when provided):
+
+“Modeled setup material waste is approximately $X per year (based on ${waste}/changeover). At {Setup Reduction %} setup reduction, this corresponds to ~$Y per year in waste reduction.”
+
+Also add one line under Assumptions Used (only when provided):
+
+Setup material waste is modeled as $/changeover × annual changeovers (user-entered).
+
+No other changes. Do not change existing wording, layout, or metrics outside of adding this optional waste feature.

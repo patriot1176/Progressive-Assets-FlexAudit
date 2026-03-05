@@ -66,7 +66,7 @@ function CopyButton({ label, textFn, icon: Icon, testId }: {
   );
 }
 
-function AssumptionsSection() {
+function AssumptionsSection({ showMaterialWaste }: { showMaterialWaste: boolean }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -89,6 +89,9 @@ function AssumptionsSection() {
                 <li>FTE equivalent assumes 2,000 working hours per employee per year</li>
                 <li>Press capacity benchmark assumes ~6,500 operating hours per press per year</li>
                 <li>Potential production revenue capacity reflects production potential at the current $/ft input (not guaranteed sales)</li>
+                {showMaterialWaste && (
+                  <li>Setup material waste is modeled as $/changeover × annual changeovers (user-entered).</li>
+                )}
               </ul>
             </div>
           </CollapsibleContent>
@@ -178,6 +181,9 @@ function InputsUsedCard({ inputs, mode }: { inputs: AuditInputs; mode: Operating
   }
   if (inputs.laborRate !== null) {
     fields.push({ label: 'Labor Rate ($/hr)', value: String(inputs.laborRate) });
+  }
+  if (inputs.setupMaterialWaste !== null && inputs.setupMaterialWaste > 0) {
+    fields.push({ label: 'Setup Material Waste ($/chg)', value: `$${inputs.setupMaterialWaste}` });
   }
 
   return (
@@ -532,6 +538,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
               <li>Setup activities currently consume <span className="font-bold">{formatPercent(results.pctPressTimeLostToSetup)}</span> of total available press time.</li>
               <li>This represents the equivalent capacity of approximately <span className="font-bold">{formatNumber(results.pctPressTimeLostToSetup * inputs.presses, 1)}</span> presses currently consumed by setup activity.</li>
               <li>A <span className="font-bold">{inputs.reductionPct}%</span> reduction in setup time would unlock approximately <span className="font-bold">{results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</span> in potential production revenue capacity at current pricing.</li>
+              {results.annualSetupMaterialWasteCost !== null && results.materialWasteSavings !== null && inputs.setupMaterialWaste !== null && (
+                <li>Modeled setup material waste is approximately <span className="font-bold">{formatCurrency(results.annualSetupMaterialWasteCost)}</span> per year (based on ${inputs.setupMaterialWaste}/changeover). At {inputs.reductionPct}% setup reduction, this corresponds to ~<span className="font-bold">{formatCurrency(results.materialWasteSavings)}</span> per year in waste reduction.</li>
+              )}
             </ul>
 
             <div className="mt-5 pt-4 border-t border-border/50">
@@ -577,7 +586,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
           </CardContent>
         </Card>
 
-        <AssumptionsSection />
+        <AssumptionsSection showMaterialWaste={results.annualSetupMaterialWasteCost !== null} />
       </div>
 
       <Separator className="print:hidden" />

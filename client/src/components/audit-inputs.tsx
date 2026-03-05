@@ -137,7 +137,7 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
           <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Optional &mdash; Financial &amp; Speed</CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <OptionalNumberField
               label="Avg Press Speed"
               value={inputs.pressSpeedFPM}
@@ -161,6 +161,16 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               prefix="$"
               suffix="/hr"
               testId="input-labor-rate"
+            />
+            <OptionalNumberField
+              label="Avg Setup Material Waste ($/changeover)"
+              value={inputs.setupMaterialWaste}
+              onChange={(v) => onInputChange('setupMaterialWaste', v)}
+              prefix="$"
+              suffix="/chg"
+              step={1}
+              testId="input-material-waste"
+              helperText="Dollar value of substrate/ink waste generated during a typical changeover (color match, register, impression, etc.)."
             />
           </div>
         </CardContent>
@@ -300,7 +310,7 @@ function NumberField({ label, value, onChange, min = 0, suffix, prefix, step = 1
   );
 }
 
-function OptionalNumberField({ label, value, onChange, suffix, prefix, step = 1, testId }: {
+function OptionalNumberField({ label, value, onChange, suffix, prefix, step = 1, testId, helperText }: {
   label: string;
   value: number | null;
   onChange: (v: number | null) => void;
@@ -308,6 +318,7 @@ function OptionalNumberField({ label, value, onChange, suffix, prefix, step = 1,
   prefix?: string;
   step?: number;
   testId: string;
+  helperText?: string;
 }) {
   const isDecimal = step !== undefined && step < 1;
   const current = value ?? 0;
@@ -365,6 +376,7 @@ function OptionalNumberField({ label, value, onChange, suffix, prefix, step = 1,
           </button>
         </div>
       </div>
+      {helperText && <p className="text-[10px] text-muted-foreground leading-snug">{helperText}</p>}
     </div>
   );
 }
