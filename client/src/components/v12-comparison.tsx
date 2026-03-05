@@ -11,6 +11,8 @@ import {
   formatPercent,
 } from "@/lib/calculations";
 
+const V12_SPEED_FPM = 400;
+
 interface V12ComparisonProps {
   inputs: AuditInputs;
   results: AuditResults;
@@ -48,13 +50,11 @@ function DeltaRow({ label, current, modeled, formatter }: { label: string; curre
 
 export function V12ComparisonSection({ inputs, results }: V12ComparisonProps) {
   const [v12SetupTime, setV12SetupTime] = useState<string>('');
-  const [v12FPM, setV12FPM] = useState<string>('');
 
   const v12SetupTimeNum = v12SetupTime !== '' ? parseFloat(v12SetupTime) : null;
-  const v12FPMNum = v12FPM !== '' ? parseFloat(v12FPM) : null;
+  const isValid = v12SetupTimeNum !== null && !isNaN(v12SetupTimeNum) && v12SetupTimeNum > 0;
 
-  const isValid = v12SetupTimeNum !== null && !isNaN(v12SetupTimeNum) && v12SetupTimeNum > 0
-    && v12FPMNum !== null && !isNaN(v12FPMNum) && v12FPMNum > 0;
+  const currentSpeed = inputs.pressSpeedFPM;
 
   let v12Results: {
     annualSetupHoursLost: number;
@@ -62,11 +62,12 @@ export function V12ComparisonSection({ inputs, results }: V12ComparisonProps) {
     pressEquivalentLost: number;
     annualSetupLaborCost: number | null;
     recoveredHours: number;
-    recoveredFeet: number | null;
+    recoveredFeetCurrentSpeed: number | null;
+    recoveredFeetV12Speed: number;
     revenueCapacity: number | null;
   } | null = null;
 
-  if (isValid && v12SetupTimeNum && v12FPMNum) {
+  if (isValid && v12SetupTimeNum) {
     const annualChangeovers = inputs.presses * inputs.changeoversPerPressPerDay * inputs.shiftsPerDay * inputs.operatingDaysPerYear;
     const v12AnnualSetupHoursLost = (annualChangeovers * v12SetupTimeNum) / 60;
     const v12PctPressTimeLost = results.totalAvailablePlantPressHoursPerYear > 0
@@ -75,8 +76,9 @@ export function V12ComparisonSection({ inputs, results }: V12ComparisonProps) {
     const v12PressEquivalentLost = v12AnnualSetupHoursLost / 6500;
     const v12AnnualSetupLaborCost = inputs.laborRate !== null ? v12AnnualSetupHoursLost * inputs.laborRate : null;
     const v12RecoveredHours = Math.max(results.setupHoursPerYear - v12AnnualSetupHoursLost, 0);
-    const v12RecoveredFeet = v12RecoveredHours * 60 * v12FPMNum;
-    const v12RevenueCapacity = inputs.pricePerFoot !== null ? v12RecoveredFeet * inputs.pricePerFoot : null;
+    const v12RecoveredFeetCurrentSpeed = currentSpeed !== null ? v12RecoveredHours * 60 * currentSpeed : null;
+    const v12RecoveredFeetV12Speed = v12RecoveredHours * 60 * V12_SPEED_FPM;
+    const v12RevenueCapacity = inputs.pricePerFoot !== null ? v12RecoveredFeetV12Speed * inputs.pricePerFoot : null;
 
     v12Results = {
       annualSetupHoursLost: v12AnnualSetupHoursLost,
@@ -84,7 +86,8 @@ export function V12ComparisonSection({ inputs, results }: V12ComparisonProps) {
       pressEquivalentLost: v12PressEquivalentLost,
       annualSetupLaborCost: v12AnnualSetupLaborCost,
       recoveredHours: v12RecoveredHours,
-      recoveredFeet: v12RecoveredFeet,
+      recoveredFeetCurrentSpeed: v12RecoveredFeetCurrentSpeed,
+      recoveredFeetV12Speed: v12RecoveredFeetV12Speed,
       revenueCapacity: v12RevenueCapacity,
     };
   }
@@ -92,6 +95,8 @@ export function V12ComparisonSection({ inputs, results }: V12ComparisonProps) {
   const handleSelectAll = (e: React.FocusEvent<HTMLInputElement>) => {
     setTimeout(() => e.target.select(), 0);
   };
+
+  const showError = v12SetupTime !== '' && !isValid;
 
   return (
     <div className="space-y-5" data-testid="v12-comparison-section">
@@ -105,6 +110,9 @@ export function V12ComparisonSection({ inputs, results }: V12ComparisonProps) {
               <MetricRow label="Equivalent Press Capacity Lost" value={formatNumber(results.pressEquivalentLost, 1)} unit="presses" />
               {results.annualSetupLaborCost !== null && (
                 <MetricRow label="Annual Setup Labor Cost" value={formatCurrency(results.annualSetupLaborCost)} />
+              )}
+              {currentSpeed !== null && (
+                <MetricRow label="Current Run Speed" value={formatNumber(currentSpeed)} unit="ft/min" />
               )}
               <MetricRow label={`Recovered Hours @ ${inputs.reductionPct}%`} value={formatNumber(results.recoveredHours)} unit="hrs/yr" />
               {results.recoveredLinearFeet !== null && (
@@ -135,20 +143,13 @@ export function V12ComparisonSection({ inputs, results }: V12ComparisonProps) {
                     className="mt-1"
                     data-testid="input-v12-setup-time"
                   />
+                  {showError && (
+                    <p className="text-xs text-red-500 mt-1" data-testid="text-v12-setup-error">Enter a valid number greater than 0.</p>
+                  )}
                 </div>
-                <div>
-                  <Label htmlFor="v12-fpm" className="text-xs text-muted-foreground">V12 Feet per Minute (ft/min)</Label>
-                  <Input
-                    id="v12-fpm"
-                    type="number"
-                    inputMode="decimal"
-                    placeholder="Enter ft/min"
-                    value={v12FPM}
-                    onChange={(e) => setV12FPM(e.target.value)}
-                    onFocus={handleSelectAll}
-                    className="mt-1"
-                    data-testid="input-v12-fpm"
-                  />
+                <div className="flex justify-between items-baseline py-2 px-3 bg-muted/50 rounded-md">
+                  <span className="text-xs text-muted-foreground">V12 Run Speed (locked)</span>
+                  <span className="text-sm font-semibold" data-testid="text-v12-locked-speed">{V12_SPEED_FPM} ft/min</span>
                 </div>
               </div>
             </CardContent>
@@ -157,7 +158,7 @@ export function V12ComparisonSection({ inputs, results }: V12ComparisonProps) {
           {!isValid && (
             <Card data-testid="card-v12-placeholder">
               <CardContent className="p-5 sm:p-6">
-                <p className="text-sm text-muted-foreground text-center">Enter both V12 inputs to compute the modeled scenario.</p>
+                <p className="text-sm text-muted-foreground text-center">Enter V12 Setup Time to compute the modeled scenario.</p>
               </CardContent>
             </Card>
           )}
@@ -174,9 +175,13 @@ export function V12ComparisonSection({ inputs, results }: V12ComparisonProps) {
                     <MetricRow label="Annual Setup Labor Cost" value={formatCurrency(v12Results.annualSetupLaborCost)} />
                   )}
                   <MetricRow label="Recovered Hours" value={formatNumber(v12Results.recoveredHours)} unit="hrs/yr" />
-                  {v12Results.recoveredFeet !== null && (
-                    <MetricRow label="Recovered Feet" value={formatNumber(v12Results.recoveredFeet)} unit="ft" />
+                  {v12Results.recoveredFeetCurrentSpeed !== null && (
+                    <MetricRow label="Recovered Feet @ Current Speed" value={formatNumber(v12Results.recoveredFeetCurrentSpeed)} unit="ft" />
                   )}
+                  <MetricRow label={`Recovered Feet @ V12 Speed (${V12_SPEED_FPM} ft/min)`} value={formatNumber(v12Results.recoveredFeetV12Speed)} unit="ft" />
+                  <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed">
+                    Recovered feet depends on where recovered hours are scheduled to run (current presses vs. V12).
+                  </p>
                   {v12Results.revenueCapacity !== null && (
                     <MetricRow label="Potential Revenue Capacity" value={formatCurrency(v12Results.revenueCapacity)} />
                   )}
@@ -198,14 +203,25 @@ export function V12ComparisonSection({ inputs, results }: V12ComparisonProps) {
                 modeled={v12Results.recoveredHours}
                 formatter={(n) => formatNumber(Math.abs(n)) + ' hrs/yr'}
               />
-              {v12Results.recoveredFeet !== null && results.recoveredLinearFeet !== null && (
+              {v12Results.recoveredFeetCurrentSpeed !== null && results.recoveredLinearFeet !== null && (
                 <DeltaRow
-                  label="Recovered Feet"
+                  label="Δ Recovered Feet @ Current Speed"
                   current={results.recoveredLinearFeet}
-                  modeled={v12Results.recoveredFeet}
+                  modeled={v12Results.recoveredFeetCurrentSpeed}
                   formatter={(n) => formatNumber(Math.abs(n)) + ' ft'}
                 />
               )}
+              {results.recoveredLinearFeet !== null && (
+                <DeltaRow
+                  label={`Δ Recovered Feet @ V12 Speed (${V12_SPEED_FPM} ft/min)`}
+                  current={results.recoveredLinearFeet}
+                  modeled={v12Results.recoveredFeetV12Speed}
+                  formatter={(n) => formatNumber(Math.abs(n)) + ' ft'}
+                />
+              )}
+              <p className="text-[10px] text-muted-foreground mt-1.5 mb-1 leading-relaxed">
+                Recovered feet depends on where recovered hours are scheduled to run (current presses vs. V12).
+              </p>
               {v12Results.revenueCapacity !== null && results.potentialRevenueCapacity !== null && (
                 <DeltaRow
                   label="Revenue Capacity"
