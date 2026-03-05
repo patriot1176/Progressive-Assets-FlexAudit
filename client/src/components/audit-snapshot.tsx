@@ -301,7 +301,6 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   const metrics: { label: string; value: string; unit?: string }[] = [
     { label: 'Setup Hours Lost', value: formatNumber(results.setupHoursPerYear), unit: 'hrs/year' },
     { label: '% Press Time Lost', value: formatPercent(results.pctPressTimeLostToSetup) },
-    { label: 'Press Capacity Lost to Setup', value: formatNumber(results.pressEquivalentLost, 1), unit: 'presses' },
     { label: 'FTE Equivalent', value: formatNumber(results.fteEquivalent, 1) },
   ];
 
