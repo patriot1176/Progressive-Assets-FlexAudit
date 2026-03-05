@@ -109,6 +109,36 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
             testId="card-labor-cost"
           />
         )}
+        {results.wasteCostPerSetup !== null && (
+          <MetricCard
+            icon={Trash2}
+            label="Waste Cost per Setup"
+            value={formatCurrency(results.wasteCostPerSetup)}
+            description="per changeover"
+            accent="loss"
+            testId="card-waste-per-setup"
+          />
+        )}
+        {results.annualSetupMaterialWasteCost !== null && (
+          <MetricCard
+            icon={Trash2}
+            label="Annual Setup Material Waste Cost"
+            value={formatCurrency(results.annualSetupMaterialWasteCost)}
+            description="waste cost / year"
+            accent="loss"
+            testId="card-material-waste"
+          />
+        )}
+        {results.totalSetupCost !== null && (
+          <MetricCard
+            icon={DollarSign}
+            label="Total Setup Cost"
+            value={formatCurrency(results.totalSetupCost)}
+            description="labor + material waste / year"
+            accent="loss"
+            testId="card-total-setup-cost"
+          />
+        )}
         <MetricCard
           icon={TrendingUp}
           label={`Recovered Production Hours (${inputs.reductionPct}% Setup Reduction)`}
@@ -134,26 +164,6 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
             description="at current $/ft input"
             accent="recovery"
             testId="card-revenue"
-          />
-        )}
-        {results.annualSetupMaterialWasteCost !== null && (
-          <MetricCard
-            icon={Trash2}
-            label="Annual Setup Material Waste Cost"
-            value={formatCurrency(results.annualSetupMaterialWasteCost)}
-            description="waste cost / year"
-            accent="loss"
-            testId="card-material-waste"
-          />
-        )}
-        {results.materialWasteSavings !== null && (
-          <MetricCard
-            icon={Trash2}
-            label={`Material Waste Savings (@ ${inputs.reductionPct}%)`}
-            value={formatCurrency(results.materialWasteSavings)}
-            description="modeled savings / year"
-            accent="recovery"
-            testId="card-waste-savings"
           />
         )}
       </div>

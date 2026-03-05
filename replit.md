@@ -33,6 +33,8 @@ A client-side PWA (Progressive Web App) that quantifies flexo press setup time l
 - Share Link (encodes all inputs as URL query parameters)
 - Export PDF via browser print dialog
 - PWA installable via Add to Home Screen
+- Optional Setup Material Waste modeling (3 inputs: setup waste ft, web width in, material cost $/MSI) with MSI-based cost calculation
+- Total Setup Cost metric (labor + material waste) displayed when both values present
 - Mobile-first, responsive design
 
 ## Tech Stack

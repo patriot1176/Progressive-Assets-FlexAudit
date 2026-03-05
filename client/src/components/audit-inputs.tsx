@@ -137,7 +137,7 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
           <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Optional &mdash; Financial &amp; Speed</CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <OptionalNumberField
               label="Avg Press Speed"
               value={inputs.pressSpeedFPM}
@@ -162,15 +162,41 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               suffix="/hr"
               testId="input-labor-rate"
             />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Optional &mdash; Setup Material Waste</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <OptionalNumberField
-              label="Avg Setup Material Waste ($/changeover)"
-              value={inputs.setupMaterialWaste}
-              onChange={(v) => onInputChange('setupMaterialWaste', v)}
-              prefix="$"
-              suffix="/chg"
+              label="Avg Setup Waste (ft/changeover)"
+              value={inputs.setupWasteFt}
+              onChange={(v) => onInputChange('setupWasteFt', v)}
+              suffix="ft"
               step={1}
-              testId="input-material-waste"
-              helperText="Dollar value of substrate/ink waste generated during a typical changeover (color match, register, impression, etc.)."
+              testId="input-setup-waste-ft"
+            />
+            <OptionalNumberField
+              label="Avg Press Web Width (inches)"
+              value={inputs.avgWebWidthIn}
+              onChange={(v) => onInputChange('avgWebWidthIn', v)}
+              suffix="in"
+              step={1}
+              testId="input-web-width"
+              helperText="Average width of presses currently running in the plant."
+            />
+            <OptionalNumberField
+              label="Material Cost ($/MSI)"
+              value={inputs.materialCostPerMSI}
+              onChange={(v) => onInputChange('materialCostPerMSI', v)}
+              prefix="$"
+              suffix="/MSI"
+              step={0.01}
+              testId="input-material-cost-msi"
             />
           </div>
         </CardContent>

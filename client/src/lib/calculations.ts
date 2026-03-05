@@ -10,7 +10,9 @@ export interface AuditInputs {
   pressSpeedFPM: number | null;
   pricePerFoot: number | null;
   laborRate: number | null;
-  setupMaterialWaste: number | null;
+  setupWasteFt: number | null;
+  avgWebWidthIn: number | null;
+  materialCostPerMSI: number | null;
   reductionPct: number;
 }
 
@@ -28,8 +30,9 @@ export interface AuditResults {
   recoveredHours: number;
   recoveredLinearFeet: number | null;
   potentialRevenueCapacity: number | null;
+  wasteCostPerSetup: number | null;
   annualSetupMaterialWasteCost: number | null;
-  materialWasteSavings: number | null;
+  totalSetupCost: number | null;
 }
 
 export const DEFAULT_INPUTS: AuditInputs = {
@@ -42,7 +45,9 @@ export const DEFAULT_INPUTS: AuditInputs = {
   pressSpeedFPM: 200,
   pricePerFoot: 0.05,
   laborRate: 30,
-  setupMaterialWaste: null,
+  setupWasteFt: null,
+  avgWebWidthIn: null,
+  materialCostPerMSI: null,
   reductionPct: 50,
 };
 
@@ -85,12 +90,25 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     : null;
 
   const annualChangeovers = inputs.presses * inputs.changeoversPerPressPerDay * inputs.operatingDaysPerYear;
-  const annualSetupMaterialWasteCost = inputs.setupMaterialWaste !== null && inputs.setupMaterialWaste > 0
-    ? annualChangeovers * inputs.setupMaterialWaste
-    : null;
-  const materialWasteSavings = annualSetupMaterialWasteCost !== null
-    ? annualSetupMaterialWasteCost * (inputs.reductionPct / 100)
-    : null;
+
+  const hasWasteInputs = inputs.setupWasteFt !== null && inputs.setupWasteFt > 0
+    && inputs.avgWebWidthIn !== null && inputs.avgWebWidthIn > 0
+    && inputs.materialCostPerMSI !== null && inputs.materialCostPerMSI > 0;
+
+  let wasteCostPerSetup: number | null = null;
+  let annualSetupMaterialWasteCost: number | null = null;
+  let totalSetupCost: number | null = null;
+
+  if (hasWasteInputs) {
+    const sqInPerSetup = inputs.setupWasteFt! * 12 * inputs.avgWebWidthIn!;
+    const msiPerSetup = sqInPerSetup / 1000;
+    wasteCostPerSetup = msiPerSetup * inputs.materialCostPerMSI!;
+    annualSetupMaterialWasteCost = wasteCostPerSetup * annualChangeovers;
+  }
+
+  if (annualSetupLaborCost !== null && annualSetupMaterialWasteCost !== null) {
+    totalSetupCost = annualSetupLaborCost + annualSetupMaterialWasteCost;
+  }
 
   return {
     totalChangeoversPerDay,
@@ -106,8 +124,9 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     recoveredHours,
     recoveredLinearFeet,
     potentialRevenueCapacity,
+    wasteCostPerSetup,
     annualSetupMaterialWasteCost,
-    materialWasteSavings,
+    totalSetupCost,
   };
 }
 
@@ -181,7 +200,9 @@ export function encodeInputsToParams(inputs: AuditInputs, mode: OperatingMode): 
   if (inputs.pressSpeedFPM !== null) params.set('spd', String(inputs.pressSpeedFPM));
   if (inputs.pricePerFoot !== null) params.set('prc', String(inputs.pricePerFoot));
   if (inputs.laborRate !== null) params.set('lr', String(inputs.laborRate));
-  if (inputs.setupMaterialWaste !== null) params.set('smw', String(inputs.setupMaterialWaste));
+  if (inputs.setupWasteFt !== null) params.set('swf', String(inputs.setupWasteFt));
+  if (inputs.avgWebWidthIn !== null) params.set('ww', String(inputs.avgWebWidthIn));
+  if (inputs.materialCostPerMSI !== null) params.set('msi', String(inputs.materialCostPerMSI));
   return params.toString();
 }
 
@@ -200,7 +221,9 @@ export function decodeParamsToInputs(search: string): { inputs: Partial<AuditInp
   if (params.has('spd')) result.pressSpeedFPM = Number(params.get('spd'));
   if (params.has('prc')) result.pricePerFoot = Number(params.get('prc'));
   if (params.has('lr')) result.laborRate = Number(params.get('lr'));
-  if (params.has('smw')) result.setupMaterialWaste = Number(params.get('smw'));
+  if (params.has('swf')) result.setupWasteFt = Number(params.get('swf'));
+  if (params.has('ww')) result.avgWebWidthIn = Number(params.get('ww'));
+  if (params.has('msi')) result.materialCostPerMSI = Number(params.get('msi'));
 
   const mode = params.get('m') as OperatingMode | null;
   return { inputs: result, mode: mode ?? undefined };

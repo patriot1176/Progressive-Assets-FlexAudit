@@ -90,7 +90,7 @@ function AssumptionsSection({ showMaterialWaste }: { showMaterialWaste: boolean 
                 <li>Press capacity benchmark assumes ~6,500 operating hours per press per year</li>
                 <li>Potential production revenue capacity reflects production potential at the current $/ft input (not guaranteed sales)</li>
                 {showMaterialWaste && (
-                  <li>Setup material waste is modeled as $/changeover × annual changeovers (user-entered).</li>
+                  <li>Setup material waste is modeled as setup waste length × web width × material cost per MSI × annual changeovers.</li>
                 )}
               </ul>
             </div>
@@ -182,8 +182,14 @@ function InputsUsedCard({ inputs, mode }: { inputs: AuditInputs; mode: Operating
   if (inputs.laborRate !== null) {
     fields.push({ label: 'Labor Rate ($/hr)', value: String(inputs.laborRate) });
   }
-  if (inputs.setupMaterialWaste !== null && inputs.setupMaterialWaste > 0) {
-    fields.push({ label: 'Setup Material Waste ($/chg)', value: `$${inputs.setupMaterialWaste}` });
+  if (inputs.setupWasteFt !== null) {
+    fields.push({ label: 'Setup Waste (ft/chg)', value: String(inputs.setupWasteFt) });
+  }
+  if (inputs.avgWebWidthIn !== null) {
+    fields.push({ label: 'Avg Web Width (in)', value: String(inputs.avgWebWidthIn) });
+  }
+  if (inputs.materialCostPerMSI !== null) {
+    fields.push({ label: 'Material Cost ($/MSI)', value: `$${inputs.materialCostPerMSI}` });
   }
 
   return (
@@ -418,6 +424,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
       <div class="value">${formatNumber(results.recoveredHours)}</div>
       <div class="unit">hrs / year</div>
     </div>
+    ${results.wasteCostPerSetup !== null ? `<div class="metric-block"><div class="label">Waste Cost per Setup</div><div class="value">${formatCurrency(results.wasteCostPerSetup)}</div><div class="unit">&nbsp;</div></div>` : ''}
+    ${results.annualSetupMaterialWasteCost !== null ? `<div class="metric-block"><div class="label">Annual Setup Material Waste</div><div class="value">${formatCurrency(results.annualSetupMaterialWasteCost)}</div><div class="unit">/ year</div></div>` : ''}
+    ${results.totalSetupCost !== null ? `<div class="metric-block"><div class="label">Total Setup Cost</div><div class="value">${formatCurrency(results.totalSetupCost)}</div><div class="unit">/ year</div></div>` : ''}
   </div>
 </div>
 
@@ -461,6 +470,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     ${inputs.pressSpeedFPM !== null ? `<div class="input-item"><span class="lbl">Average Press Speed</span><span class="val">${inputs.pressSpeedFPM} ft/min</span></div>` : ''}
     ${inputs.pricePerFoot !== null ? `<div class="input-item"><span class="lbl">Average Selling Price</span><span class="val">$${inputs.pricePerFoot}/ft</span></div>` : ''}
     ${inputs.laborRate !== null ? `<div class="input-item"><span class="lbl">Operator Labor Rate</span><span class="val">$${inputs.laborRate}/hr</span></div>` : ''}
+    ${inputs.setupWasteFt !== null ? `<div class="input-item"><span class="lbl">Avg Setup Waste</span><span class="val">${inputs.setupWasteFt} ft/chg</span></div>` : ''}
+    ${inputs.avgWebWidthIn !== null ? `<div class="input-item"><span class="lbl">Avg Web Width</span><span class="val">${inputs.avgWebWidthIn} in</span></div>` : ''}
+    ${inputs.materialCostPerMSI !== null ? `<div class="input-item"><span class="lbl">Material Cost</span><span class="val">$${inputs.materialCostPerMSI}/MSI</span></div>` : ''}
   </div>
 </div>
 
@@ -489,6 +501,16 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
 
   if (results.annualSetupLaborCost !== null) {
     metrics.push({ label: 'Setup Labor Cost', value: formatCurrency(results.annualSetupLaborCost), unit: '/year' });
+  }
+
+  if (results.wasteCostPerSetup !== null) {
+    metrics.push({ label: 'Waste Cost per Setup', value: formatCurrency(results.wasteCostPerSetup) });
+  }
+  if (results.annualSetupMaterialWasteCost !== null) {
+    metrics.push({ label: 'Annual Setup Material Waste Cost', value: formatCurrency(results.annualSetupMaterialWasteCost), unit: '/year' });
+  }
+  if (results.totalSetupCost !== null) {
+    metrics.push({ label: 'Total Setup Cost', value: formatCurrency(results.totalSetupCost), unit: '/year' });
   }
 
   metrics.push({
@@ -538,8 +560,8 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
               <li>Setup activities currently consume <span className="font-bold">{formatPercent(results.pctPressTimeLostToSetup)}</span> of total available press time.</li>
               <li>This represents the equivalent capacity of approximately <span className="font-bold">{formatNumber(results.pctPressTimeLostToSetup * inputs.presses, 1)}</span> presses currently consumed by setup activity.</li>
               <li>A <span className="font-bold">{inputs.reductionPct}%</span> reduction in setup time would unlock approximately <span className="font-bold">{results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</span> in potential production revenue capacity at current pricing.</li>
-              {results.annualSetupMaterialWasteCost !== null && results.materialWasteSavings !== null && inputs.setupMaterialWaste !== null && (
-                <li>Modeled setup material waste is approximately <span className="font-bold">{formatCurrency(results.annualSetupMaterialWasteCost)}</span> per year (based on ${inputs.setupMaterialWaste}/changeover). At {inputs.reductionPct}% setup reduction, this corresponds to ~<span className="font-bold">{formatCurrency(results.materialWasteSavings)}</span> per year in waste reduction.</li>
+              {results.annualSetupMaterialWasteCost !== null && results.wasteCostPerSetup !== null && (
+                <li>Modeled setup material waste is approximately <span className="font-bold">{formatCurrency(results.annualSetupMaterialWasteCost)}</span> per year (<span className="font-bold">{formatCurrency(results.wasteCostPerSetup)}</span>/changeover based on setup waste length, web width, and material cost per MSI).</li>
               )}
             </ul>
 
@@ -569,6 +591,11 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
               Hidden Press Capacity: Equivalent press capacity currently consumed by setup activities.
             </p>
+            {results.annualSetupMaterialWasteCost !== null && (
+              <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
+                Material waste during press setup is estimated using setup waste length, average press web width, and substrate cost per MSI.
+              </p>
+            )}
           </CardContent>
         </Card>
 

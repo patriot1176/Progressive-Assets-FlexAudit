@@ -1,0 +1,104 @@
+DO NOT START OVER.
+
+Extend the existing Flexo Setup Tax — Plant Capacity Audit tool by adding optional setup material waste modeling.
+
+Do not modify any existing calculations, charts, layout, benchmarks, or narrative text. Only extend the model with the optional inputs and metrics described below.
+
+--------------------------------------------------
+
+1) Add a new optional input section directly below:
+
+OPTIONAL — FINANCIAL & SPEED
+
+Create a block titled:
+
+OPTIONAL — SETUP MATERIAL WASTE
+
+Add three optional inputs:
+
+Avg Setup Waste (ft/changeover)
+
+Average Press Web Width (inches)
+
+Material Cost ($/MSI)
+
+Notes:
+• If any of these inputs are blank, do not display waste calculations.
+• Web width represents the average width of presses currently running in the plant.
+
+--------------------------------------------------
+
+2) Use the existing model value:
+
+Annual Changeovers Modeled
+
+--------------------------------------------------
+
+3) Add calculations for setup material waste.
+
+Square Inches Waste per Setup
+
+= Setup Waste (ft/changeover)
+× 12
+× Web Width (inches)
+
+--------------------------------
+
+MSI Waste per Setup
+
+= Square Inches Waste ÷ 1000
+
+--------------------------------
+
+Waste Cost per Setup
+
+= MSI Waste × Material Cost ($/MSI)
+
+--------------------------------
+
+Annual Setup Material Waste Cost
+
+= Waste Cost per Setup × Annual Changeovers
+
+--------------------------------------------------
+
+4) Add the following optional metrics to the CORE METRICS section.
+
+Display only if waste inputs are provided.
+
+Waste Cost per Setup ($)
+
+Annual Setup Material Waste Cost ($/year)
+
+--------------------------------------------------
+
+5) Add a new metric directly below Setup Labor Cost:
+
+Total Setup Cost ($/year)
+
+Formula:
+
+Setup Labor Cost + Annual Setup Material Waste Cost
+
+--------------------------------------------------
+
+6) Add a short explanatory note below these metrics:
+
+"Material waste during press setup is estimated using setup waste length, average press web width, and substrate cost per MSI."
+
+--------------------------------------------------
+
+Do not modify any existing calculations including:
+
+Setup Hours Lost
+Recovered Hours
+Recovered Feet
+Potential Revenue Capacity
+Hidden Press Capacity
+Press Fleet Equivalents
+Benchmarks
+Executive Snapshot
+Key Findings
+Capacity Opportunity
+
+Only extend the tool with the optional waste inputs and metrics described above.
