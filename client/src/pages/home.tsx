@@ -99,11 +99,10 @@ export default function Home() {
               Show Benchmark
             </Label>
           </div>
-          <TabsList className="grid w-full grid-cols-4 print:hidden" data-testid="tab-list">
+          <TabsList className="grid w-full grid-cols-3 print:hidden" data-testid="tab-list">
             <TabsTrigger value="inputs" data-testid="tab-inputs">Inputs</TabsTrigger>
             <TabsTrigger value="results" data-testid="tab-results">Results</TabsTrigger>
             <TabsTrigger value="snapshot" data-testid="tab-snapshot">Snapshot</TabsTrigger>
-            <TabsTrigger value="v12" data-testid="tab-v12">V12 Comparison</TabsTrigger>
           </TabsList>
 
           <div className="mt-5 sm:mt-6">
@@ -129,9 +128,10 @@ export default function Home() {
                 showBenchmark={showBenchmark}
               />
             </TabsContent>
-            <TabsContent value="v12" className="mt-0 print:hidden">
+            {/* V12 Comparison tab hidden — code retained for future re-enable */}
+            {/* <TabsContent value="v12" className="mt-0 print:hidden">
               <V12ComparisonSection inputs={inputs} results={results} mode={mode} />
-            </TabsContent>
+            </TabsContent> */}
           </div>
         </Tabs>
       </main>

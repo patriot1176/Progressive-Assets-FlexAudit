@@ -196,6 +196,54 @@ function InputsUsedCard({ inputs, mode }: { inputs: AuditInputs; mode: Operating
   );
 }
 
+function PressCapacityUtilizationBar({ results }: { results: AuditResults }) {
+  const totalHours = results.totalAvailablePlantPressHoursPerYear;
+  const setupHours = results.setupHoursPerYear;
+  const productiveHours = Math.max(totalHours - setupHours, 0);
+  const setupPct = totalHours > 0 ? (setupHours / totalHours) * 100 : 0;
+  const productivePct = totalHours > 0 ? (productiveHours / totalHours) * 100 : 0;
+
+  return (
+    <Card data-testid="card-capacity-utilization">
+      <CardContent className="p-5 sm:p-6">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Press Capacity Utilization (Annual)</h3>
+
+        <div className="w-full h-8 rounded-md overflow-hidden flex" data-testid="bar-capacity-utilization">
+          <div
+            className="bg-red-500/80 flex items-center justify-center transition-all duration-500"
+            style={{ width: `${Math.max(setupPct, 2)}%` }}
+          >
+            {setupPct >= 10 && <span className="text-[10px] font-semibold text-white">{setupPct.toFixed(1)}%</span>}
+          </div>
+          <div
+            className="bg-emerald-500/80 flex items-center justify-center transition-all duration-500"
+            style={{ width: `${Math.max(productivePct, 2)}%` }}
+          >
+            {productivePct >= 10 && <span className="text-[10px] font-semibold text-white">{productivePct.toFixed(1)}%</span>}
+          </div>
+        </div>
+
+        <div className="flex justify-between mt-3 gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-sm bg-red-500/80 flex-shrink-0" />
+            <div>
+              <p className="text-[11px] text-muted-foreground leading-tight">Setup Time</p>
+              <p className="text-sm font-semibold">{formatNumber(setupHours)} hrs <span className="font-normal text-muted-foreground">({setupPct.toFixed(1)}%)</span></p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-sm bg-emerald-500/80 flex-shrink-0" />
+            <div>
+              <p className="text-[11px] text-muted-foreground leading-tight">Remaining Productive Time</p>
+              <p className="text-sm font-semibold">{formatNumber(productiveHours)} hrs <span className="font-normal text-muted-foreground">({productivePct.toFixed(1)}%)</span></p>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function BenchmarkInterpretation() {
   return (
     <Card data-testid="card-benchmark-interpretation">
@@ -254,6 +302,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     { label: 'Equivalent Flexo Press Capacity Lost', value: formatNumber(results.pressEquivalentLost, 1), unit: 'presses' },
     { label: 'FTE Equivalent', value: formatNumber(results.fteEquivalent, 1) },
   ];
+
+  const hiddenPressCapacity = results.pctPressTimeLostToSetup * inputs.presses;
+  metrics.push({ label: 'Hidden Press Capacity', value: formatNumber(hiddenPressCapacity, 1), unit: 'presses' });
 
   if (results.annualSetupLaborCost !== null) {
     metrics.push({ label: 'Setup Labor Cost', value: formatCurrency(results.annualSetupLaborCost), unit: '/year' });
@@ -322,8 +373,13 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
                 </div>
               ))}
             </div>
+            <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+              Hidden Press Capacity: Equivalent press capacity currently consumed by setup activities.
+            </p>
           </CardContent>
         </Card>
+
+        <PressCapacityUtilizationBar results={results} />
 
         {showBenchmark && <BenchmarkPanel inputs={inputs} results={results} />}
         {showBenchmark && <BenchmarkInterpretation />}

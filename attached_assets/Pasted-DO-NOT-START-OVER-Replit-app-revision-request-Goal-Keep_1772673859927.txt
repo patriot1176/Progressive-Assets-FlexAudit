@@ -1,0 +1,78 @@
+DO NOT START OVER. Replit app revision request.
+
+Goal: Keep the app strictly non-salesy and consulting-diagnostic. Make ONLY the changes below.
+
+========================================
+A) HIDE/DISABLE “V12 COMPARISON” TAB
+========================================
+1) Remove “V12 Comparison” from the tab navigation so users only see:
+- Inputs
+- Results
+- Snapshot
+
+2) Do NOT delete any V12 Comparison code. Keep its components/logic in the codebase for later re-enable (feature flag, hidden route, or commented nav item).
+
+3) Ensure Snapshot becomes the final tab. Fix any tab indexing/routing/state so nothing breaks.
+
+4) Do not change any calculations, styling, copy, benchmarks, charts, or behavior in Inputs/Results/Snapshot.
+
+========================================
+B) ADD “HIDDEN PRESS CAPACITY” METRIC (Snapshot)
+========================================
+Add a new metric card in Snapshot under the “Core Metrics” section titled:
+
+Hidden Press Capacity
+
+Definition:
+Hidden Press Capacity (presses) = (Press Time Lost % as a decimal) × (Number of Flexo Presses)
+
+Example: 36.7% × 7 = 2.6 presses
+
+Display rules:
+- Show to 1 decimal place (e.g., 2.6 presses)
+- Add helper text (small, neutral):
+  “Equivalent press capacity currently consumed by setup activities.”
+
+Use existing computed values/state:
+- Press Time Lost % (already computed)
+- Number of presses (already input)
+
+Do NOT add new inputs.
+
+========================================
+C) ADD “PRESS CAPACITY UTILIZATION (ANNUAL)” VISUAL (Snapshot)
+========================================
+In Snapshot, add a simple stacked horizontal bar chart (minimal, consistent with existing styling) titled:
+
+Press Capacity Utilization (Annual)
+
+Bar segments:
+1) Setup Time (Annual Setup Hours Lost)
+2) Remaining Productive Time (Annual Available Press Hours − Annual Setup Hours Lost)
+
+Use the same existing definitions the app already uses:
+- Annual Available Press Hours = presses × shifts/day × hours/shift × operating days/year
+- Annual Setup Hours Lost = existing computed result
+
+Display requirements:
+- Show both segment labels + values (hours) and optionally percentages:
+  Setup % = Annual Setup Hours Lost / Annual Available Press Hours
+  Productive % = 1 − Setup %
+- Keep it clean; no new pages; place it near Core Metrics (either above or below the metric grid).
+- No new calculations beyond the simple arithmetic above; do not alter any existing model outputs.
+
+========================================
+STRICT DO-NOT-CHANGE LIST
+========================================
+- Do not modify any existing calculations or formulas elsewhere
+- Do not change wording/copy outside the new labels above
+- Do not change benchmark logic/colors
+- Do not change Inputs/Results/Snapshot layouts except inserting the new card + bar chart
+- Do not change export/share/start-over features
+
+DELIVERABLE:
+After implementing, report:
+- which files were edited
+- confirm V12 tab is hidden (code retained)
+- confirm Hidden Press Capacity card and Utilization bar are added on Snapshot
+- confirm all existing outputs remain unchanged
