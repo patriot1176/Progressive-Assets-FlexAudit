@@ -1,0 +1,118 @@
+DO NOT START OVER.
+
+Update only the "Export PDF" functionality of the tool.
+
+The exported PDF should generate a clean one-page operational diagnostic report using the existing values already calculated in the Snapshot tab.
+
+Do NOT modify:
+• any calculations
+• the UI layout
+• the tool logic
+• the Inputs, Results, or Snapshot tabs
+
+Only change the PDF export formatting.
+
+--------------------
+
+PDF STRUCTURE
+
+Header
+Title:
+Flexo Setup Tax — Plant Capacity Audit
+
+Subtitle:
+Operational Diagnostic Summary
+
+Small line under subtitle:
+Quantifying press capacity consumed by setup activity.
+
+--------------------
+
+SECTION 1 — KEY METRICS
+
+Display the following four metrics prominently across the top:
+
+Setup Hours Lost
+(value from model)
+
+% Press Time Lost
+(value from model)
+
+Hidden Press Capacity
+(value from model)
+
+Recovered Production Hours
+(value from model)
+
+Format them as large metric blocks.
+
+--------------------
+
+SECTION 2 — PRESS CAPACITY UTILIZATION
+
+Show the same capacity breakdown used in the tool:
+
+Setup Time
+(value and %)
+
+Remaining Productive Time
+(value and %)
+
+Use the same values already calculated in the Snapshot tab.
+
+--------------------
+
+SECTION 3 — OPERATIONAL IMPACT
+
+Insert the following narrative text but populate the values dynamically from the model:
+
+"This plant is currently losing approximately {Setup Hours Lost} press hours annually to changeovers, representing {Press Time Lost %} of total available press capacity. This is equivalent to roughly {Hidden Press Capacity} presses worth of plant capacity currently consumed by setup activity."
+
+--------------------
+
+SECTION 4 — IMPROVEMENT SCENARIO
+
+Display the modeled improvement:
+
+Setup Reduction Modeled
+Recovered Production Hours
+Recovered Linear Feet
+Potential Production Revenue Capacity
+
+Use the same values already shown in Snapshot.
+
+--------------------
+
+SECTION 5 — AUDIT INPUTS
+
+Include the inputs used to generate the model:
+
+Number of Presses
+Changeovers / Press / Day
+Setup Minutes per Changeover
+Shifts per Day
+Hours per Shift
+Operating Days per Year
+Average Press Speed
+Average Selling Price
+Operator Labor Rate
+
+These should come directly from the Inputs tab values.
+
+--------------------
+
+SECTION 6 — FOOTNOTE
+
+Add this note at the bottom of the PDF:
+
+"Benchmarks are directional and may vary by product mix, SKU complexity, and operating practices."
+
+--------------------
+
+Important Implementation Rules
+
+• The PDF should fit on one page.
+• Use clear section spacing.
+• Use bold labels for metrics.
+• Do not add any new calculations.
+• Only format and display values already produced by the model.

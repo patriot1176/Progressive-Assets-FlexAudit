@@ -295,7 +295,136 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   };
 
   const handleExportPDF = () => {
-    window.print();
+    const hiddenPC = results.pctPressTimeLostToSetup * inputs.presses;
+    const totalHours = results.totalAvailablePlantPressHoursPerYear;
+    const setupHours = results.setupHoursPerYear;
+    const productiveHours = Math.max(totalHours - setupHours, 0);
+    const setupPctVal = totalHours > 0 ? (setupHours / totalHours) * 100 : 0;
+    const productivePctVal = 100 - setupPctVal;
+
+    const modeLabel = mode === 'conservative' ? 'Conservative' : mode === 'typical' ? 'Typical' : 'Aggressive';
+
+    const html = `<!DOCTYPE html>
+<html><head><title>Flexo Setup Tax — Plant Capacity Audit</title>
+<style>
+  @page { size: letter; margin: 0.5in 0.6in; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1a1a1a; font-size: 10px; line-height: 1.4; }
+  .header { text-align: center; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 12px; }
+  .header h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .header h2 { font-size: 11px; font-weight: 600; color: #555; margin-top: 2px; }
+  .header p { font-size: 9px; color: #777; margin-top: 2px; }
+  .section { margin-bottom: 12px; }
+  .section-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #555; border-bottom: 1px solid #ddd; padding-bottom: 3px; margin-bottom: 8px; }
+  .metrics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+  .metric-block { background: #f7f7f7; border-radius: 4px; padding: 8px 10px; text-align: center; }
+  .metric-block .label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; font-weight: 600; }
+  .metric-block .value { font-size: 18px; font-weight: 700; margin-top: 2px; }
+  .metric-block .unit { font-size: 8px; color: #888; }
+  .util-bar { display: flex; height: 20px; border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
+  .util-bar .setup { background: #ef4444; display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; font-weight: 600; }
+  .util-bar .productive { background: #22c55e; display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; font-weight: 600; }
+  .util-legend { display: flex; gap: 24px; font-size: 9px; }
+  .util-legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+  .narrative { font-size: 10px; line-height: 1.5; color: #333; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+  .scenario-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #eee; }
+  .scenario-row .lbl { color: #555; font-size: 9px; }
+  .scenario-row .val { font-weight: 700; font-size: 10px; }
+  .inputs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 16px; }
+  .input-item { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid #f0f0f0; }
+  .input-item .lbl { color: #555; font-size: 9px; }
+  .input-item .val { font-weight: 600; font-size: 9px; }
+  .footnote { font-size: 8px; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 6px; margin-top: 12px; }
+</style></head><body>
+
+<div class="header">
+  <h1>Flexo Setup Tax — Plant Capacity Audit</h1>
+  <h2>Operational Diagnostic Summary</h2>
+  <p>Quantifying press capacity consumed by setup activity.</p>
+</div>
+
+<div class="section">
+  <div class="section-title">Key Metrics</div>
+  <div class="metrics-grid">
+    <div class="metric-block">
+      <div class="label">Setup Hours Lost</div>
+      <div class="value">${formatNumber(results.setupHoursPerYear)}</div>
+      <div class="unit">hrs / year</div>
+    </div>
+    <div class="metric-block">
+      <div class="label">% Press Time Lost</div>
+      <div class="value">${formatPercent(results.pctPressTimeLostToSetup)}</div>
+      <div class="unit">&nbsp;</div>
+    </div>
+    <div class="metric-block">
+      <div class="label">Hidden Press Capacity</div>
+      <div class="value">${formatNumber(hiddenPC, 1)}</div>
+      <div class="unit">presses</div>
+    </div>
+    <div class="metric-block">
+      <div class="label">Recovered Production Hours</div>
+      <div class="value">${formatNumber(results.recoveredHours)}</div>
+      <div class="unit">hrs / year</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Press Capacity Utilization</div>
+  <div class="util-bar">
+    <div class="setup" style="width:${Math.max(setupPctVal, 2)}%">${setupPctVal.toFixed(1)}%</div>
+    <div class="productive" style="width:${Math.max(productivePctVal, 2)}%">${productivePctVal.toFixed(1)}%</div>
+  </div>
+  <div class="util-legend">
+    <span><span class="dot" style="background:#ef4444"></span>Setup Time: ${formatNumber(setupHours)} hrs (${setupPctVal.toFixed(1)}%)</span>
+    <span><span class="dot" style="background:#22c55e"></span>Remaining Productive Time: ${formatNumber(productiveHours)} hrs (${productivePctVal.toFixed(1)}%)</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Operational Impact</div>
+  <p class="narrative">This plant is currently losing approximately ${formatNumber(results.setupHoursPerYear)} press hours annually to changeovers, representing ${formatPercent(results.pctPressTimeLostToSetup)} of total available press capacity. This is equivalent to roughly ${formatNumber(hiddenPC, 1)} presses worth of plant capacity currently consumed by setup activity.</p>
+</div>
+
+<div class="section">
+  <div class="section-title">Improvement Scenario</div>
+  <div class="scenario-grid">
+    <div class="scenario-row"><span class="lbl">Setup Reduction Modeled</span><span class="val">${inputs.reductionPct}%</span></div>
+    <div class="scenario-row"><span class="lbl">Recovered Production Hours</span><span class="val">${formatNumber(results.recoveredHours)} hrs/yr</span></div>
+    ${results.recoveredLinearFeet !== null ? `<div class="scenario-row"><span class="lbl">Recovered Linear Feet</span><span class="val">${formatNumber(results.recoveredLinearFeet)} ft</span></div>` : ''}
+    ${results.potentialRevenueCapacity !== null ? `<div class="scenario-row"><span class="lbl">Potential Revenue Capacity</span><span class="val">${formatCurrency(results.potentialRevenueCapacity)}</span></div>` : ''}
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Audit Inputs</div>
+  <div class="inputs-grid">
+    <div class="input-item"><span class="lbl">Operating Mode</span><span class="val">${modeLabel}</span></div>
+    <div class="input-item"><span class="lbl">Number of Presses</span><span class="val">${inputs.presses}</span></div>
+    <div class="input-item"><span class="lbl">Changeovers / Press / Day</span><span class="val">${inputs.changeoversPerPressPerDay}</span></div>
+    <div class="input-item"><span class="lbl">Setup Minutes per Changeover</span><span class="val">${inputs.setupMinutesPerChangeover}</span></div>
+    <div class="input-item"><span class="lbl">Shifts per Day</span><span class="val">${inputs.shiftsPerDay}</span></div>
+    <div class="input-item"><span class="lbl">Hours per Shift</span><span class="val">${inputs.hoursPerShift}</span></div>
+    <div class="input-item"><span class="lbl">Operating Days per Year</span><span class="val">${inputs.operatingDaysPerYear}</span></div>
+    ${inputs.pressSpeedFPM !== null ? `<div class="input-item"><span class="lbl">Average Press Speed</span><span class="val">${inputs.pressSpeedFPM} ft/min</span></div>` : ''}
+    ${inputs.pricePerFoot !== null ? `<div class="input-item"><span class="lbl">Average Selling Price</span><span class="val">$${inputs.pricePerFoot}/ft</span></div>` : ''}
+    ${inputs.laborRate !== null ? `<div class="input-item"><span class="lbl">Operator Labor Rate</span><span class="val">$${inputs.laborRate}/hr</span></div>` : ''}
+  </div>
+</div>
+
+<div class="footnote">Benchmarks are directional and may vary by product mix, SKU complexity, and operating practices.</div>
+
+</body></html>`;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.onload = () => {
+        printWindow.print();
+      };
+    }
   };
 
   const metrics: { label: string; value: string; unit?: string }[] = [
