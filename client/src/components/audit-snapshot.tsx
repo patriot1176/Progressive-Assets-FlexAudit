@@ -391,7 +391,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     }
     let narrativeP3 = '';
     if (results.totalSetupImpact !== null) {
-      narrativeP3 = `Combined, these factors represent an estimated total operational impact of approximately ${formatCurrency(results.totalSetupImpact)} annually when both direct setup costs and unrealized production capacity are considered.`;
+      narrativeP3 = `Combined, these factors represent an estimated total operational impact of approximately ${formatCurrency(results.totalSetupImpact)} annually when both direct setup costs and unrealized production value are considered.`;
     } else {
       narrativeP3 = 'These results illustrate the operational impact of setup efficiency on plant throughput and highlight the potential value of reducing changeover time.';
     }
@@ -510,6 +510,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
 <!-- 6. Capacity Opportunity / Press Fleet Equivalents -->
 <div class="section">
   <div class="section-title">Capacity Opportunity — Press Fleet Equivalents</div>
+  <p class="narrative" style="margin-bottom:4px;font-style:italic;color:#666;">Press equivalents translate setup-related capacity loss into the number of presses effectively removed from production.</p>
   <p class="narrative" style="margin-bottom:10px;">Based on the modeled inputs, the plant's <strong>${inputs.presses}</strong> installed presses currently operate with the effective production capacity of approximately <strong>${formatNumber(effectiveToday, 1)}</strong> fully utilized presses due to setup activity.</p>
   <div class="fleet-row">
     <div class="fleet-label"><span class="name">Installed Presses</span><span class="val">${formatNumber(installed, 0)} presses</span></div>
@@ -659,7 +660,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
                 {results.potentialRevenueCapacity !== null && <>{' '}At the current selling price, the unused capacity caused by setup activity represents approximately <span className="font-semibold text-foreground">{formatCurrency(results.potentialRevenueCapacity)}</span> in unrealized annual production value.</>}
               </p>
               {results.totalSetupImpact !== null ? (
-                <p>Combined, these factors represent an estimated total operational impact of approximately <span className="font-semibold text-foreground">{formatCurrency(results.totalSetupImpact)}</span> annually when both direct setup costs and unrealized production capacity are considered.</p>
+                <p>Combined, these factors represent an estimated total operational impact of approximately <span className="font-semibold text-foreground">{formatCurrency(results.totalSetupImpact)}</span> annually when both direct setup costs and unrealized production value are considered.</p>
               ) : (
                 <p>These results illustrate the operational impact of setup efficiency on plant throughput and highlight the potential value of reducing changeover time.</p>
               )}
@@ -680,7 +681,8 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             </ul>
 
             <div className="mt-5 pt-4 border-t border-border/50">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Capacity Opportunity</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Capacity Opportunity</h4>
+              <p className="text-xs text-muted-foreground italic mb-2">Press equivalents translate setup-related capacity loss into the number of presses effectively removed from production.</p>
               <p className="text-sm leading-relaxed text-foreground/90" data-testid="text-capacity-opportunity">
                 Based on the modeled inputs, the plant's <span className="font-bold">{inputs.presses}</span> installed presses currently operate with the effective production capacity of approximately <span className="font-bold">{formatNumber(inputs.presses * (1 - results.pctPressTimeLostToSetup), 1)}</span> fully utilized presses due to setup activity.
               </p>
@@ -712,7 +714,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             )}
             {(results.totalSetupCost !== null || results.potentialRevenueCapacity !== null) && (
               <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
-                Direct setup costs include labor and substrate waste during press setup. Opportunity cost represents unrealized production capacity caused by setup downtime.
+                Direct setup costs include labor and substrate waste during press setup. Opportunity cost represents unrealized production value caused by setup downtime.
               </p>
             )}
           </CardContent>
