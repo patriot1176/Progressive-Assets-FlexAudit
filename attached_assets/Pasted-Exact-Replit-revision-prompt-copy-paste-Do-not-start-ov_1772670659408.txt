@@ -1,0 +1,107 @@
+Exact Replit revision prompt (copy/paste). Do not start over. No other changes.
+
+REVISION (do not start over): Add a new tab called “V12 Comparison” (4th tab after Snapshot). Do not change any existing tabs, calculations, styling, or copy outside what’s required to add this tab and wire state.
+
+Goal: In this new tab, compare the current audit results (auto-populated from existing computed values) vs a simple “modeled with V12” scenario driven by ONLY TWO user-entered inputs:
+
+V12 Setup Time (min) (no default; user must enter)
+
+V12 Feet per Minute (ft/min) (no default; user must enter)
+
+1) Tab + layout
+
+Add a tab label: V12 Comparison
+
+Inside, render a clean two-column layout:
+
+Current (from Audit) on the left
+
+Modeled with V12 (user inputs) on the right
+
+Add a small “Difference (V12 − Current)” section under the columns showing deltas for recovered hours, recovered feet, and revenue capacity.
+
+2) Auto-populate “Current (from Audit)” (no new math)
+
+Pull these values directly from the tool’s existing computed results (the same ones shown in Results/Snapshot):
+
+Annual Setup Hours Lost
+
+% Press Time Lost
+
+Equivalent Press Capacity Lost
+
+Annual Setup Labor Cost
+
+Recovered Hours (based on the currently selected setup reduction scenario)
+
+Recovered Feet
+
+Potential Production Revenue Capacity
+
+Do not re-derive with different formulas—reuse the existing computed variables/state.
+
+3) Add the TWO V12 user inputs (no defaults)
+
+In the right column, add a card titled “V12 Inputs” with two required numeric inputs:
+
+V12 Setup Time (min) (required; start empty; show placeholder “Enter minutes”)
+
+V12 Feet per Minute (ft/min) (required; start empty; show placeholder “Enter ft/min”)
+
+If either input is empty/invalid, show a neutral inline message: “Enter both V12 inputs to compute the modeled scenario.”
+
+4) Compute “Modeled with V12” using only those two inputs + existing audit volumes
+
+Use the audit’s existing activity volumes (presses, changeovers/press/day, shifts/day, days/year) to compute a V12-based scenario:
+
+Compute Annual V12 Setup Hours Lost using:
+
+annualChangeovers = presses * changeoversPerPressPerDay * shiftsPerDay * operatingDaysPerYear
+
+v12AnnualSetupHoursLost = (annualChangeovers * v12SetupTimeMin) / 60
+
+Compute V12 Press Time Lost % by dividing v12AnnualSetupHoursLost by the same existing “annual available press hours” denominator the app already uses for % press time lost (reuse existing variable/function).
+
+Compute V12 Equivalent Press Capacity Lost using the same method the current tool uses, but with v12AnnualSetupHoursLost.
+
+Compute V12 Recovered Hours as the difference between current annual setup hours lost and v12AnnualSetupHoursLost:
+
+v12RecoveredHours = max(currentAnnualSetupHoursLost - v12AnnualSetupHoursLost, 0)
+
+Compute V12 Recovered Feet using ONLY the user-entered V12 Feet/min:
+
+v12RecoveredFeet = v12RecoveredHours * 60 * v12FeetPerMin
+
+Compute V12 Potential Production Revenue Capacity using the tool’s existing avg selling price ($/ft) input (reuse existing value):
+
+v12RevenueCapacity = v12RecoveredFeet * avgSellingPricePerFt
+
+Also compute V12 Labor Cost using the tool’s existing operator labor rate ($/hr) and v12AnnualSetupHoursLost:
+
+v12AnnualSetupLaborCost = v12AnnualSetupHoursLost * operatorLaborRate
+
+5) Display (neutral, non-salesy)
+
+Title right column: “Modeled with V12”
+
+Use neutral language: “Modeled”, “Assumption”, “Estimate”.
+
+Add a small disclaimer at bottom of the V12 tab:
+
+“Modeled comparison for planning purposes. Actual results depend on mix, scheduling, and operating discipline.”
+
+6) Difference section
+
+Under the columns show:
+
+Recovered Hours: (v12RecoveredHours − currentRecoveredHours)
+
+Recovered Feet: (v12RecoveredFeet − currentRecoveredFeet)
+
+Revenue Capacity: (v12RevenueCapacity − currentRevenueCapacity)
+
+Annual Setup Labor Cost difference: (v12AnnualSetupLaborCost − currentAnnualSetupLaborCost)
+
+7) Strict constraint
+
+Do not change any other parts of the app. Do not modify existing benchmark labels/colors, operating mode behavior, existing scenario slider logic, or any existing copy outside of adding this new tab.

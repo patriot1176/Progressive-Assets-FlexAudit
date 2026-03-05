@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { AuditInputsSection } from "@/components/audit-inputs";
 import { AuditResultsSection } from "@/components/audit-results";
 import { AuditSnapshotSection } from "@/components/audit-snapshot";
+import { V12ComparisonSection } from "@/components/v12-comparison";
 import {
   type AuditInputs,
   type OperatingMode,
@@ -98,10 +99,11 @@ export default function Home() {
               Show Benchmark
             </Label>
           </div>
-          <TabsList className="grid w-full grid-cols-3 print:hidden" data-testid="tab-list">
+          <TabsList className="grid w-full grid-cols-4 print:hidden" data-testid="tab-list">
             <TabsTrigger value="inputs" data-testid="tab-inputs">Inputs</TabsTrigger>
             <TabsTrigger value="results" data-testid="tab-results">Results</TabsTrigger>
             <TabsTrigger value="snapshot" data-testid="tab-snapshot">Snapshot</TabsTrigger>
+            <TabsTrigger value="v12" data-testid="tab-v12">V12 Comparison</TabsTrigger>
           </TabsList>
 
           <div className="mt-5 sm:mt-6">
@@ -126,6 +128,9 @@ export default function Home() {
                 snapshotRef={snapshotRef}
                 showBenchmark={showBenchmark}
               />
+            </TabsContent>
+            <TabsContent value="v12" className="mt-0 print:hidden">
+              <V12ComparisonSection inputs={inputs} results={results} mode={mode} />
             </TabsContent>
           </div>
         </Tabs>
