@@ -197,6 +197,51 @@ function InputsUsedCard({ inputs, mode }: { inputs: AuditInputs; mode: Operating
   );
 }
 
+function PressFleetEquivalents({ inputs, results }: { inputs: AuditInputs; results: AuditResults }) {
+  const installed = inputs.presses;
+  const effectiveToday = inputs.presses * (1 - results.pctPressTimeLostToSetup);
+  const totalAvailable = results.totalAvailablePlantPressHoursPerYear;
+  const recoveredPressEquiv = totalAvailable > 0 ? (results.recoveredHours / totalAvailable) * inputs.presses : 0;
+  const effectiveAfter = Math.min(effectiveToday + recoveredPressEquiv, installed);
+
+  const rows = [
+    { label: 'Installed Presses', value: formatNumber(installed, 0), pct: 100 },
+    { label: 'Effective Presses Today', value: formatNumber(effectiveToday, 1), pct: installed > 0 ? (effectiveToday / installed) * 100 : 0 },
+    { label: `Effective Presses After Improvement (${inputs.reductionPct}% Reduction)`, value: formatNumber(effectiveAfter, 1), pct: installed > 0 ? Math.min((effectiveAfter / installed) * 100, 100) : 0 },
+  ];
+
+  return (
+    <Card data-testid="card-press-fleet">
+      <CardContent className="p-5 sm:p-6">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Press Fleet Equivalents</h3>
+        <div className="space-y-4">
+          {rows.map((row, i) => (
+            <div key={i} data-testid={`fleet-row-${i}`}>
+              <div className="flex justify-between items-baseline mb-1">
+                <span className="text-xs text-muted-foreground">{row.label}</span>
+                <span className="text-sm font-semibold">{row.value} <span className="text-xs font-normal text-muted-foreground">presses</span></span>
+              </div>
+              <div className="w-full h-4 rounded-full bg-muted overflow-hidden">
+                <div
+                  className={cn(
+                    "h-full rounded-full transition-all duration-500",
+                    i === 0 ? "bg-slate-400" : i === 1 ? "bg-amber-500" : "bg-emerald-500"
+                  )}
+                  style={{ width: `${Math.max(row.pct, 1)}%` }}
+                  data-testid={`fleet-bar-${i}`}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+          Effective presses translate setup loss and modeled recovery into press-equivalent capacity.
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
 function PressCapacityUtilizationBar({ results }: { results: AuditResults }) {
   const totalHours = results.totalAvailablePlantPressHoursPerYear;
   const setupHours = results.setupHoursPerYear;
@@ -488,8 +533,17 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
               <li>This represents the equivalent capacity of approximately <span className="font-bold">{formatNumber(results.pctPressTimeLostToSetup * inputs.presses, 1)}</span> presses currently consumed by setup activity.</li>
               <li>A <span className="font-bold">{inputs.reductionPct}%</span> reduction in setup time would unlock approximately <span className="font-bold">{results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</span> in potential production revenue capacity at current pricing.</li>
             </ul>
+
+            <div className="mt-5 pt-4 border-t border-border/50">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Capacity Opportunity</h4>
+              <p className="text-sm leading-relaxed text-foreground/90" data-testid="text-capacity-opportunity">
+                Based on the modeled inputs, the plant's <span className="font-bold">{inputs.presses}</span> installed presses currently deliver the effective production capacity of approximately <span className="font-bold">{formatNumber(inputs.presses * (1 - results.pctPressTimeLostToSetup), 1)}</span> fully utilized presses due to setup activity.
+              </p>
+            </div>
           </CardContent>
         </Card>
+
+        <PressFleetEquivalents inputs={inputs} results={results} />
 
         <Card>
           <CardContent className="p-5 sm:p-6">
