@@ -1,0 +1,79 @@
+
+"Add one new tab called 'M&A Analysis' positioned between 'Plate Cost' and 'Snapshot'. Do not change anything else — no redesign, no restructuring, no changes to any existing tabs, fields, calculations or layout. Only add this new tab.
+The tab has its own independent inputs at the top in a section called 'COMPANY & TRANSACTION INPUTS':
+
+Reported Annual EBITDA ($) — default 0, helper text 'Enter the company's most recently reported annual EBITDA'
+Assumed EBITDA Multiple (x) — default 6, range 4-12, increments of 0.5, helper text 'Typical label converter multiples range from 5x-9x depending on size, growth, and customer concentration'
+Estimated V12 Investment ($) — default 2000000, helper text 'Estimated all-in cost of HP Indigo V12 including installation, training, and first year support. Typical range $1.8M-$2.2M'
+
+OUTPUT SECTION 1 — EBITDA IMPACT ANALYSIS
+Display a clean comparison table with three columns: Current Operation, 40% Improvement, Full Elimination
+Rows:
+
+Annual Setup Tax: [Total Setup Cost from Results tab] | [Total Setup Cost × 60%] | $0
+Reported EBITDA: [entered value] | [entered value] | [entered value]
+Normalized EBITDA: [Reported EBITDA] | [Reported EBITDA + (Total Setup Cost × 40%)] | [Reported EBITDA + Total Setup Cost]
+EBITDA Margin Improvement: 0% | [(Total Setup Cost × 40%) ÷ Reported EBITDA × 100]% | [Total Setup Cost ÷ Reported EBITDA × 100]%
+
+If Reported EBITDA is 0 show dashes instead of calculations in this table and display a note: 'Enter Reported Annual EBITDA above to see EBITDA impact calculations'
+OUTPUT SECTION 2 — ENTERPRISE VALUE IMPACT
+Header: 'At [X]x EBITDA Multiple' — dynamically show the entered multiple
+Display a clean comparison table with three columns: Current Operation, 40% Improvement, Full Elimination
+Rows:
+
+EBITDA Used: [Reported EBITDA] | [Normalized EBITDA at 40%] | [Normalized EBITDA at full elimination]
+Enterprise Value: [Reported EBITDA × Multiple] | [Normalized EBITDA 40% × Multiple] | [Normalized EBITDA full × Multiple]
+Value Creation vs Current: — | [EV at 40% minus EV at current] | [EV at full minus EV at current]
+
+Display a prominent callout box showing:
+'The documented setup tax of $[Total Setup Cost] represents approximately $[Total Setup Cost × Multiple] in suppressed enterprise value at [X]x EBITDA. Full elimination would increase normalized enterprise value by approximately $[Total Setup Cost × Multiple].'
+If Reported EBITDA is 0 show the callout box using only the setup tax suppressed value without EBITDA normalization language.
+OUTPUT SECTION 3 — RETURN ON INVESTMENT
+Header: 'V12 Investment Analysis'
+Display these metrics as individual cards in a 2-column grid:
+
+V12 Investment: [Estimated V12 Investment input]
+Annual Setup Tax Eliminated: [Total Setup Cost from Results]
+Simple Payback Period: [V12 Investment ÷ Total Setup Cost] years — show to 1 decimal place
+3-Year Net Benefit: [(Total Setup Cost × 3) minus V12 Investment]
+5-Year Net Benefit: [(Total Setup Cost × 5) minus V12 Investment]
+Enterprise Value Created: [Total Setup Cost × EBITDA Multiple]
+
+Color code: Payback period green if under 4 years, yellow if 4-6 years, red if over 6 years
+Color code: Net benefit cards green if positive, red if negative
+Display a note below: 'Payback analysis assumes full elimination of setup tax. Actual results will vary based on job mix, digital press utilization, and operational implementation.'
+OUTPUT SECTION 4 — QUALITY OF EARNINGS LANGUAGE
+Header: 'Due Diligence Summary'
+Subheader: 'For use in M&A due diligence, QofE analysis, or investor presentations'
+Display this as a formatted text block that updates dynamically with real values:
+'SETUP TAX — QUALITY OF EARNINGS ADJUSTMENT
+This plant capacity diagnostic identifies an annual setup tax burden of approximately $[Total Setup Cost], representing [% Press Time Lost] of total available press capacity currently consumed by setup activity.
+This setup tax burden represents a potential Quality of Earnings adjustment of approximately $[Total Setup Cost] annually. Elimination of this operational inefficiency through investment in digital print technology would increase normalized EBITDA by approximately $[Total Setup Cost] per year.
+At an assumed transaction multiple of [X]x EBITDA, the suppressed enterprise value attributable to this setup tax burden is approximately $[Total Setup Cost × Multiple].
+Key operational metrics supporting this adjustment:
+
+Annual press hours lost to setup: [Annual Setup Hours Lost]
+Press capacity consumed by setup: [% Press Time Lost] ([Press Capacity Lost] press equivalents)
+Annual setup labor cost: $[Annual Setup Labor Cost]
+Annual setup material waste cost: $[Annual Setup Material Waste Cost]
+Annual plate cost: $[Annual Plate Cost]
+Annual consumables cost: $[Other Consumables × Annual Changeovers]
+Total documented setup tax: $[Total Setup Cost]
+
+Modeled improvement scenario (40% setup reduction):
+
+Recovered press hours: [Recovered Hours] hours/year
+Recovered production capacity: [Recovered Linear Feet] linear feet/year
+EBITDA improvement: $[Total Setup Cost × 40%]/year
+Enterprise value impact at [X]x: $[Total Setup Cost × 40% × Multiple]
+
+This analysis was produced using the Flexo Setup Tax Plant Capacity Audit methodology. All inputs were provided by plant management and have not been independently verified.'
+Add a 'Copy QofE Text' button below this text block that copies the full formatted text to clipboard.
+IMPORTANT BEHAVIOR:
+
+All outputs pull Total Setup Cost, Annual Setup Hours Lost, % Press Time Lost, Press Capacity Lost, Annual Setup Labor Cost, Annual Setup Material Waste Cost, Annual Plate Cost, Recovered Hours, and Recovered Linear Feet directly from the existing Results tab calculations
+If Total Setup Cost is 0 display a message: 'Complete the Inputs tab to generate M&A analysis'
+This tab does not affect any calculations on any other tab
+The tab is fully functional even if Reported EBITDA is left at 0 — Enterprise Value sections that require EBITDA will show dashes with an explanatory note
+
+Do not touch any other calculations, fields, labels, layout, styling or logic anywhere in the app. Only add this new tab."
