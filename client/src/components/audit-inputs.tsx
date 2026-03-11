@@ -96,6 +96,7 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
                 value={inputs.setupMinutesPerChangeover}
                 onChange={(v) => onInputChange('setupMinutesPerChangeover', v)}
                 min={1}
+                step={5}
                 suffix="min"
                 testId="input-setup-time"
                 tooltip="Include washups, plate mounting, and registration."
