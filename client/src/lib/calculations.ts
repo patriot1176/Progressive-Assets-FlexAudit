@@ -13,6 +13,8 @@ export interface AuditInputs {
   setupWasteFt: number | null;
   avgWebWidthIn: number | null;
   materialCostPerMSI: number | null;
+  avgColorsPerJob: number | null;
+  avgPlateCostPerColor: number | null;
   reductionPct: number;
 }
 
@@ -32,6 +34,8 @@ export interface AuditResults {
   potentialRevenueCapacity: number | null;
   wasteCostPerSetup: number | null;
   annualSetupMaterialWasteCost: number | null;
+  plateCostPerChangeover: number | null;
+  annualPlateCost: number | null;
   totalSetupCost: number | null;
   setupTaxPerChangeover: number | null;
   totalSetupImpact: number | null;
@@ -50,6 +54,8 @@ export const DEFAULT_INPUTS: AuditInputs = {
   setupWasteFt: 100,
   avgWebWidthIn: 13,
   materialCostPerMSI: 0.40,
+  avgColorsPerJob: 5,
+  avgPlateCostPerColor: 175,
   reductionPct: 50,
 };
 
@@ -99,6 +105,8 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
 
   let wasteCostPerSetup: number | null = null;
   let annualSetupMaterialWasteCost: number | null = null;
+  let plateCostPerChangeover: number | null = null;
+  let annualPlateCost: number | null = null;
   let totalSetupCost: number | null = null;
 
   if (hasWasteInputs) {
@@ -108,8 +116,13 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     annualSetupMaterialWasteCost = wasteCostPerSetup * annualChangeovers;
   }
 
+  if (inputs.avgColorsPerJob !== null && inputs.avgPlateCostPerColor !== null) {
+    plateCostPerChangeover = inputs.avgColorsPerJob * inputs.avgPlateCostPerColor;
+    annualPlateCost = plateCostPerChangeover * annualChangeovers;
+  }
+
   if (annualSetupLaborCost !== null && annualSetupMaterialWasteCost !== null) {
-    totalSetupCost = annualSetupLaborCost + annualSetupMaterialWasteCost;
+    totalSetupCost = annualSetupLaborCost + annualSetupMaterialWasteCost + (annualPlateCost ?? 0);
   }
 
   let setupTaxPerChangeover: number | null = null;
@@ -139,6 +152,8 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     potentialRevenueCapacity,
     wasteCostPerSetup,
     annualSetupMaterialWasteCost,
+    plateCostPerChangeover,
+    annualPlateCost,
     totalSetupCost,
     setupTaxPerChangeover,
     totalSetupImpact,

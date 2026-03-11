@@ -129,12 +129,32 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
             testId="card-material-waste"
           />
         )}
+        {results.plateCostPerChangeover !== null && (
+          <MetricCard
+            icon={DollarSign}
+            label="Plate Cost per Changeover"
+            value={formatCurrency(results.plateCostPerChangeover)}
+            description="per changeover"
+            accent="loss"
+            testId="card-plate-cost-per-changeover"
+          />
+        )}
+        {results.annualPlateCost !== null && (
+          <MetricCard
+            icon={DollarSign}
+            label="Annual Plate Cost"
+            value={formatCurrency(results.annualPlateCost)}
+            description="plate cost / year"
+            accent="loss"
+            testId="card-annual-plate-cost"
+          />
+        )}
         {results.totalSetupCost !== null && (
           <MetricCard
             icon={DollarSign}
             label="Total Setup Cost"
             value={formatCurrency(results.totalSetupCost)}
-            description="labor + material waste / year"
+            description="labor + material waste + plate cost / year"
             accent="loss"
             testId="card-total-setup-cost"
           />

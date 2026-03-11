@@ -198,6 +198,21 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               step={0.01}
               testId="input-material-cost-msi"
             />
+            <OptionalNumberField
+              label="Avg Colors per Job"
+              value={inputs.avgColorsPerJob}
+              onChange={(v) => onInputChange('avgColorsPerJob', v)}
+              step={1}
+              testId="input-avg-colors-per-job"
+            />
+            <OptionalNumberField
+              label="Avg Plate Cost per Color ($)"
+              value={inputs.avgPlateCostPerColor}
+              onChange={(v) => onInputChange('avgPlateCostPerColor', v)}
+              prefix="$"
+              step={1}
+              testId="input-avg-plate-cost-per-color"
+            />
           </div>
         </CardContent>
       </Card>
