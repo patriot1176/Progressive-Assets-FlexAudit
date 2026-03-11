@@ -335,6 +335,13 @@ function BenchmarkInterpretation() {
 export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snapshotRef, showBenchmark }: Props) {
   const { toast } = useToast();
 
+  const totalAnnualRevenue = inputs.pressSpeedFPM !== null && inputs.pricePerFoot !== null
+    ? results.totalAvailablePlantPressHoursPerYear * 60 * inputs.pressSpeedFPM * inputs.pricePerFoot
+    : null;
+  const plateCostPctOfTotalRevenue = results.annualPlateCost !== null && totalAnnualRevenue !== null && totalAnnualRevenue > 0
+    ? (results.annualPlateCost / totalAnnualRevenue) * 100
+    : null;
+
   const handleShareLink = async () => {
     const params = encodeInputsToParams(inputs, mode);
     const url = `${window.location.origin}${window.location.pathname}?${params}`;
@@ -501,7 +508,17 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   <p class="narrative">This plant is currently giving up meaningful press capacity to setup activity.</p>
   <p class="narrative">Based on the inputs provided, this plant is losing approximately <strong>${formatNumber(results.setupHoursPerYear)}</strong> press hours per year to changeovers, representing <strong>${formatPercent(results.pctPressTimeLostToSetup)}</strong> of total available press capacity. This loss is equivalent to roughly <strong>${formatNumber(hiddenPC, 1)}</strong> presses worth of plant capacity currently consumed by setup activity.</p>
   <p class="narrative">${narrativeP2}</p>
-  ${results.annualPlateCost !== null && results.potentialRevenueCapacity !== null && results.potentialRevenueCapacity > 0 ? `<p class="narrative">Modeled annual plate costs of approximately <strong>${formatCurrency(results.annualPlateCost)}</strong> represent approximately <strong>${formatNumber((results.annualPlateCost / results.potentialRevenueCapacity) * 100, 1)}%</strong> of the <strong>${formatCurrency(results.potentialRevenueCapacity)}</strong> in unrealized annual production revenue.</p>` : ''}
+  ${(() => {
+      const totalRev = inputs.pressSpeedFPM !== null && inputs.pricePerFoot !== null
+        ? results.totalAvailablePlantPressHoursPerYear * 60 * inputs.pressSpeedFPM * inputs.pricePerFoot
+        : null;
+      const pct = results.annualPlateCost !== null && totalRev !== null && totalRev > 0
+        ? (results.annualPlateCost / totalRev) * 100
+        : null;
+      return results.annualPlateCost !== null && pct !== null
+        ? `<p class="narrative">Modeled annual plate costs of approximately <strong>${formatCurrency(results.annualPlateCost)}</strong> per year represent <strong>${formatNumber(pct, 1)}%</strong> of estimated annual revenue consumed by plate activity.</p>`
+        : '';
+    })()}
   <p class="narrative">${narrativeP3}</p>
 </div>
 
@@ -667,8 +684,8 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
                 {results.recoveredLinearFeet !== null && <>{' '}This recovered capacity could unlock roughly <span className="font-semibold text-foreground">{formatNumber(results.recoveredLinearFeet)}</span> additional linear feet of recoverable production capacity.</>}
                 {results.potentialRevenueCapacity !== null && <>{' '}At the current selling price, the unused capacity caused by setup activity represents approximately <span className="font-semibold text-foreground">{formatCurrency(results.potentialRevenueCapacity)}</span> in unrealized annual production revenue.</>}
               </p>
-              {results.annualPlateCost !== null && results.potentialRevenueCapacity !== null && results.potentialRevenueCapacity > 0 && (
-                <p>Modeled annual plate costs of approximately <span className="font-semibold text-foreground">{formatCurrency(results.annualPlateCost)}</span> represent approximately <span className="font-semibold text-foreground">{formatNumber((results.annualPlateCost / results.potentialRevenueCapacity) * 100, 1)}%</span> of the <span className="font-semibold text-foreground">{formatCurrency(results.potentialRevenueCapacity)}</span> in unrealized annual production revenue.</p>
+              {results.annualPlateCost !== null && plateCostPctOfTotalRevenue !== null && (
+                <p>Modeled annual plate costs of approximately <span className="font-semibold text-foreground">{formatCurrency(results.annualPlateCost)}</span> per year represent <span className="font-semibold text-foreground">{formatNumber(plateCostPctOfTotalRevenue, 1)}%</span> of estimated annual revenue consumed by plate activity.</p>
               )}
               {results.totalSetupImpact !== null ? (
                 <p>Combined, these factors represent an estimated total operational impact of approximately <span className="font-semibold text-foreground">{formatCurrency(results.totalSetupImpact)}</span> annually when both direct setup costs and unrealized production value are considered.</p>
