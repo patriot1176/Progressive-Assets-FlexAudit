@@ -95,8 +95,9 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
                 label="Setup Time per Changeover"
                 value={inputs.setupMinutesPerChangeover}
                 onChange={(v) => onInputChange('setupMinutesPerChangeover', v)}
-                onBlur={(v) => onInputChange('setupMinutesPerChangeover', Math.max(5, Math.round(v / 5) * 5))}
-                min={1}
+                onBlur={(v) => onInputChange('setupMinutesPerChangeover', Math.min(90, Math.max(5, Math.round(v / 5) * 5)))}
+                min={5}
+                max={90}
                 step={5}
                 suffix="min"
                 testId="input-setup-time"
@@ -300,12 +301,13 @@ function handleSelectAll(e: React.FocusEvent<HTMLInputElement>) {
   e.target.select();
 }
 
-function NumberField({ label, value, onChange, onBlur, min = 0, suffix, prefix, step = 1, testId, tooltip }: {
+function NumberField({ label, value, onChange, onBlur, min = 0, max, suffix, prefix, step = 1, testId, tooltip }: {
   label: string;
   value: number;
   onChange: (v: number) => void;
   onBlur?: (v: number) => void;
   min?: number;
+  max?: number;
   suffix?: string;
   prefix?: string;
   step?: number;
@@ -338,12 +340,13 @@ function NumberField({ label, value, onChange, onBlur, min = 0, suffix, prefix, 
           type="number"
           inputMode="numeric"
           min={min}
+          max={max}
           step={step}
           value={value}
           onFocus={handleSelectAll}
           onChange={(e) => {
             const v = e.target.valueAsNumber;
-            if (!isNaN(v) && v >= min) onChange(v);
+            if (!isNaN(v) && v >= min && (max === undefined || v <= max)) onChange(v);
           }}
           onBlur={(e) => {
             if (onBlur) {
