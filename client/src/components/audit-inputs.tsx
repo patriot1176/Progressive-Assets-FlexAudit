@@ -220,7 +220,7 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               suffix="%"
               step={1}
               testId="input-pct-jobs-requiring-new-plates"
-              helperText="Percentage of changeovers that require new plate sets due to copy changes"
+              helperText="Percentage of jobs requiring a complete new plate set — new jobs or full remakes."
             />
             <OptionalNumberField
               label="Avg Plates Changed per Copy Change"
