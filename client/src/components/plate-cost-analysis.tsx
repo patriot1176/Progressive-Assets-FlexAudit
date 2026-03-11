@@ -45,29 +45,78 @@ function NumInput({
   );
 }
 
+function StrNumInput({
+  label,
+  value,
+  onChange,
+  prefix,
+  suffix,
+  step = 1,
+  testId,
+  helperText,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  prefix?: string;
+  suffix?: string;
+  step?: number;
+  testId?: string;
+  helperText?: string;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label className="text-sm font-medium">{label}</Label>
+      <div className="relative flex items-center">
+        {prefix && <span className="absolute left-3 text-sm text-muted-foreground pointer-events-none">{prefix}</span>}
+        <Input
+          type="number"
+          value={value}
+          min={0}
+          step={step}
+          onChange={(e) => onChange(e.target.value)}
+          className={cn("h-9 text-sm", prefix && "pl-7", suffix && "pr-10")}
+          data-testid={testId}
+        />
+        {suffix && <span className="absolute right-3 text-sm text-muted-foreground pointer-events-none">{suffix}</span>}
+      </div>
+      {helperText && <p className="text-xs text-muted-foreground">{helperText}</p>}
+    </div>
+  );
+}
+
+function n(s: string): number { return parseFloat(s) || 0; }
+
 function fmtC(n: number) { return formatCurrency(n); }
 function fmtN(n: number, d = 0) { return n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); }
 
 const FIXED_LENGTHS = [500, 1000, 2500, 5000, 10000];
 
 export function PlateCostAnalysisSection() {
-  const [newJobsPerYear, setNewJobsPerYear] = useState(0);
-  const [avgColors, setAvgColors] = useState(0);
-  const [avgPlateCostPerColor, setAvgPlateCostPerColor] = useState(0);
+  const [newJobsPerYear, setNewJobsPerYear] = useState('');
+  const [avgColors, setAvgColors] = useState('');
+  const [avgPlateCostPerColor, setAvgPlateCostPerColor] = useState('');
   const [avgSellingPrice, setAvgSellingPrice] = useState(0.21);
-  const [avgRunLength, setAvgRunLength] = useState(0);
+  const [avgRunLength, setAvgRunLength] = useState('');
 
-  const [copyChangeEvents, setCopyChangeEvents] = useState(0);
+  const [copyChangeEvents, setCopyChangeEvents] = useState('');
   const [avgPlatesPerCopyChange, setAvgPlatesPerCopyChange] = useState(1);
-  const [avgPlateCostPerCopyChangePlate, setAvgPlateCostPerCopyChangePlate] = useState(0);
+  const [avgPlateCostPerCopyChangePlate, setAvgPlateCostPerCopyChangePlate] = useState('');
 
   const [numSkus, setNumSkus] = useState(0);
   const [customLength, setCustomLength] = useState(0);
 
-  const newJobPlateCostPerJob = avgColors * avgPlateCostPerColor;
-  const copyChangePlateCostPerEvent = avgPlatesPerCopyChange * avgPlateCostPerCopyChangePlate;
-  const totalAnnualNewJobPlateCost = newJobsPerYear * newJobPlateCostPerJob;
-  const totalAnnualCopyChangePlateCost = copyChangeEvents * copyChangePlateCostPerEvent;
+  const nColors = n(avgColors);
+  const nPlateCostPerColor = n(avgPlateCostPerColor);
+  const nNewJobsPerYear = n(newJobsPerYear);
+  const nRunLength = n(avgRunLength);
+  const nCopyChangeEvents = n(copyChangeEvents);
+  const nPlateCostPerCopyChangePlate = n(avgPlateCostPerCopyChangePlate);
+
+  const newJobPlateCostPerJob = nColors * nPlateCostPerColor;
+  const copyChangePlateCostPerEvent = avgPlatesPerCopyChange * nPlateCostPerCopyChangePlate;
+  const totalAnnualNewJobPlateCost = nNewJobsPerYear * newJobPlateCostPerJob;
+  const totalAnnualCopyChangePlateCost = nCopyChangeEvents * copyChangePlateCostPerEvent;
   const totalAnnualPlateCost = totalAnnualNewJobPlateCost + totalAnnualCopyChangePlateCost;
 
   const breakEvenFootage = avgSellingPrice > 0 ? newJobPlateCostPerJob / avgSellingPrice : null;
@@ -85,8 +134,8 @@ export function PlateCostAnalysisSection() {
     return { jobRevenue, plateCost, net, color, covered };
   }
 
-  const skuTotalFlexo = numSkus * avgColors * avgPlateCostPerColor;
-  const skuAnnualCopyChange = numSkus * avgPlatesPerCopyChange * avgPlateCostPerCopyChangePlate;
+  const skuTotalFlexo = numSkus * nColors * nPlateCostPerColor;
+  const skuAnnualCopyChange = numSkus * avgPlatesPerCopyChange * nPlateCostPerCopyChangePlate;
   const skuCombinedFlexo = skuTotalFlexo + skuAnnualCopyChange;
 
   const flexoRedClass = (v: number) => v > 10000 ? 'text-red-600 dark:text-red-400 font-semibold' : '';
@@ -122,11 +171,11 @@ export function PlateCostAnalysisSection() {
             <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Section 1 — Job & Plate Configuration</CardTitle>
           </CardHeader>
           <CardContent className="pt-0 space-y-4">
-            <NumInput label="Number of New Jobs per Year" value={newJobsPerYear} onChange={setNewJobsPerYear} testId="pca-new-jobs-per-year" />
-            <NumInput label="Avg Colors per Job" value={avgColors} onChange={setAvgColors} testId="pca-avg-colors-per-job" />
-            <NumInput label="Avg Plate Cost per Color ($)" value={avgPlateCostPerColor} onChange={setAvgPlateCostPerColor} prefix="$" testId="pca-avg-plate-cost-per-color" />
+            <StrNumInput label="Number of New Jobs per Year" value={newJobsPerYear} onChange={setNewJobsPerYear} testId="pca-new-jobs-per-year" />
+            <StrNumInput label="Avg Colors per Job" value={avgColors} onChange={setAvgColors} testId="pca-avg-colors-per-job" />
+            <StrNumInput label="Avg Plate Cost per Color ($)" value={avgPlateCostPerColor} onChange={setAvgPlateCostPerColor} prefix="$" testId="pca-avg-plate-cost-per-color" />
             <NumInput label="Avg Selling Price ($/ft)" value={avgSellingPrice} onChange={setAvgSellingPrice} prefix="$" suffix="/ft" step={0.01} testId="pca-avg-selling-price" />
-            <NumInput label="Avg Run Length per Job (ft)" value={avgRunLength} onChange={setAvgRunLength} suffix="ft" testId="pca-avg-run-length" />
+            <StrNumInput label="Avg Run Length per Job (ft)" value={avgRunLength} onChange={setAvgRunLength} suffix="ft" testId="pca-avg-run-length" />
           </CardContent>
         </Card>
 
@@ -135,9 +184,9 @@ export function PlateCostAnalysisSection() {
             <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Section 2 — Copy Change Events</CardTitle>
           </CardHeader>
           <CardContent className="pt-0 space-y-4">
-            <NumInput label="Number of Copy Change Events per Year" value={copyChangeEvents} onChange={setCopyChangeEvents} testId="pca-copy-change-events" />
+            <StrNumInput label="Number of Copy Change Events per Year" value={copyChangeEvents} onChange={setCopyChangeEvents} testId="pca-copy-change-events" />
             <NumInput label="Avg Plates Changed per Copy Change" value={avgPlatesPerCopyChange} onChange={setAvgPlatesPerCopyChange} testId="pca-avg-plates-per-copy-change" />
-            <NumInput label="Avg Plate Cost per Copy Change Plate ($)" value={avgPlateCostPerCopyChangePlate} onChange={setAvgPlateCostPerCopyChangePlate} prefix="$" testId="pca-avg-plate-cost-copy-change" />
+            <StrNumInput label="Avg Plate Cost per Copy Change Plate ($)" value={avgPlateCostPerCopyChangePlate} onChange={setAvgPlateCostPerCopyChangePlate} prefix="$" testId="pca-avg-plate-cost-copy-change" />
           </CardContent>
         </Card>
       </div>
@@ -157,10 +206,10 @@ export function PlateCostAnalysisSection() {
             </thead>
             <tbody>
               {[
-                { label: 'New Job Plate Cost per Job', flexo: newJobPlateCostPerJob, formula: `${avgColors} colors × $${avgPlateCostPerColor}/color` },
-                { label: 'Copy Change Plate Cost per Event', flexo: copyChangePlateCostPerEvent, formula: `${avgPlatesPerCopyChange} plates × $${avgPlateCostPerCopyChangePlate}/plate` },
-                { label: 'Total Annual New Job Plate Cost', flexo: totalAnnualNewJobPlateCost, formula: `${newJobsPerYear} jobs × ${avgColors} colors × $${avgPlateCostPerColor}` },
-                { label: 'Total Annual Copy Change Plate Cost', flexo: totalAnnualCopyChangePlateCost, formula: `${copyChangeEvents} events × ${avgPlatesPerCopyChange} plates × $${avgPlateCostPerCopyChangePlate}` },
+                { label: 'New Job Plate Cost per Job', flexo: newJobPlateCostPerJob, formula: `${nColors} colors × $${nPlateCostPerColor}/color` },
+                { label: 'Copy Change Plate Cost per Event', flexo: copyChangePlateCostPerEvent, formula: `${avgPlatesPerCopyChange} plates × $${nPlateCostPerCopyChangePlate}/plate` },
+                { label: 'Total Annual New Job Plate Cost', flexo: totalAnnualNewJobPlateCost, formula: `${nNewJobsPerYear} jobs × ${nColors} colors × $${nPlateCostPerColor}` },
+                { label: 'Total Annual Copy Change Plate Cost', flexo: totalAnnualCopyChangePlateCost, formula: `${nCopyChangeEvents} events × ${avgPlatesPerCopyChange} plates × $${nPlateCostPerCopyChangePlate}` },
               ].map(({ label, flexo, formula }) => (
                 <tr key={label} className="border-b border-border/50">
                   <td className="py-2.5 px-3 text-sm">
@@ -289,7 +338,7 @@ export function PlateCostAnalysisSection() {
                 <tr className="border-b border-border/50">
                   <td className="py-2.5 px-3 text-sm">
                     <div className="font-medium">Total Plate Cost for SKU Family</div>
-                    <div className="text-xs text-muted-foreground">{numSkus} SKUs × {avgColors} colors × ${avgPlateCostPerColor}/color</div>
+                    <div className="text-xs text-muted-foreground">{numSkus} SKUs × {nColors} colors × ${nPlateCostPerColor}/color</div>
                   </td>
                   <td className={cn("py-2.5 px-3 text-sm text-right whitespace-nowrap", flexoRedClass(skuTotalFlexo))}>{fmtC(skuTotalFlexo)}</td>
                   <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap text-green-600 dark:text-green-400">$0</td>
@@ -297,7 +346,7 @@ export function PlateCostAnalysisSection() {
                 <tr className="border-b border-border/50">
                   <td className="py-2.5 px-3 text-sm">
                     <div className="font-medium">If every SKU gets one copy change per year</div>
-                    <div className="text-xs text-muted-foreground">{numSkus} SKUs × {avgPlatesPerCopyChange} plates × ${avgPlateCostPerCopyChangePlate}/plate</div>
+                    <div className="text-xs text-muted-foreground">{numSkus} SKUs × {avgPlatesPerCopyChange} plates × ${nPlateCostPerCopyChangePlate}/plate</div>
                   </td>
                   <td className={cn("py-2.5 px-3 text-sm text-right whitespace-nowrap", flexoRedClass(skuAnnualCopyChange))}>{fmtC(skuAnnualCopyChange)}</td>
                   <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap text-green-600 dark:text-green-400">$0</td>
