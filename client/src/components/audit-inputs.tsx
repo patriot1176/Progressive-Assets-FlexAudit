@@ -214,7 +214,7 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               testId="input-avg-plate-cost-per-color"
             />
             <OptionalNumberField
-              label="% of Jobs Requiring New Plates"
+              label="% of Jobs Requiring Full Plate Set"
               value={inputs.pctJobsRequiringNewPlates}
               onChange={(v) => onInputChange('pctJobsRequiringNewPlates', v)}
               suffix="%"
@@ -229,6 +229,15 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               step={1}
               testId="input-avg-plates-changed-per-copy-change"
               helperText="Average number of plates remade when a copy change occurs — often just text plates, not all colors"
+            />
+            <OptionalNumberField
+              label="% of Jobs With Copy Changes Only"
+              value={inputs.pctJobsWithCopyChangesOnly}
+              onChange={(v) => onInputChange('pctJobsWithCopyChangesOnly', v)}
+              suffix="%"
+              step={1}
+              testId="input-pct-jobs-with-copy-changes-only"
+              helperText="Percentage of changeovers involving only copy changes (text or art updates), not full plate remakes"
             />
           </div>
         </CardContent>

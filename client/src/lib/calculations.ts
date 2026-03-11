@@ -17,6 +17,7 @@ export interface AuditInputs {
   avgPlateCostPerColor: number | null;
   pctJobsRequiringNewPlates: number | null;
   avgPlatesChangedPerCopyChange: number | null;
+  pctJobsWithCopyChangesOnly: number | null;
   reductionPct: number;
 }
 
@@ -59,7 +60,8 @@ export const DEFAULT_INPUTS: AuditInputs = {
   avgColorsPerJob: 0,
   avgPlateCostPerColor: 0,
   pctJobsRequiringNewPlates: 30,
-  avgPlatesChangedPerCopyChange: 1,
+  avgPlatesChangedPerCopyChange: 0,
+  pctJobsWithCopyChangesOnly: 0,
   reductionPct: 50,
 };
 
@@ -120,10 +122,18 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     annualSetupMaterialWasteCost = wasteCostPerSetup * annualChangeovers;
   }
 
-  if (inputs.avgPlatesChangedPerCopyChange !== null && inputs.avgPlateCostPerColor !== null) {
-    const newPlatesPct = (inputs.pctJobsRequiringNewPlates ?? 100) / 100;
-    plateCostPerChangeover = inputs.avgPlatesChangedPerCopyChange * inputs.avgPlateCostPerColor * newPlatesPct;
-    annualPlateCost = plateCostPerChangeover * annualChangeovers;
+  if (inputs.avgPlateCostPerColor !== null && inputs.avgPlateCostPerColor > 0) {
+    const fullSetComponent = (inputs.avgColorsPerJob ?? 0)
+      * inputs.avgPlateCostPerColor
+      * ((inputs.pctJobsRequiringNewPlates ?? 0) / 100);
+    const copyChangeComponent = (inputs.avgPlatesChangedPerCopyChange ?? 0)
+      * inputs.avgPlateCostPerColor
+      * ((inputs.pctJobsWithCopyChangesOnly ?? 0) / 100);
+    const combined = fullSetComponent + copyChangeComponent;
+    if (combined > 0) {
+      plateCostPerChangeover = combined;
+      annualPlateCost = plateCostPerChangeover * annualChangeovers;
+    }
   }
 
   if (annualSetupLaborCost !== null && annualSetupMaterialWasteCost !== null) {
@@ -133,7 +143,7 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
   let setupTaxPerChangeover: number | null = null;
   if (annualSetupLaborCost !== null && wasteCostPerSetup !== null && annualChangeovers > 0) {
     const laborPerChangeover = annualSetupLaborCost / annualChangeovers;
-    setupTaxPerChangeover = laborPerChangeover + wasteCostPerSetup;
+    setupTaxPerChangeover = laborPerChangeover + wasteCostPerSetup + (plateCostPerChangeover ?? 0);
   }
 
   let totalSetupImpact: number | null = null;
