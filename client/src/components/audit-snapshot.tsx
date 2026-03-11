@@ -409,7 +409,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     if (results.annualSetupMaterialWasteCost !== null && results.wasteCostPerSetup !== null) {
       keyFindings += `<li>Modeled setup material waste is approximately <strong>${formatCurrency(results.annualSetupMaterialWasteCost)}</strong> per year (≈ <strong>${formatCurrency(results.wasteCostPerSetup)}</strong> per changeover based on setup waste length, press web width, and material cost per MSI).</li>`;
     }
-    if (results.annualPlateCost !== null && results.plateCostPerChangeover !== null && inputs.avgColorsPerJob !== null && inputs.avgPlateCostPerColor !== null && inputs.pctJobsRequiringNewPlates !== null) {
+    if (results.annualPlateCost !== null && results.plateCostPerChangeover !== null && inputs.avgColorsPerJob !== null && inputs.avgColorsPerJob > 0 && inputs.avgPlateCostPerColor !== null && inputs.avgPlateCostPerColor > 0 && inputs.pctJobsRequiringNewPlates !== null) {
       keyFindings += `<li>Annual plate cost is approximately <strong>${formatCurrency(results.annualPlateCost)}</strong> per year (= <strong>${formatCurrency(results.plateCostPerChangeover)}</strong> per changeover), based on <strong>${inputs.avgColorsPerJob}</strong> colors × <strong>$${inputs.avgPlateCostPerColor}</strong> per color × <strong>${inputs.pctJobsRequiringNewPlates}%</strong> of changeovers requiring new plates.</li>`;
     }
 
@@ -706,7 +706,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
               {results.annualSetupMaterialWasteCost !== null && results.wasteCostPerSetup !== null && (
                 <li>Modeled setup material waste is approximately <span className="font-bold">{formatCurrency(results.annualSetupMaterialWasteCost)}</span> per year (≈ <span className="font-bold">{formatCurrency(results.wasteCostPerSetup)}</span> per changeover based on setup waste length, press web width, and material cost per MSI).</li>
               )}
-              {results.annualPlateCost !== null && results.plateCostPerChangeover !== null && inputs.avgColorsPerJob !== null && inputs.avgPlateCostPerColor !== null && inputs.pctJobsRequiringNewPlates !== null && (
+              {results.annualPlateCost !== null && results.plateCostPerChangeover !== null && inputs.avgColorsPerJob !== null && inputs.avgColorsPerJob > 0 && inputs.avgPlateCostPerColor !== null && inputs.avgPlateCostPerColor > 0 && inputs.pctJobsRequiringNewPlates !== null && (
                 <li>Annual plate cost is approximately <span className="font-bold">{formatCurrency(results.annualPlateCost)}</span> per year (= <span className="font-bold">{formatCurrency(results.plateCostPerChangeover)}</span> per changeover), based on <span className="font-bold">{inputs.avgColorsPerJob}</span> colors × <span className="font-bold">${inputs.avgPlateCostPerColor}</span> per color × <span className="font-bold">{inputs.pctJobsRequiringNewPlates}%</span> of changeovers requiring new plates.</li>
               )}
             </ul>
