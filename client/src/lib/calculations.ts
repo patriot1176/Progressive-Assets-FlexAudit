@@ -49,11 +49,11 @@ export interface AuditResults {
 export const DEFAULT_INPUTS: AuditInputs = {
   presses: 5,
   changeoversPerPressPerDay: 8,
-  setupMinutesPerChangeover: 55,
+  setupMinutesPerChangeover: 60,
   shiftsPerDay: 2,
-  hoursPerShift: 10,
+  hoursPerShift: 8,
   operatingDaysPerYear: 250,
-  pressSpeedFPM: 200,
+  pressSpeedFPM: 150,
   pricePerFoot: 0.21,
   laborRate: 30,
   setupWasteFt: 500,
@@ -65,7 +65,7 @@ export const DEFAULT_INPUTS: AuditInputs = {
   avgPlatesChangedPerCopyChange: 0,
   pctJobsWithCopyChangesOnly: 0,
   consumablesPerChangeover: 0,
-  reductionPct: 50,
+  reductionPct: 40,
 };
 
 export function getModePresets(mode: OperatingMode): { setupMultiplier: number; reductionPct: number } {
