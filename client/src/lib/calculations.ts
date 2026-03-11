@@ -59,7 +59,7 @@ export const DEFAULT_INPUTS: AuditInputs = {
   materialCostPerMSI: 0.40,
   avgColorsPerJob: 0,
   avgPlateCostPerColor: 0,
-  pctJobsRequiringNewPlates: 30,
+  pctJobsRequiringNewPlates: 0,
   avgPlatesChangedPerCopyChange: 0,
   pctJobsWithCopyChangesOnly: 0,
   reductionPct: 50,
