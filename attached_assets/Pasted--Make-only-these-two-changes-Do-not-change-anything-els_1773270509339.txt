@@ -1,0 +1,34 @@
+"Make only these two changes. Do not change anything else — no redesign, no restructuring, no renaming of existing fields, no layout changes.
+Change 1 — Add a single new input field to the 'Optional — Setup Material Waste' section on the Inputs tab:
+
+Field label: 'Other Consumables per Changeover ($)'
+Default value: 0
+Helper text: 'Estimated cost of mounting tape, anilox cleaning solvent, residual ink waste, and other press supplies consumed per changeover'
+This value must feed into Setup Tax per Changeover and Total Setup Cost calculations exactly like the existing material waste cost does
+Update the Total Setup Cost label from 'labor + material waste + plate cost / year' to 'labor + material waste + plate cost + consumables / year'
+Update Results tab, Snapshot tab Core Metrics, and Executive Snapshot text to reflect this additional cost component
+
+Change 2 — Add a new section at the bottom of the Results tab called 'Estimating System Comparison':
+
+This section only becomes visible when the user enters a value greater than 0 in the 'Estimated Setup Cost per Job' field
+Add two inputs at the top of this section:
+
+'Estimating System Name' — text input, placeholder text 'e.g. Labeltraxx, CERM, Radius...'
+'Estimated Setup Cost per Job in Your System ($)' — numeric input, default 0
+
+
+Display a comparison table with these rows:
+
+Setup Cost per Changeover: [entered value] vs [calculated Setup Tax per Changeover from Results]
+Annual Setup Cost: [entered value × Annual Changeovers] vs [Total Setup Cost from Results]
+Gap per Changeover: blank vs [calculated Setup Tax per Changeover minus entered value — show in red if positive]
+Annual Unrecovered Cost: blank vs [Gap per Changeover × Annual Changeovers — show in red if positive]
+
+
+Below the table show a dynamic callout box with this text, substituting real values:
+'Your [Estimating System Name] is pricing setup at $[entered value]/job. This audit calculates your actual setup cost at $[Setup Tax per Changeover]/job. That's a $[gap]/job gap across [Annual Changeovers] annual changeovers — $[Annual Unrecovered Cost] in unrecovered setup cost annually that may not be captured in your quotes.'
+If Estimating System Name is left blank substitute 'estimating system' in the callout text
+If the entered value is higher than the calculated Setup Tax per Changeover show a green callout instead that reads: 'Your estimating system is pricing setup above this audit's calculated cost — your quotes may already be capturing full setup cost.'
+If entered value is 0 hide the entire section
+
+Do not touch any other calculations, fields, labels, layout, styling or logic anywhere in the app. Only these two changes."

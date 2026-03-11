@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, LabelList, Tooltip } from "recharts";
-import { Clock, Percent, Layers, Users, DollarSign, TrendingUp, Ruler, Banknote, Trash2, AlertTriangle, type LucideIcon } from "lucide-react";
+import { Clock, Percent, Layers, Users, DollarSign, TrendingUp, Ruler, Banknote, Trash2, AlertTriangle, Package, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type AuditInputs, type AuditResults, formatNumber, formatCurrency, formatPercent } from "@/lib/calculations";
 import { BenchmarkPanel } from "@/components/benchmark-panel";
@@ -58,6 +61,11 @@ function MetricCard({ icon: Icon, label, value, description, accent = 'neutral',
 const chartLabelFormatter = (v: number) => formatNumber(v);
 
 export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
+  const [systemName, setSystemName] = useState('');
+  const [systemCost, setSystemCost] = useState('0');
+  const systemCostNum = parseFloat(systemCost) || 0;
+  const annualChangeovers = inputs.presses * inputs.changeoversPerPressPerDay * inputs.operatingDaysPerYear;
+
   const chartData = [
     { name: 'Setup Hours Lost', hours: Math.round(results.setupHoursPerYear) },
     { name: 'Recovered Hours', hours: Math.round(results.recoveredHours) },
@@ -149,12 +157,32 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
             testId="card-annual-plate-cost"
           />
         )}
+        {inputs.consumablesPerChangeover !== null && inputs.consumablesPerChangeover > 0 && (
+          <MetricCard
+            icon={Package}
+            label="Consumables Cost per Changeover"
+            value={formatCurrency(inputs.consumablesPerChangeover)}
+            description="per changeover"
+            accent="loss"
+            testId="card-consumables-per-changeover"
+          />
+        )}
+        {results.annualConsumablesCost !== null && (
+          <MetricCard
+            icon={Package}
+            label="Annual Consumables Cost"
+            value={formatCurrency(results.annualConsumablesCost)}
+            description="consumables / year"
+            accent="loss"
+            testId="card-annual-consumables-cost"
+          />
+        )}
         {results.totalSetupCost !== null && (
           <MetricCard
             icon={DollarSign}
             label="Total Setup Cost"
             value={formatCurrency(results.totalSetupCost)}
-            description="labor + material waste + plate cost / year"
+            description="labor + material waste + plate cost + consumables / year"
             accent="loss"
             testId="card-total-setup-cost"
           />
@@ -210,6 +238,95 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
       </div>
 
       {showBenchmark && <BenchmarkPanel inputs={inputs} results={results} />}
+
+      <Card data-testid="card-estimating-comparison">
+        <CardContent className="p-5 sm:p-6">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+            Estimating System Comparison
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium">Estimating System Name</Label>
+              <Input
+                type="text"
+                placeholder="e.g. Labeltraxx, CERM, Radius..."
+                value={systemName}
+                onChange={(e) => setSystemName(e.target.value)}
+                data-testid="input-system-name"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium">Estimated Setup Cost per Job in Your System ($)</Label>
+              <Input
+                type="number"
+                min={0}
+                step={1}
+                value={systemCost}
+                onChange={(e) => setSystemCost(e.target.value)}
+                data-testid="input-system-cost"
+              />
+            </div>
+          </div>
+          {systemCostNum > 0 && (
+            results.setupTaxPerChangeover === null ? (
+              <p className="text-sm text-muted-foreground italic">Complete the optional financial inputs (labor rate and material waste) above to enable cost comparison.</p>
+            ) : (() => {
+              const gapPerChangeover = results.setupTaxPerChangeover - systemCostNum;
+              const annualSystemCost = systemCostNum * annualChangeovers;
+              const annualUnrecovered = gapPerChangeover * annualChangeovers;
+              const isUnderpriced = gapPerChangeover > 0;
+              const displayName = systemName.trim() || 'estimating system';
+              const auditAnnualCost = results.totalSetupCost ?? results.setupTaxPerChangeover * annualChangeovers;
+              return (
+                <>
+                  <div className="border rounded-md overflow-hidden mb-4" data-testid="table-estimating-comparison">
+                    <div className="grid grid-cols-3 bg-muted/50 px-4 py-2 border-b text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      <span>Metric</span>
+                      <span className="text-right">{systemName.trim() || 'Your System'}</span>
+                      <span className="text-right">This Audit</span>
+                    </div>
+                    <div className="divide-y text-sm">
+                      <div className="grid grid-cols-3 px-4 py-2.5">
+                        <span className="text-muted-foreground">Setup Cost per Changeover</span>
+                        <span className="text-right font-medium">{formatCurrency(systemCostNum)}/job</span>
+                        <span className="text-right font-medium">{formatCurrency(results.setupTaxPerChangeover)}/job</span>
+                      </div>
+                      <div className="grid grid-cols-3 px-4 py-2.5">
+                        <span className="text-muted-foreground">Annual Setup Cost</span>
+                        <span className="text-right font-medium">{formatCurrency(annualSystemCost)}/yr</span>
+                        <span className="text-right font-medium">{formatCurrency(auditAnnualCost)}/yr</span>
+                      </div>
+                      <div className="grid grid-cols-3 px-4 py-2.5">
+                        <span className="text-muted-foreground">Gap per Changeover</span>
+                        <span className="text-right text-muted-foreground">—</span>
+                        <span className={cn("text-right font-semibold", gapPerChangeover > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400")}>
+                          {gapPerChangeover > 0 ? '+' : ''}{formatCurrency(gapPerChangeover)}/job
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-3 px-4 py-2.5">
+                        <span className="text-muted-foreground">Annual Unrecovered Cost</span>
+                        <span className="text-right text-muted-foreground">—</span>
+                        <span className={cn("text-right font-semibold", annualUnrecovered > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400")}>
+                          {annualUnrecovered > 0 ? '+' : ''}{formatCurrency(annualUnrecovered)}/yr
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  {isUnderpriced ? (
+                    <div className="rounded-md border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 p-4 text-sm leading-relaxed text-foreground/80" data-testid="callout-comparison">
+                      Your <span className="font-semibold">{displayName}</span> is pricing setup at <span className="font-semibold">{formatCurrency(systemCostNum)}/job</span>. This audit calculates your actual setup cost at <span className="font-semibold">{formatCurrency(results.setupTaxPerChangeover)}/job</span>. That's a <span className="font-semibold text-red-600 dark:text-red-400">{formatCurrency(gapPerChangeover)}/job</span> gap across <span className="font-semibold">{formatNumber(annualChangeovers)}</span> annual changeovers — <span className="font-semibold text-red-600 dark:text-red-400">{formatCurrency(annualUnrecovered)}</span> in unrecovered setup cost annually that may not be captured in your quotes.
+                    </div>
+                  ) : (
+                    <div className="rounded-md border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 p-4 text-sm leading-relaxed text-foreground/80" data-testid="callout-comparison">
+                      Your estimating system is pricing setup above this audit's calculated cost — your quotes may already be capturing full setup cost.
+                    </div>
+                  )}
+                </>
+              );
+            })()
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardContent className="p-5">

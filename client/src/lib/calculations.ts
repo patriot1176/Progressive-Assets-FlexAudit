@@ -18,6 +18,7 @@ export interface AuditInputs {
   pctJobsRequiringNewPlates: number | null;
   avgPlatesChangedPerCopyChange: number | null;
   pctJobsWithCopyChangesOnly: number | null;
+  consumablesPerChangeover: number | null;
   reductionPct: number;
 }
 
@@ -39,6 +40,7 @@ export interface AuditResults {
   annualSetupMaterialWasteCost: number | null;
   plateCostPerChangeover: number | null;
   annualPlateCost: number | null;
+  annualConsumablesCost: number | null;
   totalSetupCost: number | null;
   setupTaxPerChangeover: number | null;
   totalSetupImpact: number | null;
@@ -62,6 +64,7 @@ export const DEFAULT_INPUTS: AuditInputs = {
   pctJobsRequiringNewPlates: 0,
   avgPlatesChangedPerCopyChange: 0,
   pctJobsWithCopyChangesOnly: 0,
+  consumablesPerChangeover: 0,
   reductionPct: 50,
 };
 
@@ -113,6 +116,7 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
   let annualSetupMaterialWasteCost: number | null = null;
   let plateCostPerChangeover: number | null = null;
   let annualPlateCost: number | null = null;
+  let annualConsumablesCost: number | null = null;
   let totalSetupCost: number | null = null;
 
   if (hasWasteInputs) {
@@ -136,14 +140,18 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     }
   }
 
+  if (inputs.consumablesPerChangeover !== null && inputs.consumablesPerChangeover > 0) {
+    annualConsumablesCost = inputs.consumablesPerChangeover * annualChangeovers;
+  }
+
   if (annualSetupLaborCost !== null && annualSetupMaterialWasteCost !== null) {
-    totalSetupCost = annualSetupLaborCost + annualSetupMaterialWasteCost + (annualPlateCost ?? 0);
+    totalSetupCost = annualSetupLaborCost + annualSetupMaterialWasteCost + (annualPlateCost ?? 0) + (annualConsumablesCost ?? 0);
   }
 
   let setupTaxPerChangeover: number | null = null;
   if (annualSetupLaborCost !== null && wasteCostPerSetup !== null && annualChangeovers > 0) {
     const laborPerChangeover = annualSetupLaborCost / annualChangeovers;
-    setupTaxPerChangeover = laborPerChangeover + wasteCostPerSetup + (plateCostPerChangeover ?? 0);
+    setupTaxPerChangeover = laborPerChangeover + wasteCostPerSetup + (plateCostPerChangeover ?? 0) + (inputs.consumablesPerChangeover ?? 0);
   }
 
   let totalSetupImpact: number | null = null;
@@ -169,6 +177,7 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     annualSetupMaterialWasteCost,
     plateCostPerChangeover,
     annualPlateCost,
+    annualConsumablesCost,
     totalSetupCost,
     setupTaxPerChangeover,
     totalSetupImpact,
@@ -248,6 +257,7 @@ export function encodeInputsToParams(inputs: AuditInputs, mode: OperatingMode): 
   if (inputs.setupWasteFt !== null) params.set('swf', String(inputs.setupWasteFt));
   if (inputs.avgWebWidthIn !== null) params.set('ww', String(inputs.avgWebWidthIn));
   if (inputs.materialCostPerMSI !== null) params.set('msi', String(inputs.materialCostPerMSI));
+  if (inputs.consumablesPerChangeover !== null) params.set('cons', String(inputs.consumablesPerChangeover));
   return params.toString();
 }
 
@@ -269,6 +279,7 @@ export function decodeParamsToInputs(search: string): { inputs: Partial<AuditInp
   if (params.has('swf')) result.setupWasteFt = Number(params.get('swf'));
   if (params.has('ww')) result.avgWebWidthIn = Number(params.get('ww'));
   if (params.has('msi')) result.materialCostPerMSI = Number(params.get('msi'));
+  if (params.has('cons')) result.consumablesPerChangeover = Number(params.get('cons'));
 
   const mode = params.get('m') as OperatingMode | null;
   return { inputs: result, mode: mode ?? undefined };

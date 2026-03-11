@@ -243,6 +243,15 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               testId="input-pct-jobs-with-copy-changes-only"
               helperText="Percentage of changeovers involving only copy changes (text or art updates), not full plate remakes"
             />
+            <OptionalNumberField
+              label="Other Consumables per Changeover ($)"
+              value={inputs.consumablesPerChangeover}
+              onChange={(v) => onInputChange('consumablesPerChangeover', v)}
+              prefix="$"
+              step={1}
+              testId="input-consumables-per-changeover"
+              helperText="Estimated cost of mounting tape, anilox cleaning solvent, residual ink waste, and other press supplies consumed per changeover"
+            />
           </div>
         </CardContent>
       </Card>

@@ -519,6 +519,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
         ? `<p class="narrative">Modeled annual plate costs of approximately <strong>${formatCurrency(results.annualPlateCost)}</strong> per year represent <strong>${formatNumber(pct, 1)}%</strong> of estimated annual revenue consumed by plate activity.</p>`
         : '';
     })()}
+  ${inputs.consumablesPerChangeover !== null && inputs.consumablesPerChangeover > 0 && results.annualConsumablesCost !== null
+    ? `<p class="narrative">Modeled other consumables (mounting tape, anilox solvent, ink waste, and press supplies) add approximately <strong>${formatCurrency(results.annualConsumablesCost)}</strong> per year (≈ <strong>${formatCurrency(inputs.consumablesPerChangeover)}</strong> per changeover) to the total direct setup cost.</p>`
+    : ''}
   <p class="narrative">${narrativeP3}</p>
 </div>
 
@@ -559,6 +562,8 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     ${results.wasteCostPerSetup !== null ? `<div class="metric-block"><div class="label">Material Waste Cost per Changeover</div><div class="value">${formatCurrency(results.wasteCostPerSetup)}</div><div class="unit">&nbsp;</div></div>` : ''}
     ${results.annualSetupMaterialWasteCost !== null ? `<div class="metric-block"><div class="label">Annual Setup Material Waste</div><div class="value">${formatCurrency(results.annualSetupMaterialWasteCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.annualPlateCost !== null ? `<div class="metric-block"><div class="label">Annual Plate Cost</div><div class="value">${formatCurrency(results.annualPlateCost)}</div><div class="unit">/ year</div></div>` : ''}
+    ${inputs.consumablesPerChangeover !== null && inputs.consumablesPerChangeover > 0 ? `<div class="metric-block"><div class="label">Consumables / Changeover</div><div class="value">${formatCurrency(inputs.consumablesPerChangeover)}</div><div class="unit">&nbsp;</div></div>` : ''}
+    ${results.annualConsumablesCost !== null ? `<div class="metric-block"><div class="label">Annual Consumables Cost</div><div class="value">${formatCurrency(results.annualConsumablesCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.totalSetupCost !== null ? `<div class="metric-block"><div class="label">Total Setup Cost</div><div class="value">${formatCurrency(results.totalSetupCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.setupTaxPerChangeover !== null ? `<div class="metric-block"><div class="label">Setup Tax per Changeover</div><div class="value">${formatCurrency(results.setupTaxPerChangeover)}</div><div class="unit">&nbsp;</div></div>` : ''}
     <div class="metric-block"><div class="label">Recovered Hours @ ${inputs.reductionPct}%</div><div class="value">${formatNumber(results.recoveredHours)}</div><div class="unit">hrs / year</div></div>
@@ -639,6 +644,12 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   if (results.annualPlateCost !== null) {
     metrics.push({ label: 'Annual Plate Cost', value: formatCurrency(results.annualPlateCost), unit: '/year' });
   }
+  if (inputs.consumablesPerChangeover !== null && inputs.consumablesPerChangeover > 0) {
+    metrics.push({ label: 'Consumables per Changeover', value: formatCurrency(inputs.consumablesPerChangeover) });
+  }
+  if (results.annualConsumablesCost !== null) {
+    metrics.push({ label: 'Annual Consumables Cost', value: formatCurrency(results.annualConsumablesCost), unit: '/year' });
+  }
   if (results.totalSetupCost !== null) {
     metrics.push({ label: 'Total Setup Cost', value: formatCurrency(results.totalSetupCost), unit: '/year' });
   }
@@ -686,6 +697,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
               </p>
               {results.annualPlateCost !== null && plateCostPctOfTotalRevenue !== null && (
                 <p>Modeled annual plate costs of approximately <span className="font-semibold text-foreground">{formatCurrency(results.annualPlateCost)}</span> per year represent <span className="font-semibold text-foreground">{formatNumber(plateCostPctOfTotalRevenue, 1)}%</span> of estimated annual revenue consumed by plate activity.</p>
+              )}
+              {inputs.consumablesPerChangeover !== null && inputs.consumablesPerChangeover > 0 && results.annualConsumablesCost !== null && (
+                <p>Modeled other consumables (mounting tape, anilox solvent, ink waste, and press supplies) add approximately <span className="font-semibold text-foreground">{formatCurrency(results.annualConsumablesCost)}</span> per year (≈ <span className="font-semibold text-foreground">{formatCurrency(inputs.consumablesPerChangeover)}</span> per changeover) to the total direct setup cost.</p>
               )}
               {results.totalSetupImpact !== null ? (
                 <p>Combined, these factors represent an estimated total operational impact of approximately <span className="font-semibold text-foreground">{formatCurrency(results.totalSetupImpact)}</span> annually when both direct setup costs and unrealized production value are considered.</p>
@@ -745,7 +759,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             )}
             {(results.totalSetupCost !== null || results.potentialRevenueCapacity !== null) && (
               <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
-                Direct setup costs include labor and substrate waste during press setup. Opportunity cost represents unrealized production value caused by setup downtime.
+                Direct setup costs include labor, substrate waste, plate costs, and other consumables incurred during press setup. Opportunity cost represents unrealized production value caused by setup downtime.
               </p>
             )}
           </CardContent>
