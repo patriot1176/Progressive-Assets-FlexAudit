@@ -55,8 +55,8 @@ export const DEFAULT_INPUTS: AuditInputs = {
   setupWasteFt: 100,
   avgWebWidthIn: 13,
   materialCostPerMSI: 0.40,
-  avgColorsPerJob: 5,
-  avgPlateCostPerColor: 175,
+  avgColorsPerJob: 0,
+  avgPlateCostPerColor: 0,
   pctJobsRequiringNewPlates: 30,
   reductionPct: 50,
 };

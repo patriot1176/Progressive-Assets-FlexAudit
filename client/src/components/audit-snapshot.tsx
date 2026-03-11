@@ -402,6 +402,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     if (results.annualSetupMaterialWasteCost !== null && results.wasteCostPerSetup !== null) {
       keyFindings += `<li>Modeled setup material waste is approximately <strong>${formatCurrency(results.annualSetupMaterialWasteCost)}</strong> per year (≈ <strong>${formatCurrency(results.wasteCostPerSetup)}</strong> per changeover based on setup waste length, press web width, and material cost per MSI).</li>`;
     }
+    if (results.annualPlateCost !== null && results.plateCostPerChangeover !== null && inputs.avgColorsPerJob !== null && inputs.avgPlateCostPerColor !== null && inputs.pctJobsRequiringNewPlates !== null) {
+      keyFindings += `<li>Annual plate cost is approximately <strong>${formatCurrency(results.annualPlateCost)}</strong> per year (= <strong>${formatCurrency(results.plateCostPerChangeover)}</strong> per changeover), based on <strong>${inputs.avgColorsPerJob}</strong> colors × <strong>$${inputs.avgPlateCostPerColor}</strong> per color × <strong>${inputs.pctJobsRequiringNewPlates}%</strong> of changeovers requiring new plates.</li>`;
+    }
 
     const html = `<!DOCTYPE html>
 <html><head><title>Flexo Setup Tax — Plant Capacity Audit</title>
@@ -498,6 +501,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   <p class="narrative">This plant is currently giving up meaningful press capacity to setup activity.</p>
   <p class="narrative">Based on the inputs provided, this plant is losing approximately <strong>${formatNumber(results.setupHoursPerYear)}</strong> press hours per year to changeovers, representing <strong>${formatPercent(results.pctPressTimeLostToSetup)}</strong> of total available press capacity. This loss is equivalent to roughly <strong>${formatNumber(hiddenPC, 1)}</strong> presses worth of plant capacity currently consumed by setup activity.</p>
   <p class="narrative">${narrativeP2}</p>
+  ${results.annualPlateCost !== null && results.potentialRevenueCapacity !== null && results.potentialRevenueCapacity > 0 ? `<p class="narrative">Modeled annual plate costs of approximately <strong>${formatCurrency(results.annualPlateCost)}</strong> represent approximately <strong>${formatNumber((results.annualPlateCost / results.potentialRevenueCapacity) * 100, 1)}%</strong> of the <strong>${formatCurrency(results.potentialRevenueCapacity)}</strong> in unrealized annual production revenue.</p>` : ''}
   <p class="narrative">${narrativeP3}</p>
 </div>
 
@@ -537,6 +541,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     ${results.annualSetupLaborCost !== null ? `<div class="metric-block"><div class="label">Setup Labor Cost</div><div class="value">${formatCurrency(results.annualSetupLaborCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.wasteCostPerSetup !== null ? `<div class="metric-block"><div class="label">Material Waste Cost per Changeover</div><div class="value">${formatCurrency(results.wasteCostPerSetup)}</div><div class="unit">&nbsp;</div></div>` : ''}
     ${results.annualSetupMaterialWasteCost !== null ? `<div class="metric-block"><div class="label">Annual Setup Material Waste</div><div class="value">${formatCurrency(results.annualSetupMaterialWasteCost)}</div><div class="unit">/ year</div></div>` : ''}
+    ${results.annualPlateCost !== null ? `<div class="metric-block"><div class="label">Annual Plate Cost</div><div class="value">${formatCurrency(results.annualPlateCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.totalSetupCost !== null ? `<div class="metric-block"><div class="label">Total Setup Cost</div><div class="value">${formatCurrency(results.totalSetupCost)}</div><div class="unit">/ year</div></div>` : ''}
     ${results.setupTaxPerChangeover !== null ? `<div class="metric-block"><div class="label">Setup Tax per Changeover</div><div class="value">${formatCurrency(results.setupTaxPerChangeover)}</div><div class="unit">&nbsp;</div></div>` : ''}
     <div class="metric-block"><div class="label">Recovered Hours @ ${inputs.reductionPct}%</div><div class="value">${formatNumber(results.recoveredHours)}</div><div class="unit">hrs / year</div></div>
@@ -614,6 +619,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   if (results.annualSetupMaterialWasteCost !== null) {
     metrics.push({ label: 'Annual Setup Material Waste Cost', value: formatCurrency(results.annualSetupMaterialWasteCost), unit: '/year' });
   }
+  if (results.annualPlateCost !== null) {
+    metrics.push({ label: 'Annual Plate Cost', value: formatCurrency(results.annualPlateCost), unit: '/year' });
+  }
   if (results.totalSetupCost !== null) {
     metrics.push({ label: 'Total Setup Cost', value: formatCurrency(results.totalSetupCost), unit: '/year' });
   }
@@ -659,6 +667,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
                 {results.recoveredLinearFeet !== null && <>{' '}This recovered capacity could unlock roughly <span className="font-semibold text-foreground">{formatNumber(results.recoveredLinearFeet)}</span> additional linear feet of recoverable production capacity.</>}
                 {results.potentialRevenueCapacity !== null && <>{' '}At the current selling price, the unused capacity caused by setup activity represents approximately <span className="font-semibold text-foreground">{formatCurrency(results.potentialRevenueCapacity)}</span> in unrealized annual production revenue.</>}
               </p>
+              {results.annualPlateCost !== null && results.potentialRevenueCapacity !== null && results.potentialRevenueCapacity > 0 && (
+                <p>Modeled annual plate costs of approximately <span className="font-semibold text-foreground">{formatCurrency(results.annualPlateCost)}</span> represent approximately <span className="font-semibold text-foreground">{formatNumber((results.annualPlateCost / results.potentialRevenueCapacity) * 100, 1)}%</span> of the <span className="font-semibold text-foreground">{formatCurrency(results.potentialRevenueCapacity)}</span> in unrealized annual production revenue.</p>
+              )}
               {results.totalSetupImpact !== null ? (
                 <p>Combined, these factors represent an estimated total operational impact of approximately <span className="font-semibold text-foreground">{formatCurrency(results.totalSetupImpact)}</span> annually when both direct setup costs and unrealized production value are considered.</p>
               ) : (
@@ -677,6 +688,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
               <li>The current setup environment represents approximately <span className="font-bold">{results.potentialRevenueCapacity !== null ? formatCurrency(results.potentialRevenueCapacity) : 'N/A'}</span> in unrealized annual production revenue due to lost press capacity.</li>
               {results.annualSetupMaterialWasteCost !== null && results.wasteCostPerSetup !== null && (
                 <li>Modeled setup material waste is approximately <span className="font-bold">{formatCurrency(results.annualSetupMaterialWasteCost)}</span> per year (≈ <span className="font-bold">{formatCurrency(results.wasteCostPerSetup)}</span> per changeover based on setup waste length, press web width, and material cost per MSI).</li>
+              )}
+              {results.annualPlateCost !== null && results.plateCostPerChangeover !== null && inputs.avgColorsPerJob !== null && inputs.avgPlateCostPerColor !== null && inputs.pctJobsRequiringNewPlates !== null && (
+                <li>Annual plate cost is approximately <span className="font-bold">{formatCurrency(results.annualPlateCost)}</span> per year (= <span className="font-bold">{formatCurrency(results.plateCostPerChangeover)}</span> per changeover), based on <span className="font-bold">{inputs.avgColorsPerJob}</span> colors × <span className="font-bold">${inputs.avgPlateCostPerColor}</span> per color × <span className="font-bold">{inputs.pctJobsRequiringNewPlates}%</span> of changeovers requiring new plates.</li>
               )}
             </ul>
 
