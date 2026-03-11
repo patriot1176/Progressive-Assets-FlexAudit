@@ -103,7 +103,7 @@ export function PlateCostAnalysisSection() {
   const [avgPlatesPerCopyChange, setAvgPlatesPerCopyChange] = useState(1);
   const [avgPlateCostPerCopyChangePlate, setAvgPlateCostPerCopyChangePlate] = useState('');
 
-  const [numSkus, setNumSkus] = useState(0);
+  const [numSkus, setNumSkus] = useState('');
   const [customLength, setCustomLength] = useState(0);
 
   const nColors = n(avgColors);
@@ -134,8 +134,9 @@ export function PlateCostAnalysisSection() {
     return { jobRevenue, plateCost, net, color, covered };
   }
 
-  const skuTotalFlexo = numSkus * nColors * nPlateCostPerColor;
-  const skuAnnualCopyChange = numSkus * avgPlatesPerCopyChange * nPlateCostPerCopyChangePlate;
+  const nNumSkus = n(numSkus);
+  const skuTotalFlexo = nNumSkus * nColors * nPlateCostPerColor;
+  const skuAnnualCopyChange = nNumSkus * avgPlatesPerCopyChange * nPlateCostPerCopyChangePlate;
   const skuCombinedFlexo = skuTotalFlexo + skuAnnualCopyChange;
 
   const flexoRedClass = (v: number) => v > 10000 ? 'text-red-600 dark:text-red-400 font-semibold' : '';
@@ -317,7 +318,7 @@ export function PlateCostAnalysisSection() {
         </CardHeader>
         <CardContent className="pt-0 space-y-4">
           <div className="max-w-xs">
-            <NumInput
+            <StrNumInput
               label="Number of SKUs in Job Family"
               value={numSkus}
               onChange={setNumSkus}

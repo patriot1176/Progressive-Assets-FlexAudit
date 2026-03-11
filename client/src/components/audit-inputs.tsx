@@ -143,6 +143,7 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               value={inputs.pressSpeedFPM}
               onChange={(v) => onInputChange('pressSpeedFPM', v)}
               suffix="ft/min"
+              step={50}
               testId="input-speed"
             />
             <OptionalNumberField
@@ -177,7 +178,7 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               value={inputs.setupWasteFt}
               onChange={(v) => onInputChange('setupWasteFt', v)}
               suffix="ft"
-              step={1}
+              step={100}
               testId="input-setup-waste-ft"
             />
             <OptionalNumberField
