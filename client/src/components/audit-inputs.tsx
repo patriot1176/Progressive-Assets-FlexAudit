@@ -95,6 +95,7 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
                 label="Setup Time per Changeover"
                 value={inputs.setupMinutesPerChangeover}
                 onChange={(v) => onInputChange('setupMinutesPerChangeover', v)}
+                onBlur={(v) => onInputChange('setupMinutesPerChangeover', Math.max(5, Math.round(v / 5) * 5))}
                 min={1}
                 step={5}
                 suffix="min"
@@ -299,10 +300,11 @@ function handleSelectAll(e: React.FocusEvent<HTMLInputElement>) {
   e.target.select();
 }
 
-function NumberField({ label, value, onChange, min = 0, suffix, prefix, step = 1, testId, tooltip }: {
+function NumberField({ label, value, onChange, onBlur, min = 0, suffix, prefix, step = 1, testId, tooltip }: {
   label: string;
   value: number;
   onChange: (v: number) => void;
+  onBlur?: (v: number) => void;
   min?: number;
   suffix?: string;
   prefix?: string;
@@ -342,6 +344,12 @@ function NumberField({ label, value, onChange, min = 0, suffix, prefix, step = 1
           onChange={(e) => {
             const v = e.target.valueAsNumber;
             if (!isNaN(v) && v >= min) onChange(v);
+          }}
+          onBlur={(e) => {
+            if (onBlur) {
+              const v = e.target.valueAsNumber;
+              if (!isNaN(v)) onBlur(v);
+            }
           }}
           className={cn("pointer-events-auto", prefix && "pl-7", suffix && "pr-16")}
           style={{ touchAction: "manipulation" }}
