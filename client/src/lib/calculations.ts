@@ -15,6 +15,7 @@ export interface AuditInputs {
   materialCostPerMSI: number | null;
   avgColorsPerJob: number | null;
   avgPlateCostPerColor: number | null;
+  pctJobsRequiringNewPlates: number | null;
   reductionPct: number;
 }
 
@@ -56,6 +57,7 @@ export const DEFAULT_INPUTS: AuditInputs = {
   materialCostPerMSI: 0.40,
   avgColorsPerJob: 5,
   avgPlateCostPerColor: 175,
+  pctJobsRequiringNewPlates: 30,
   reductionPct: 50,
 };
 
@@ -118,7 +120,8 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
 
   if (inputs.avgColorsPerJob !== null && inputs.avgPlateCostPerColor !== null) {
     plateCostPerChangeover = inputs.avgColorsPerJob * inputs.avgPlateCostPerColor;
-    annualPlateCost = plateCostPerChangeover * annualChangeovers;
+    const newPlatesPct = (inputs.pctJobsRequiringNewPlates ?? 100) / 100;
+    annualPlateCost = plateCostPerChangeover * annualChangeovers * newPlatesPct;
   }
 
   if (annualSetupLaborCost !== null && annualSetupMaterialWasteCost !== null) {

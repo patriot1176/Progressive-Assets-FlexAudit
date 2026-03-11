@@ -213,6 +213,15 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               step={1}
               testId="input-avg-plate-cost-per-color"
             />
+            <OptionalNumberField
+              label="% of Jobs Requiring New Plates"
+              value={inputs.pctJobsRequiringNewPlates}
+              onChange={(v) => onInputChange('pctJobsRequiringNewPlates', v)}
+              suffix="%"
+              step={1}
+              testId="input-pct-jobs-requiring-new-plates"
+              helperText="Percentage of changeovers that require new plate sets due to copy changes"
+            />
           </div>
         </CardContent>
       </Card>
