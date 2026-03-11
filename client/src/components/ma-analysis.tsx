@@ -123,8 +123,8 @@ export function MAAnalysisSection({ inputs, results }: Props) {
     text += `  • Press capacity consumed by setup: ${formatPercent(results.pctPressTimeLostToSetup)} (${formatNumber(results.pressEquivalentLost, 1)} press equivalents)\n`;
     text += `  • Annual setup labor cost: ${results.annualSetupLaborCost !== null ? formatCurrency(results.annualSetupLaborCost) : 'N/A'}\n`;
     text += `  • Annual setup material waste cost: ${results.annualSetupMaterialWasteCost !== null ? formatCurrency(results.annualSetupMaterialWasteCost) : 'N/A'}\n`;
-    text += `  • Annual plate cost: ${results.annualPlateCost !== null ? formatCurrency(results.annualPlateCost) : 'N/A'}\n`;
-    text += `  • Annual consumables cost: ${annualConsumables !== null ? formatCurrency(annualConsumables) : 'N/A'}\n`;
+    text += `  • Annual plate cost: ${results.annualPlateCost !== null ? formatCurrency(results.annualPlateCost) : '$0'}\n`;
+    text += `  • Annual consumables cost: ${annualConsumables !== null ? formatCurrency(annualConsumables) : '$0'}\n`;
     text += `  • Total documented setup tax: ${formatCurrency(setupTax)}\n\n`;
     text += `Modeled improvement scenario (40% setup reduction):\n`;
     text += `  • Recovered press hours: ${formatNumber(results.recoveredHours)} hours/year\n`;
