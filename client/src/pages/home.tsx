@@ -6,6 +6,7 @@ import { AuditInputsSection } from "@/components/audit-inputs";
 import { AuditResultsSection } from "@/components/audit-results";
 import { AuditSnapshotSection } from "@/components/audit-snapshot";
 import { RunLengthAnalysisSection } from "@/components/run-length-analysis";
+import { PlateCostAnalysisSection } from "@/components/plate-cost-analysis";
 import { V12ComparisonSection } from "@/components/v12-comparison";
 import {
   type AuditInputs,
@@ -100,10 +101,11 @@ export default function Home() {
               Show Benchmark
             </Label>
           </div>
-          <TabsList className="grid w-full grid-cols-4 print:hidden" data-testid="tab-list">
+          <TabsList className="grid w-full grid-cols-5 print:hidden" data-testid="tab-list">
             <TabsTrigger value="inputs" data-testid="tab-inputs">Inputs</TabsTrigger>
             <TabsTrigger value="results" data-testid="tab-results">Results</TabsTrigger>
             <TabsTrigger value="run-length" data-testid="tab-run-length">Run Length</TabsTrigger>
+            <TabsTrigger value="plate-cost" data-testid="tab-plate-cost">Plate Cost</TabsTrigger>
             <TabsTrigger value="snapshot" data-testid="tab-snapshot">Snapshot</TabsTrigger>
           </TabsList>
 
@@ -122,6 +124,9 @@ export default function Home() {
             </TabsContent>
             <TabsContent value="run-length" className="mt-0 print:hidden">
               <RunLengthAnalysisSection inputs={inputs} results={results} mode={mode} />
+            </TabsContent>
+            <TabsContent value="plate-cost" className="mt-0 print:hidden">
+              <PlateCostAnalysisSection />
             </TabsContent>
             <TabsContent value="snapshot" className="mt-0">
               <AuditSnapshotSection

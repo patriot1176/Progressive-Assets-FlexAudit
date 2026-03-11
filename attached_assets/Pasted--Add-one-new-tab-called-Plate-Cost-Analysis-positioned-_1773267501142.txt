@@ -1,0 +1,59 @@
+"Add one new tab called 'Plate Cost Analysis' positioned between 'Run Length' and 'Snapshot'. Do not change anything else — no redesign, no restructuring, no changes to any existing tabs, fields, calculations or layout. Only add this new tab.
+The tab has its own independent inputs at the top — these do not connect to any other tab:
+SECTION 1 — JOB & PLATE CONFIGURATION
+
+Number of New Jobs per Year (default 0)
+Avg Colors per Job (default 0)
+Avg Plate Cost per Color ($) (default 0)
+Avg Selling Price ($/ft) (default 0.21)
+Avg Run Length per Job (ft) (default 0)
+
+SECTION 2 — COPY CHANGE EVENTS
+
+Number of Copy Change Events per Year (default 0)
+Avg Plates Changed per Copy Change (default 1)
+Avg Plate Cost per Copy Change Plate ($) (default 0)
+
+The tab displays three sections of output:
+OUTPUT SECTION 1 — ANNUAL PLATE COST SUMMARY
+Display a simple comparison table with two columns — Flexo and HP Indigo V12:
+
+New Job Plate Cost per Job: (Avg Colors × Avg Plate Cost per Color) | $0
+Copy Change Plate Cost per Event: (Avg Plates Changed × Avg Plate Cost per Copy Change Plate) | $0
+Total Annual New Job Plate Cost: (New Jobs × Colors × Plate Cost) | $0
+Total Annual Copy Change Plate Cost: (Copy Change Events × Plates Changed × Plate Cost) | $0
+TOTAL ANNUAL PLATE COST: sum of both | $0
+V12 Annual Savings: total annual plate cost | Eliminated
+Color code the V12 column green. Color code the Flexo column red for any value over $10,000.
+
+OUTPUT SECTION 2 — RUN LENGTH BREAK-EVEN ANALYSIS
+Show a table with the header: 'At what run length does a job cover its plate cost?'
+
+Break-Even Footage = (Avg Colors × Avg Plate Cost per Color) ÷ Avg Selling Price ($/ft)
+Display this number prominently as: 'This job must run at least X feet just to cover plate cost'
+Below it show a comparison table for these run lengths: 500 ft, 1,000 ft, 2,500 ft, 5,000 ft, 10,000 ft, and one custom input row:
+
+Columns: Run Length | Job Revenue | Plate Cost | Setup Covers Revenue? | Net After Plates
+Job Revenue = Run Length × Avg Selling Price
+Plate Cost = Avg Colors × Avg Plate Cost per Color (flat per job regardless of length)
+Net After Plates = Job Revenue minus Plate Cost
+Color code each row: red if Net After Plates is negative, yellow if positive but less than 20% margin, green if positive and above 20% margin
+
+
+
+OUTPUT SECTION 3 — SKU FAMILY ANALYSIS
+Header: 'What does a high-SKU job family cost in plates?'
+
+One input field: Number of SKUs in Job Family (default 0)
+Display:
+
+Total Plate Cost for SKU Family (Flexo): SKUs × Colors × Plate Cost per Color
+Total Plate Cost for SKU Family (V12): $0
+If every SKU gets one copy change per year: SKUs × Plates Changed per Copy Change × Plate Cost per Copy Change Plate
+Combined Annual Plate Spend on this Job Family (Flexo): sum of both
+Combined Annual Plate Spend on this Job Family (V12): $0
+Prominent callout box showing the difference labeled: 'Annual Plate Savings by Moving This Job Family to V12'
+
+
+
+All values default to 0 or the specified defaults so the tab is clean until the user enters numbers. Do not connect any of these inputs to the existing tabs. Do not touch any other calculations, fields, labels, layout, styling or logic anywhere in the app. Only add this new tab."
