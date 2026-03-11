@@ -222,6 +222,14 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               testId="input-pct-jobs-requiring-new-plates"
               helperText="Percentage of changeovers that require new plate sets due to copy changes"
             />
+            <OptionalNumberField
+              label="Avg Plates Changed per Copy Change"
+              value={inputs.avgPlatesChangedPerCopyChange}
+              onChange={(v) => onInputChange('avgPlatesChangedPerCopyChange', v)}
+              step={1}
+              testId="input-avg-plates-changed-per-copy-change"
+              helperText="Average number of plates remade when a copy change occurs — often just text plates, not all colors"
+            />
           </div>
         </CardContent>
       </Card>

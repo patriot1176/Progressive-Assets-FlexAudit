@@ -16,6 +16,7 @@ export interface AuditInputs {
   avgColorsPerJob: number | null;
   avgPlateCostPerColor: number | null;
   pctJobsRequiringNewPlates: number | null;
+  avgPlatesChangedPerCopyChange: number | null;
   reductionPct: number;
 }
 
@@ -58,6 +59,7 @@ export const DEFAULT_INPUTS: AuditInputs = {
   avgColorsPerJob: 0,
   avgPlateCostPerColor: 0,
   pctJobsRequiringNewPlates: 30,
+  avgPlatesChangedPerCopyChange: 1,
   reductionPct: 50,
 };
 
@@ -118,10 +120,10 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     annualSetupMaterialWasteCost = wasteCostPerSetup * annualChangeovers;
   }
 
-  if (inputs.avgColorsPerJob !== null && inputs.avgPlateCostPerColor !== null) {
-    plateCostPerChangeover = inputs.avgColorsPerJob * inputs.avgPlateCostPerColor;
+  if (inputs.avgPlatesChangedPerCopyChange !== null && inputs.avgPlateCostPerColor !== null) {
     const newPlatesPct = (inputs.pctJobsRequiringNewPlates ?? 100) / 100;
-    annualPlateCost = plateCostPerChangeover * annualChangeovers * newPlatesPct;
+    plateCostPerChangeover = inputs.avgPlatesChangedPerCopyChange * inputs.avgPlateCostPerColor * newPlatesPct;
+    annualPlateCost = plateCostPerChangeover * annualChangeovers;
   }
 
   if (annualSetupLaborCost !== null && annualSetupMaterialWasteCost !== null) {
