@@ -52,7 +52,7 @@ export const DEFAULT_INPUTS: AuditInputs = {
   hoursPerShift: 10,
   operatingDaysPerYear: 250,
   pressSpeedFPM: 200,
-  pricePerFoot: 0.05,
+  pricePerFoot: 0.21,
   laborRate: 30,
   setupWasteFt: 500,
   avgWebWidthIn: 13,
