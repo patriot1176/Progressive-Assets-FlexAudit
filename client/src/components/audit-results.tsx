@@ -254,7 +254,7 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
               accent="recovery"
               testId="card-revenue"
             />
-            <p className="text-[10px] text-muted-foreground italic leading-relaxed -mt-1">
+            <p className="col-span-full text-[10px] text-muted-foreground italic leading-relaxed -mt-1">
               Note: This figure represents theoretical press capacity at full utilization. In conversations, press capacity equivalents above are often the more actionable metric.
             </p>
           </>
