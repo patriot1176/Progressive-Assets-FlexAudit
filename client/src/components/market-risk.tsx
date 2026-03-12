@@ -14,20 +14,30 @@ function n(s: string): number { return parseFloat(s) || 0; }
 
 const SHORT_RUN_LENGTHS = [500, 1000, 2500, 5000];
 
-function getPosition(setupCost: number | null, runLengthFt: number, pricePerFoot: number | null): 'red' | 'yellow' | 'green' | 'unknown' {
-  if (setupCost === null || pricePerFoot === null || pricePerFoot <= 0) return 'unknown';
-  const jobValue = runLengthFt * pricePerFoot;
-  if (setupCost >= jobValue) return 'red';
-  if (setupCost >= jobValue * 0.5) return 'yellow';
+type PositionType = 'red' | 'orange' | 'yellow' | 'green' | 'unknown';
+
+function getSetupRunRatio(setupMinutes: number, pressSpeedFPM: number | null, runLengthFt: number): number | null {
+  if (!pressSpeedFPM || pressSpeedFPM <= 0) return null;
+  const runTimeMin = runLengthFt / pressSpeedFPM;
+  return setupMinutes / runTimeMin;
+}
+
+function getPosition(setupMinutes: number, pressSpeedFPM: number | null, runLengthFt: number): PositionType {
+  const ratio = getSetupRunRatio(setupMinutes, pressSpeedFPM, runLengthFt);
+  if (ratio === null) return 'unknown';
+  if (ratio > 1.0) return 'red';
+  if (ratio >= 0.5) return 'orange';
+  if (ratio >= 0.25) return 'yellow';
   return 'green';
 }
 
-function PositionBadge({ pos }: { pos: 'red' | 'yellow' | 'green' | 'unknown' }) {
+function PositionBadge({ pos }: { pos: PositionType }) {
   if (pos === 'unknown') return <span className="text-muted-foreground text-xs">—</span>;
-  const configs = {
-    red: { label: 'Unprofitable', cls: 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900' },
-    yellow: { label: 'Marginal', cls: 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900' },
-    green: { label: 'Competitive', cls: 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900' },
+  const configs: Record<Exclude<PositionType, 'unknown'>, { label: string; cls: string }> = {
+    red:    { label: 'Uncompetitive', cls: 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900' },
+    orange: { label: 'At Risk',       cls: 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-900' },
+    yellow: { label: 'Marginal',      cls: 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900' },
+    green:  { label: 'Competitive',   cls: 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900' },
   };
   const { label, cls } = configs[pos];
   return <span className={cn('text-[10px] font-semibold px-1.5 py-0.5 rounded border whitespace-nowrap', cls)}>{label}</span>;
@@ -151,8 +161,8 @@ export function MarketRiskSection({ inputs, results }: Props) {
           <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Why Your Current Fleet Cannot Compete on Short Runs</CardTitle>
         </CardHeader>
         <CardContent className="pt-0 space-y-3">
-          {(setupTax === null || pricePerFoot === null) && (
-            <p className="text-xs text-amber-600 dark:text-amber-400 italic">Enter labor rate, material waste, and selling price in Plant Config to see full competitive analysis.</p>
+          {inputs.pressSpeedFPM === null && (
+            <p className="text-xs text-amber-600 dark:text-amber-400 italic">Enter press speed in Plant Config to see competitive position analysis.</p>
           )}
           <div className="border rounded-md overflow-hidden">
             <div className="overflow-x-auto">
@@ -169,13 +179,14 @@ export function MarketRiskSection({ inputs, results }: Props) {
                 </thead>
                 <tbody className="divide-y">
                   {SHORT_RUN_LENGTHS.map((len) => {
-                    const pos = getPosition(setupTax, len, pricePerFoot);
+                    const pos = getPosition(inputs.setupMinutesPerChangeover, inputs.pressSpeedFPM, len);
                     const flexoEffCost = setupTax !== null && pricePerFoot !== null
                       ? pricePerFoot + setupTax / len
                       : null;
-                    const rowBg = pos === 'red' ? 'bg-red-50 dark:bg-red-950/20' :
-                      pos === 'yellow' ? 'bg-amber-50 dark:bg-amber-950/20' :
-                      pos === 'green' ? 'bg-emerald-50 dark:bg-emerald-950/20' : '';
+                    const rowBg = pos === 'red'    ? 'bg-red-50 dark:bg-red-950/20' :
+                                  pos === 'orange' ? 'bg-orange-50 dark:bg-orange-950/20' :
+                                  pos === 'yellow' ? 'bg-amber-50 dark:bg-amber-950/20' :
+                                  pos === 'green'  ? 'bg-emerald-50 dark:bg-emerald-950/20' : '';
                     return (
                       <tr key={len} className={cn('text-sm', rowBg)}>
                         <td className="py-2.5 px-3 font-medium whitespace-nowrap">{len.toLocaleString()} ft</td>
@@ -199,8 +210,14 @@ export function MarketRiskSection({ inputs, results }: Props) {
               </table>
             </div>
           </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[10px] text-muted-foreground">
+            <span className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-sm bg-emerald-200 border border-emerald-400 dark:bg-emerald-900 dark:border-emerald-700" />Competitive: Setup:Run ratio &lt; 25%</span>
+            <span className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-sm bg-amber-200 border border-amber-400 dark:bg-amber-900 dark:border-amber-700" />Marginal: Setup:Run ratio 25–50%</span>
+            <span className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-sm bg-orange-200 border border-orange-400 dark:bg-orange-900 dark:border-orange-700" />At Risk: Setup:Run ratio 50–100%</span>
+            <span className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-sm bg-red-200 border border-red-400 dark:bg-red-900 dark:border-red-700" />Uncompetitive: Setup:Run ratio &gt; 100%</span>
+          </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            A digital competitor quoting these same jobs has zero setup cost. Your effective cost per foot on short runs includes setup tax that a digital press eliminates entirely. This is the structural pricing disadvantage your current fleet creates on every short run job.
+            A digital competitor quoting these same jobs has zero setup cost. The Setup:Run ratio shows how much of your press time is consumed by setup on each job length. Any ratio above 25% creates a structural pricing disadvantage against a competitor with no setup cost.
           </p>
         </CardContent>
       </Card>

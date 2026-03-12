@@ -1,9 +1,12 @@
 import { type RefObject } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Copy, Mail, Link2, FileDown, RotateCcw, Check, ChevronDown } from "lucide-react";
+import { Copy, Mail, Link2, FileDown, RotateCcw, Check, ChevronDown, Save } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -332,8 +335,42 @@ function BenchmarkInterpretation() {
   );
 }
 
+const todayISO = new Date().toISOString().split('T')[0];
+
 export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snapshotRef, showBenchmark }: Props) {
   const { toast } = useToast();
+
+  const [saveCompanyName, setSaveCompanyName] = useState('');
+  const [saveContactName, setSaveContactName] = useState('');
+  const [saveAuditDate, setSaveAuditDate] = useState(todayISO);
+  const [saveNotes, setSaveNotes] = useState('');
+  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const handleSaveAudit = () => {
+    if (!saveCompanyName.trim()) {
+      setSaveMessage({ type: 'error', text: 'Please enter a company name before saving' });
+      return;
+    }
+    const timestamp = Date.now();
+    const key = `audit:${timestamp}`;
+    const data = {
+      timestamp,
+      companyName: saveCompanyName.trim(),
+      contactName: saveContactName.trim(),
+      auditDate: saveAuditDate,
+      notes: saveNotes.trim(),
+      mode,
+      inputs,
+      setupHoursPerYear: results.setupHoursPerYear,
+      totalSetupCost: results.totalSetupCost,
+    };
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+      setSaveMessage({ type: 'success', text: `Audit saved for ${saveCompanyName.trim()} on ${saveAuditDate}` });
+    } catch {
+      setSaveMessage({ type: 'error', text: 'Failed to save audit. Storage may be full.' });
+    }
+  };
 
   const totalAnnualRevenue = inputs.pressSpeedFPM !== null && inputs.pricePerFoot !== null
     ? results.totalAvailablePlantPressHoursPerYear * 60 * inputs.pressSpeedFPM * inputs.pricePerFoot
@@ -679,6 +716,66 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
 
   return (
     <div className="space-y-5">
+      <Card className="print:hidden" data-testid="card-save-audit">
+        <CardContent className="p-5 sm:p-6 space-y-4">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Save This Audit</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="save-company-name" className="text-sm font-medium">Company Name</Label>
+              <Input
+                id="save-company-name"
+                placeholder="Enter company name"
+                value={saveCompanyName}
+                onChange={(e) => { setSaveCompanyName(e.target.value); setSaveMessage(null); }}
+                data-testid="input-save-company-name"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="save-contact-name" className="text-sm font-medium">Contact Name</Label>
+              <Input
+                id="save-contact-name"
+                placeholder="Enter contact name"
+                value={saveContactName}
+                onChange={(e) => setSaveContactName(e.target.value)}
+                data-testid="input-save-contact-name"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="save-audit-date" className="text-sm font-medium">Audit Date</Label>
+              <Input
+                id="save-audit-date"
+                type="date"
+                value={saveAuditDate}
+                onChange={(e) => setSaveAuditDate(e.target.value)}
+                data-testid="input-save-audit-date"
+              />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="save-notes" className="text-sm font-medium">Notes</Label>
+            <Textarea
+              id="save-notes"
+              placeholder="Add any notes about this audit — key findings, next steps, follow-up date"
+              value={saveNotes}
+              onChange={(e) => setSaveNotes(e.target.value)}
+              rows={3}
+              data-testid="textarea-save-notes"
+            />
+          </div>
+          <div className="flex items-center gap-4 flex-wrap">
+            <Button onClick={handleSaveAudit} data-testid="btn-save-audit" className="gap-2">
+              <Save className="w-4 h-4" />
+              Save Audit
+            </Button>
+            {saveMessage && (
+              <p className={cn('text-sm', saveMessage.type === 'success' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')} data-testid="text-save-message">
+                {saveMessage.text}
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       <div ref={snapshotRef} className="space-y-4 snapshot-printable" data-testid="snapshot-content">
         <PerformanceScoreCard results={results} />
 

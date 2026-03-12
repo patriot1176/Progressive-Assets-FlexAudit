@@ -1,0 +1,56 @@
+
+
+"Make only these changes. Do not change anything else — no redesign, no restructuring, no changes to any existing tabs, fields, calculations or layout. Only add these specific features.
+Change 1 — Fix Market Risk tab competitive position color coding:
+In the 'WHY YOUR CURRENT FLEET CANNOT COMPETE ON SHORT RUNS' table, change the Flexo Position color coding logic as follows:
+
+The current logic only considers whether the job is profitable
+Replace with this logic that accounts for competitive pricing against digital:
+
+If Setup:Run ratio is over 100% → color red, label 'Uncompetitive'
+If Setup:Run ratio is 50%-100% → color orange, label 'At Risk'
+If Setup:Run ratio is 25%-50% → color yellow, label 'Marginal'
+If Setup:Run ratio is under 25% → color green, label 'Competitive'
+
+
+Update the color coding legend below the table to reflect these new labels and thresholds
+Update the explanatory text below the table to read: 'A digital competitor quoting these same jobs has zero setup cost. The Setup:Run ratio shows how much of your press time is consumed by setup on each job length. Any ratio above 25% creates a structural pricing disadvantage against a competitor with no setup cost.'
+
+Change 2 — Add Save Audit functionality to the Exec Report tab:
+Add a new section at the top of the Exec Report tab called 'SAVE THIS AUDIT' with these fields:
+
+Company Name — text input, placeholder 'Enter company name'
+Contact Name — text input, placeholder 'Enter contact name'
+Audit Date — auto-populated with today's date, user can edit
+Notes — text area, placeholder 'Add any notes about this audit — key findings, next steps, follow-up date'
+A prominent 'Save Audit' button
+
+When Save Audit is clicked:
+
+Save all current input values from every tab plus the company name, contact name, date, and notes to persistent private storage
+Use storage key format: 'audit:[timestamp]'
+Show a success confirmation message: 'Audit saved for [Company Name] on [Date]'
+If Company Name is blank show an error: 'Please enter a company name before saving'
+
+Change 3 — Add a new tab called 'Audit History' as the very last tab after Exec Report:
+The tab displays a table of all saved audits with these columns:
+
+Company Name
+Contact Name
+Date
+Setup Hours Lost
+Total Setup Cost
+Payback Period (yrs)
+Notes (truncated to 50 characters with ellipsis)
+Actions
+
+Under Actions show two buttons per row:
+
+'Load' — loads all saved inputs from that audit back into the tool exactly as they were when saved, replacing all current inputs. Show a confirmation dialog first: 'Loading this audit will replace all current inputs. Continue?'
+'Delete' — deletes the saved audit from storage. Show a confirmation dialog first: 'Delete this audit? This cannot be undone.'
+
+If no audits have been saved show a message: 'No audits saved yet. Complete an audit and click Save Audit on the Exec Report tab to save your first audit.'
+At the top of the Audit History tab show a summary line: 'You have [N] saved audits. Total setups documented: [sum of all setup hours across all saved audits]. Total setup cost documented: $[sum of all total setup costs across all saved audits].'
+Sort audits by date descending — most recent first.
+All audit data must be stored using the persistent private storage system already used by this application. Audit data is private to the current user only and not visible to other users.
+Do not touch any other calculations, fields, labels, layout, styling or logic anywhere in the app. Only these three changes."

@@ -9,6 +9,7 @@ import { RunLengthAnalysisSection } from "@/components/run-length-analysis";
 import { PlateCostAnalysisSection } from "@/components/plate-cost-analysis";
 import { MAAnalysisSection } from "@/components/ma-analysis";
 import { MarketRiskSection } from "@/components/market-risk";
+import { AuditHistorySection } from "@/components/audit-history";
 import { V12ComparisonSection } from "@/components/v12-comparison";
 import {
   type AuditInputs,
@@ -64,6 +65,12 @@ export default function Home() {
     setActiveTab('inputs');
   };
 
+  const handleLoadAudit = (savedInputs: AuditInputs, savedMode: OperatingMode) => {
+    setInputs(savedInputs);
+    setMode(savedMode);
+    setActiveTab('inputs');
+  };
+
   return (
     <div className="min-h-screen bg-background print:bg-white" style={{ touchAction: "manipulation" }}>
       <header className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50 print:hidden">
@@ -103,7 +110,7 @@ export default function Home() {
               Show Benchmark
             </Label>
           </div>
-          <TabsList className="grid w-full grid-cols-7 print:hidden" data-testid="tab-list">
+          <TabsList className="grid w-full grid-cols-8 print:hidden" data-testid="tab-list">
             <TabsTrigger value="inputs" data-testid="tab-inputs">Plant Config</TabsTrigger>
             <TabsTrigger value="results" data-testid="tab-results">Setup Tax</TabsTrigger>
             <TabsTrigger value="run-length" data-testid="tab-run-length">Job Economics</TabsTrigger>
@@ -111,6 +118,7 @@ export default function Home() {
             <TabsTrigger value="market-risk" data-testid="tab-market-risk">Market Risk</TabsTrigger>
             <TabsTrigger value="ma-analysis" data-testid="tab-ma-analysis">Valuation</TabsTrigger>
             <TabsTrigger value="snapshot" data-testid="tab-snapshot">Exec Report</TabsTrigger>
+            <TabsTrigger value="history" data-testid="tab-history">History</TabsTrigger>
           </TabsList>
 
           <div className="mt-5 sm:mt-6">
@@ -147,6 +155,9 @@ export default function Home() {
                 snapshotRef={snapshotRef}
                 showBenchmark={showBenchmark}
               />
+            </TabsContent>
+            <TabsContent value="history" className="mt-0 print:hidden">
+              <AuditHistorySection onLoadAudit={handleLoadAudit} />
             </TabsContent>
             {/* V12 Comparison tab hidden — code retained for future re-enable */}
             {/* <TabsContent value="v12" className="mt-0 print:hidden">
