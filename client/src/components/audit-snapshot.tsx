@@ -780,6 +780,31 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
       </Card>
 
       <div ref={snapshotRef} className="space-y-4 snapshot-printable" data-testid="snapshot-content">
+        {/* Hero metric */}
+        {(() => {
+          const pctLostRounded = Math.round(results.pctPressTimeLostToSetup * 100);
+          const leadPhrase = pctLostRounded === 50 ? 'Half' : `${pctLostRounded}% of`;
+          return (
+            <Card data-testid="card-hero-metric">
+              <CardContent className="p-5 sm:p-6">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">Plant Capacity Diagnostic — Headline Finding</p>
+                <div className="mb-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Press capacity lost to setup</p>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-5xl font-bold tracking-tight" data-testid="text-hero-press-equiv">{formatNumber(results.pressEquivalentLost, 1)}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">of {inputs.presses} installed press{inputs.presses !== 1 ? 'es' : ''}</p>
+                </div>
+                <div className="border-l-4 border-amber-400 bg-amber-50 dark:bg-amber-950/30 pl-4 py-3 pr-3">
+                  <p className="text-sm leading-relaxed font-medium text-foreground/85" data-testid="text-hero-callout">
+                    <span className="font-bold">{leadPhrase}</span> this plant's press capacity never produces a foot of saleable product. It exists solely to absorb setup.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
+
         <PerformanceScoreCard results={results} />
 
         <InputsUsedCard inputs={inputs} mode={mode} />
