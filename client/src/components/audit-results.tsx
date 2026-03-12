@@ -245,14 +245,19 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
           />
         )}
         {results.potentialRevenueCapacity !== null && (
-          <MetricCard
-            icon={Banknote}
-            label="Opportunity Cost (Unused Production Capacity)"
-            value={formatCurrency(results.potentialRevenueCapacity)}
-            description="at current $/ft input"
-            accent="recovery"
-            testId="card-revenue"
-          />
+          <>
+            <MetricCard
+              icon={Banknote}
+              label="Opportunity Cost (Unused Production Capacity)"
+              value={formatCurrency(results.potentialRevenueCapacity)}
+              description="at current $/ft input"
+              accent="recovery"
+              testId="card-revenue"
+            />
+            <p className="text-[10px] text-muted-foreground italic leading-relaxed -mt-1">
+              Note: This figure represents theoretical press capacity at full utilization. In conversations, press capacity equivalents above are often the more actionable metric.
+            </p>
+          </>
         )}
         {results.totalSetupImpact !== null && (
           <MetricCard
