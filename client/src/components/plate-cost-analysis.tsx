@@ -266,11 +266,6 @@ export function PlateCostAnalysisSection({ onDataChange }: { onDataChange?: (dat
                 <td className={cn("py-2.5 px-3 text-sm text-right whitespace-nowrap font-semibold", flexoRedClass(totalAnnualPlateCost))}>{fmtC(totalAnnualPlateCost)}</td>
                 <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap font-semibold text-green-600 dark:text-green-400">$0</td>
               </tr>
-              <tr>
-                <td className="py-2.5 px-3 text-sm text-muted-foreground">V12 Annual Savings</td>
-                <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap text-muted-foreground">{fmtC(totalAnnualPlateCost)}</td>
-                <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap font-semibold text-green-600 dark:text-green-400">Eliminated</td>
-              </tr>
             </tbody>
           </table>
         </CardContent>
