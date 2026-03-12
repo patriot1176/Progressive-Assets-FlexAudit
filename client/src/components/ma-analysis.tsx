@@ -82,13 +82,10 @@ export function MAAnalysisSection({ inputs, results }: Props) {
   const [copied, setCopied] = useState(false);
   const [reportedEBITDA, setReportedEBITDA] = useState('0');
   const [ebitdaMultiple, setEbitdaMultiple] = useState('6');
-  const [v12Investment, setV12Investment] = useState('2000000');
-
   const setupTax = results.totalSetupCost ?? 0;
   const hasSetupTax = setupTax > 0;
   const ebitda = n(reportedEBITDA);
   const multiple = n(ebitdaMultiple) || 6;
-  const v12 = n(v12Investment);
   const hasEBITDA = ebitda > 0;
 
   const annualChangeovers = inputs.presses * inputs.changeoversPerPressPerDay * inputs.operatingDaysPerYear;
@@ -102,17 +99,6 @@ export function MAAnalysisSection({ inputs, results }: Props) {
   const ev_40 = normalizedEBITDA40 * multiple;
   const ev_full = normalizedEBITDAFull * multiple;
 
-  const payback = hasSetupTax && v12 > 0 ? v12 / setupTax : null;
-  const net3yr = setupTax * 3 - v12;
-  const net5yr = setupTax * 5 - v12;
-  const evCreated = setupTax * multiple;
-
-  const paybackColor = payback === null ? 'neutral' : payback < 4 ? 'green' : payback <= 6 ? 'yellow' : 'red';
-
-  const annualConsumables = inputs.consumablesPerChangeover !== null && inputs.consumablesPerChangeover > 0
-    ? inputs.consumablesPerChangeover * annualChangeovers
-    : null;
-
   const buildQofEText = () => {
     let text = `SETUP TAX — QUALITY OF EARNINGS ADJUSTMENT\n\n`;
     text += `This plant capacity diagnostic identifies an annual setup tax burden of approximately ${formatCurrency(setupTax)}, representing ${formatPercent(results.pctPressTimeLostToSetup)} of total available press capacity currently consumed by setup activity.\n\n`;
@@ -124,9 +110,7 @@ export function MAAnalysisSection({ inputs, results }: Props) {
     text += `  • Annual setup labor cost: ${results.annualSetupLaborCost !== null ? formatCurrency(results.annualSetupLaborCost) : 'N/A'}\n`;
     text += `  • Annual setup material waste cost: ${results.annualSetupMaterialWasteCost !== null ? formatCurrency(results.annualSetupMaterialWasteCost) : 'N/A'}\n`;
     text += `  • Annual plate cost: ${results.annualPlateCost !== null ? formatCurrency(results.annualPlateCost) : '$0'}\n`;
-    text += `  • Annual consumables cost: ${annualConsumables !== null ? formatCurrency(annualConsumables) : '$0'}\n`;
-    text += `  • Annual overtime cost (setup-attributed): ${results.annualOvertimeCost !== null ? formatCurrency(results.annualOvertimeCost) : '$0'}\n`;
-    text += `  • Annual premium substrate waste cost: ${results.annualPremiumSubstrateWasteCost !== null ? formatCurrency(results.annualPremiumSubstrateWasteCost) : '$0'}\n`;
+
     text += `  • Total documented setup tax: ${formatCurrency(setupTax)}\n\n`;
     text += `Modeled improvement scenario (40% setup reduction):\n`;
     text += `  • Recovered press hours: ${formatNumber(results.recoveredHours)} hours/year\n`;
@@ -209,22 +193,6 @@ export function MAAnalysisSection({ inputs, results }: Props) {
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs pointer-events-none">x</span>
               </div>
               <p className="text-[10px] text-muted-foreground leading-snug">Typical label converter multiples range from 5x–9x depending on size, growth, and customer concentration</p>
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium">Estimated V12 Investment ($)</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">$</span>
-                <Input
-                  type="number"
-                  min={0}
-                  step={50000}
-                  value={v12Investment}
-                  onChange={(e) => setV12Investment(e.target.value)}
-                  className="pl-7"
-                  data-testid="input-v12-investment"
-                />
-              </div>
-              <p className="text-[10px] text-muted-foreground leading-snug">Estimated all-in cost of HP Indigo V12 including installation, training, and first year support. Typical range $1.8M–$2.2M</p>
             </div>
           </div>
         </CardContent>
@@ -321,57 +289,6 @@ export function MAAnalysisSection({ inputs, results }: Props) {
               <>The documented setup tax of <span className="font-semibold">{formatCurrency(setupTax)}</span> represents approximately <span className="font-semibold">{formatCurrency(setupTax * multiple)}</span> in suppressed enterprise value at <span className="font-semibold">{multiple}x</span> EBITDA.</>
             )}
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">V12 Investment Analysis</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0 space-y-3">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <MetricCard
-              label="V12 Investment"
-              value={formatCurrency(v12)}
-              color="neutral"
-              testId="card-v12-investment"
-            />
-            <MetricCard
-              label="Annual Setup Tax Eliminated"
-              value={formatCurrency(setupTax)}
-              color="neutral"
-              testId="card-setup-tax-eliminated"
-            />
-            <MetricCard
-              label="Simple Payback Period"
-              value={payback !== null ? `${formatNumber(payback, 1)} yrs` : '—'}
-              sub={payback !== null ? (payback < 4 ? 'Under 4 years' : payback <= 6 ? '4–6 years' : 'Over 6 years') : 'Enter investment above'}
-              color={paybackColor}
-              testId="card-payback"
-            />
-            <MetricCard
-              label="3-Year Net Benefit"
-              value={hasSetupTax ? formatCurrency(net3yr) : '—'}
-              color={net3yr >= 0 ? 'green' : 'red'}
-              testId="card-net3yr"
-            />
-            <MetricCard
-              label="5-Year Net Benefit"
-              value={hasSetupTax ? formatCurrency(net5yr) : '—'}
-              color={net5yr >= 0 ? 'green' : 'red'}
-              testId="card-net5yr"
-            />
-            <MetricCard
-              label="Enterprise Value Created"
-              value={formatCurrency(evCreated)}
-              sub={`at ${multiple}x EBITDA`}
-              color="green"
-              testId="card-ev-created"
-            />
-          </div>
-          <p className="text-[10px] text-muted-foreground leading-relaxed">
-            Payback analysis assumes full elimination of setup tax. Actual results will vary based on job mix, digital press utilization, and operational implementation.
-          </p>
         </CardContent>
       </Card>
 
