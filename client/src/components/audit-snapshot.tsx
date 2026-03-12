@@ -410,6 +410,8 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
     const modeLabel = mode === 'conservative' ? 'Conservative' : mode === 'typical' ? 'Typical' : 'Aggressive';
 
     const pctLost = results.pctPressTimeLostToSetup * 100;
+    const pdfPctLostRounded = Math.round(pctLost);
+    const pdfLeadPhrase = pdfPctLostRounded === 50 ? 'Half' : `${pdfPctLostRounded}% of`;
     const perfScore = Math.max(0, Math.min(100, Math.round(100 - pctLost)));
     let perfLabel: string;
     let perfColor: string;
@@ -505,7 +507,20 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
   <h2>Operational Diagnostic Summary</h2>
 </div>
 
-<!-- 2. Performance Score -->
+<!-- 2. Headline Finding -->
+<div class="section">
+  <div class="section-title" style="font-size:9px;letter-spacing:0.08em;">Plant Capacity Diagnostic — Headline Finding</div>
+  <p style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#888;margin-bottom:4px;">Press Capacity Lost to Setup</p>
+  <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:2px;">
+    <span style="font-size:32px;font-weight:700;line-height:1;">${formatNumber(results.pressEquivalentLost, 1)}</span>
+  </div>
+  <p style="font-size:10px;color:#888;margin-bottom:10px;">of ${inputs.presses} installed press${inputs.presses !== 1 ? 'es' : ''}</p>
+  <div style="border-left:3px solid #f59e0b;background:#fffbeb;padding:8px 10px;">
+    <p style="font-size:10px;line-height:1.5;margin:0;"><strong>${pdfLeadPhrase}</strong> this plant's press capacity never produces a foot of saleable product. It exists solely to absorb setup.</p>
+  </div>
+</div>
+
+<!-- 3. Performance Score -->
 <div class="section">
   <div class="section-title">Plant Performance Score</div>
   <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;">
