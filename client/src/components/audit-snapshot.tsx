@@ -827,58 +827,6 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
                 <li>Annual plate cost is approximately <span className="font-bold">{formatCurrency(results.annualPlateCost)}</span> per year (= <span className="font-bold">{formatCurrency(results.plateCostPerChangeover)}</span> per changeover), based on <span className="font-bold">${inputs.avgPlateCostPerColor}</span>/color across full plate set changeovers (<span className="font-bold">{inputs.avgColorsPerJob ?? 0}</span> colors, <span className="font-bold">{inputs.pctJobsRequiringNewPlates ?? 0}%</span> of changeovers) and copy change only changeovers (<span className="font-bold">{inputs.avgPlatesChangedPerCopyChange ?? 0}</span> plates, <span className="font-bold">{inputs.pctJobsWithCopyChangesOnly ?? 0}%</span> of changeovers).</li>
               )}
             </ul>
-
-            <div className="mt-5 pt-4 border-t border-border/50">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Capacity Opportunity</h4>
-              <p className="text-xs text-muted-foreground italic mb-2">Press equivalents translate setup-related capacity loss into the number of presses effectively removed from production.</p>
-              <p className="text-sm leading-relaxed text-foreground/90" data-testid="text-capacity-opportunity">
-                Based on the modeled inputs, the plant's <span className="font-bold">{inputs.presses}</span> installed presses currently operate with the effective production capacity of approximately <span className="font-bold">{formatNumber(inputs.presses * (1 - results.pctPressTimeLostToSetup), 1)}</span> fully utilized presses due to setup activity.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <PressFleetEquivalents inputs={inputs} results={results} />
-
-        <Card>
-          <CardContent className="p-5 sm:p-6">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-5">Core Metrics</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-5">
-              {metrics.map((m, i) => (
-                <div key={i} data-testid={`snapshot-metric-${i}`}>
-                  <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider leading-tight">{m.label}</p>
-                  <p className="text-xl sm:text-2xl font-bold tracking-tight mt-0.5">{m.value}</p>
-                  {m.unit && <p className="text-[11px] text-muted-foreground">{m.unit}</p>}
-                </div>
-              ))}
-            </div>
-            <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
-              Press Capacity Consumed by Setup: Equivalent press capacity currently consumed by setup activities.
-            </p>
-            {results.annualSetupMaterialWasteCost !== null && (
-              <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
-                Material waste during press setup is estimated using setup waste length, average press web width, and substrate cost per MSI.
-              </p>
-            )}
-            {(results.totalSetupCost !== null || results.potentialRevenueCapacity !== null) && (
-              <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
-                Direct setup costs include labor, substrate waste, plate costs, and other consumables incurred during press setup. Opportunity cost represents unrealized production value caused by setup downtime.
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        <PressCapacityUtilizationBar results={results} />
-
-        {showBenchmark && <BenchmarkPanel inputs={inputs} results={results} />}
-        {showBenchmark && <BenchmarkInterpretation />}
-
-        <Card>
-          <CardContent className="p-5 sm:p-6">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">What This Means</h3>
-            <p className="text-sm leading-relaxed text-foreground/90" data-testid="text-what-this-means">
-              {generateWhatThisMeans(inputs, results)}
-            </p>
           </CardContent>
         </Card>
 
@@ -949,6 +897,60 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             </Card>
           );
         })()}
+
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Capacity Opportunity</h4>
+            <p className="text-xs text-muted-foreground italic mb-2">Press equivalents translate setup-related capacity loss into the number of presses effectively removed from production.</p>
+            <p className="text-sm leading-relaxed text-foreground/90" data-testid="text-capacity-opportunity">
+              Based on the modeled inputs, the plant's <span className="font-bold">{inputs.presses}</span> installed presses currently operate with the effective production capacity of approximately <span className="font-bold">{formatNumber(inputs.presses * (1 - results.pctPressTimeLostToSetup), 1)}</span> fully utilized presses due to setup activity.
+            </p>
+          </CardContent>
+        </Card>
+
+        <PressFleetEquivalents inputs={inputs} results={results} />
+
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-5">Core Metrics</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-5">
+              {metrics.map((m, i) => (
+                <div key={i} data-testid={`snapshot-metric-${i}`}>
+                  <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider leading-tight">{m.label}</p>
+                  <p className="text-xl sm:text-2xl font-bold tracking-tight mt-0.5">{m.value}</p>
+                  {m.unit && <p className="text-[11px] text-muted-foreground">{m.unit}</p>}
+                </div>
+              ))}
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+              Press Capacity Consumed by Setup: Equivalent press capacity currently consumed by setup activities.
+            </p>
+            {results.annualSetupMaterialWasteCost !== null && (
+              <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
+                Material waste during press setup is estimated using setup waste length, average press web width, and substrate cost per MSI.
+              </p>
+            )}
+            {(results.totalSetupCost !== null || results.potentialRevenueCapacity !== null) && (
+              <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
+                Direct setup costs include labor, substrate waste, plate costs, and other consumables incurred during press setup. Opportunity cost represents unrealized production value caused by setup downtime.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        <PressCapacityUtilizationBar results={results} />
+
+        {showBenchmark && <BenchmarkPanel inputs={inputs} results={results} />}
+        {showBenchmark && <BenchmarkInterpretation />}
+
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">What This Means</h3>
+            <p className="text-sm leading-relaxed text-foreground/90" data-testid="text-what-this-means">
+              {generateWhatThisMeans(inputs, results)}
+            </p>
+          </CardContent>
+        </Card>
 
         <AssumptionsSection showMaterialWaste={results.annualSetupMaterialWasteCost !== null} />
       </div>
