@@ -1,0 +1,106 @@
+
+"Make only these two changes. Do not change anything else — no redesign, no restructuring, no changes to any existing tabs, fields, calculations or layout. Only add these new features.
+Change 1 — Add a new section at the bottom of the 'Setup Tax Analysis' tab called 'V12 CAPACITY UPSIDE — NOT INCLUDED IN ROI CALCULATION':
+This section must be clearly visually separated from the existing results above it with a distinct header and a note that reads: 'The following represents additional value potential beyond the documented setup tax ROI. These factors are deliberately excluded from the payback calculation to maintain conservative, defensible numbers.'
+Display these comparison cards in a 2-column grid:
+Card 1 — Production Speed Advantage:
+
+Label: 'V12 vs Current Fleet Speed'
+Flexo: [Avg Press Speed from inputs] fpm
+V12: 400 fpm
+Advantage: [400 ÷ Avg Press Speed] x faster
+Note: 'At 400 fpm the V12 produces [400 ÷ Avg Press Speed × 100 - 100]% more linear footage per hour than your current fleet average'
+
+Card 2 — Non-Stop Production:
+
+Label: 'Annual Changeover Downtime Eliminated'
+Current: [Annual Setup Hours Lost] hours of press stops per year
+V12: 0 press stops
+Note: 'The V12 runs job-to-job without stopping. Every hour currently lost to changeover becomes continuous billable production time.'
+
+Card 3 — Short Run Profitability:
+
+Label: 'Jobs Currently Below Break-Even'
+Pull the break-even footage from Job Economics tab calculation
+Display: 'Jobs under [break-even footage] ft are currently unprofitable on flexo after plate cost. On the V12 every run length is profitable regardless of footage.'
+Note: 'Break-even footage assumes current plate cost structure. V12 plate cost is $0.'
+
+Card 4 — New Revenue Potential:
+
+Label: 'Recovered Capacity Revenue Potential'
+Display: [Recovered Linear Feet from Setup Tax Analysis] feet of recovered annual capacity
+At current selling price: [Recovered Linear Feet × Avg Selling Price]
+Note: 'This represents the revenue potential of recovered press capacity at current selling price. Actual capture depends on demand and job mix.'
+
+Below all four cards display this statement in a highlighted box:
+'The 3.3-year payback documented above is calculated using setup tax elimination only. Speed advantage, non-stop production, short run profitability improvement, and new revenue potential from recovered capacity are all additional upside that are deliberately not included in the conservative ROI calculation.'
+Change 2 — Add a new tab called 'Market Risk' positioned between 'Plate Cost Analysis' and 'Business Valuation':
+The tab has its own independent inputs in a section called 'COMPETITIVE EXPOSURE INPUTS':
+Field 1:
+
+Label: 'Estimated Jobs Lost to Digital Competitors per Month'
+Default: 0
+Helper text: 'Jobs you know or suspect are going to competitors running digital label presses. Leave at 0 if unknown and use the manual revenue estimate below.'
+
+Field 2:
+
+Label: 'Average Value of Lost Job ($)'
+Default: 0
+Helper text: 'Average revenue per job you are losing to digital competitors'
+
+Field 3:
+
+Label: 'Average Run Length of Lost Jobs (ft)'
+Default: 0
+Helper text: 'Typical footage of jobs being lost to digital competitors — usually short run jobs under 5,000 ft'
+
+Field 4:
+
+Label: 'Estimated Annual Revenue Lost to Digital Competition ($)'
+Default: 0
+Helper text: 'If you do not know jobs lost per month enter your best estimate of total annual revenue lost to digital competitors directly here. This field is used if jobs per month and average job value are both 0.'
+
+Below the inputs display a note in a clearly styled info box:
+'Do not know your lost job numbers? That is common. Most converters do not formally track lost opportunities. Enter your best estimate in the annual revenue field above, or leave all fields at 0 to see the structural competitive risk analysis below based on your current job economics.'
+OUTPUT SECTION 1 — REVENUE LEAKAGE ANALYSIS
+Calculate Annual Revenue Lost as:
+
+If Jobs Lost per Month > 0 AND Average Job Value > 0: Jobs Lost per Month × 12 × Average Job Value
+If above = 0 but Estimated Annual Revenue Lost > 0: use Estimated Annual Revenue Lost directly
+If all = 0: show 0 with a note 'Enter estimated lost jobs or revenue above to calculate revenue leakage'
+
+Display these output cards:
+
+Annual Revenue Lost to Digital Competitors: [calculated above]
+As % of Current Revenue: [Annual Revenue Lost ÷ (Recovered Linear Feet × Avg Selling Price × 12) — if selling price and footage available, otherwise show 'Enter selling price in Plant Configuration to calculate']
+5-Year Cumulative Revenue Leakage: [Annual Revenue Lost × 5]
+V12 Capture Opportunity (50%): [Annual Revenue Lost × 50%]
+V12 Capture Opportunity (75%): [Annual Revenue Lost × 75%]
+
+OUTPUT SECTION 2 — STRUCTURAL COMPETITIVE RISK
+Display this regardless of whether lost job numbers are entered:
+Header: 'Why Your Current Fleet Cannot Compete on Short Runs'
+Show a comparison table with columns: Job Length | Flexo Economics | V12 Economics
+Rows using data from Job Economics tab:
+
+500 ft
+1,000 ft
+2,500 ft
+5,000 ft
+
+Columns:
+
+Flexo Setup Cost/Job: [from Job Economics calculation]
+Flexo Effective Cost/ft: [from Job Economics calculation]
+V12 Setup Cost/Job: $0
+V12 Effective Cost/ft: [Avg Selling Price — since no setup cost]
+Flexo Competitive Position: color coded red for unprofitable, yellow for marginal, green for competitive
+
+Below the table display:
+'A digital competitor quoting these same jobs has zero setup cost. Your effective cost per foot on short runs includes setup tax that a digital press eliminates entirely. This is the structural pricing disadvantage your current fleet creates on every short run job.'
+OUTPUT SECTION 3 — MARKET RISK SUMMARY
+Display a single callout box:
+'Based on your inputs this operation has an estimated $[Annual Revenue Lost] in annual revenue exposure to digital competition. The short run jobs most vulnerable to digital displacement represent your highest setup tax burden — the same jobs where your effective cost per foot is least competitive. The V12 eliminates this structural disadvantage entirely.'
+If Annual Revenue Lost = 0 display:
+'Enter your estimated lost job data above to quantify your revenue exposure. Even without specific lost job data the structural pricing disadvantage on short runs under [break-even footage] ft is documented in the Job Economics tab.'
+Do not touch any other calculations, fields, labels, layout, styling or logic anywhere in the app. Only these two changes."

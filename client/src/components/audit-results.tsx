@@ -404,6 +404,119 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
           </div>
         </CardContent>
       </Card>
+
+      <div className="space-y-4" data-testid="section-v12-upside">
+        <div className="flex items-center gap-3">
+          <div className="flex-1 border-t-2 border-dashed border-muted-foreground/20" />
+          <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground whitespace-nowrap">
+            V12 Capacity Upside &mdash; Not Included in ROI Calculation
+          </h3>
+          <div className="flex-1 border-t-2 border-dashed border-muted-foreground/20" />
+        </div>
+        <p className="text-xs text-muted-foreground bg-muted/40 rounded-md border px-4 py-3 leading-relaxed">
+          The following represents additional value potential beyond the documented setup tax ROI. These factors are deliberately excluded from the payback calculation to maintain conservative, defensible numbers.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* Card 1 — Production Speed Advantage */}
+          <Card>
+            <CardContent className="p-4 space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">V12 vs Current Fleet Speed</p>
+              <div className="grid grid-cols-3 gap-2 text-sm">
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Flexo</p>
+                  <p className="font-bold">{inputs.pressSpeedFPM !== null ? `${inputs.pressSpeedFPM} fpm` : '—'}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">V12</p>
+                  <p className="font-bold text-emerald-600 dark:text-emerald-400">400 fpm</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Advantage</p>
+                  <p className="font-bold text-emerald-600 dark:text-emerald-400">
+                    {inputs.pressSpeedFPM !== null && inputs.pressSpeedFPM > 0
+                      ? `${(400 / inputs.pressSpeedFPM).toFixed(1)}x faster`
+                      : '—'}
+                  </p>
+                </div>
+              </div>
+              {inputs.pressSpeedFPM !== null && inputs.pressSpeedFPM > 0 && (
+                <p className="text-[10px] text-muted-foreground leading-snug">
+                  At 400 fpm the V12 produces {Math.round((400 / inputs.pressSpeedFPM - 1) * 100)}% more linear footage per hour than your current fleet average.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Card 2 — Non-Stop Production */}
+          <Card>
+            <CardContent className="p-4 space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Annual Changeover Downtime Eliminated</p>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Current</p>
+                  <p className="font-bold text-red-600 dark:text-red-400">{formatNumber(results.setupHoursPerYear)} hrs of press stops/yr</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">V12</p>
+                  <p className="font-bold text-emerald-600 dark:text-emerald-400">0 press stops</p>
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground leading-snug">
+                The V12 runs job-to-job without stopping. Every hour currently lost to changeover becomes continuous billable production time.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Card 3 — Short Run Profitability */}
+          <Card>
+            <CardContent className="p-4 space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Jobs Currently Below Break-Even</p>
+              {results.setupTaxPerChangeover !== null && inputs.pricePerFoot !== null && inputs.pricePerFoot > 0 ? (() => {
+                const breakEvenFt = Math.ceil(results.setupTaxPerChangeover / inputs.pricePerFoot!);
+                return (
+                  <>
+                    <p className="text-sm font-bold text-red-600 dark:text-red-400">Break-even: {formatNumber(breakEvenFt)} ft</p>
+                    <p className="text-[10px] text-muted-foreground leading-snug">
+                      Jobs under {formatNumber(breakEvenFt)} ft are currently unprofitable on flexo after plate cost. On the V12 every run length is profitable regardless of footage.
+                    </p>
+                    <p className="text-[10px] text-muted-foreground leading-snug italic">
+                      Break-even footage assumes current plate cost structure. V12 plate cost is $0.
+                    </p>
+                  </>
+                );
+              })() : (
+                <p className="text-xs text-muted-foreground italic">Enter labor rate, material waste, and selling price in Plant Config to calculate break-even footage.</p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Card 4 — New Revenue Potential */}
+          <Card>
+            <CardContent className="p-4 space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Recovered Capacity Revenue Potential</p>
+              {results.recoveredLinearFeet !== null ? (
+                <>
+                  <p className="text-sm"><span className="font-bold">{formatNumber(results.recoveredLinearFeet)}</span> <span className="text-muted-foreground">ft of recovered annual capacity</span></p>
+                  {inputs.pricePerFoot !== null ? (
+                    <p className="text-sm">At current selling price: <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(results.recoveredLinearFeet * inputs.pricePerFoot)}</span></p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground italic">Enter selling price in Plant Config to calculate revenue potential.</p>
+                  )}
+                  <p className="text-[10px] text-muted-foreground leading-snug">
+                    This represents the revenue potential of recovered press capacity at current selling price. Actual capture depends on demand and job mix.
+                  </p>
+                </>
+              ) : (
+                <p className="text-xs text-muted-foreground italic">Enter press speed and selling price in Plant Config to calculate recovered capacity revenue.</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="rounded-md border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 px-4 py-3 text-sm leading-relaxed text-foreground/80" data-testid="callout-v12-upside">
+          The 3.3-year payback documented above is calculated using setup tax elimination only. Speed advantage, non-stop production, short run profitability improvement, and new revenue potential from recovered capacity are all additional upside that are deliberately not included in the conservative ROI calculation.
+        </div>
+      </div>
     </div>
   );
 }

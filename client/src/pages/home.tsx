@@ -8,6 +8,7 @@ import { AuditSnapshotSection } from "@/components/audit-snapshot";
 import { RunLengthAnalysisSection } from "@/components/run-length-analysis";
 import { PlateCostAnalysisSection } from "@/components/plate-cost-analysis";
 import { MAAnalysisSection } from "@/components/ma-analysis";
+import { MarketRiskSection } from "@/components/market-risk";
 import { V12ComparisonSection } from "@/components/v12-comparison";
 import {
   type AuditInputs,
@@ -102,11 +103,12 @@ export default function Home() {
               Show Benchmark
             </Label>
           </div>
-          <TabsList className="grid w-full grid-cols-6 print:hidden" data-testid="tab-list">
+          <TabsList className="grid w-full grid-cols-7 print:hidden" data-testid="tab-list">
             <TabsTrigger value="inputs" data-testid="tab-inputs">Plant Config</TabsTrigger>
             <TabsTrigger value="results" data-testid="tab-results">Setup Tax</TabsTrigger>
             <TabsTrigger value="run-length" data-testid="tab-run-length">Job Economics</TabsTrigger>
             <TabsTrigger value="plate-cost" data-testid="tab-plate-cost">Plate Cost</TabsTrigger>
+            <TabsTrigger value="market-risk" data-testid="tab-market-risk">Market Risk</TabsTrigger>
             <TabsTrigger value="ma-analysis" data-testid="tab-ma-analysis">Valuation</TabsTrigger>
             <TabsTrigger value="snapshot" data-testid="tab-snapshot">Exec Report</TabsTrigger>
           </TabsList>
@@ -129,6 +131,9 @@ export default function Home() {
             </TabsContent>
             <TabsContent value="plate-cost" className="mt-0 print:hidden">
               <PlateCostAnalysisSection />
+            </TabsContent>
+            <TabsContent value="market-risk" className="mt-0 print:hidden">
+              <MarketRiskSection inputs={inputs} results={results} />
             </TabsContent>
             <TabsContent value="ma-analysis" className="mt-0 print:hidden">
               <MAAnalysisSection inputs={inputs} results={results} />
