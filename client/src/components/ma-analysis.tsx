@@ -102,15 +102,13 @@ export function MAAnalysisSection({ inputs, results }: Props) {
   const buildQofEText = () => {
     let text = `SETUP TAX — QUALITY OF EARNINGS ADJUSTMENT\n\n`;
     text += `This plant capacity diagnostic identifies an annual setup tax burden of approximately ${formatCurrency(setupTax)}, representing ${formatPercent(results.pctPressTimeLostToSetup)} of total available press capacity currently consumed by setup activity.\n\n`;
-    text += `This setup tax burden represents a potential Quality of Earnings adjustment of approximately ${formatCurrency(setupTax)} annually. Elimination of this operational inefficiency through investment in digital print technology would increase normalized EBITDA by approximately ${formatCurrency(setupTax)} per year.\n\n`;
+    text += `This setup tax burden represents a potential Quality of Earnings adjustment of approximately ${formatCurrency(setupTax)} annually. Elimination of this operational inefficiency would increase normalized EBITDA by approximately ${formatCurrency(setupTax)} per year.\n\n`;
     text += `At an assumed transaction multiple of ${multiple}x EBITDA, the suppressed enterprise value attributable to this setup tax burden is approximately ${formatCurrency(setupTax * multiple)}.\n\n`;
     text += `Key operational metrics supporting this adjustment:\n`;
     text += `  • Annual press hours lost to setup: ${formatNumber(results.setupHoursPerYear)}\n`;
     text += `  • Press capacity consumed by setup: ${formatPercent(results.pctPressTimeLostToSetup)} (${formatNumber(results.pressEquivalentLost, 1)} press equivalents)\n`;
     text += `  • Annual setup labor cost: ${results.annualSetupLaborCost !== null ? formatCurrency(results.annualSetupLaborCost) : 'N/A'}\n`;
     text += `  • Annual setup material waste cost: ${results.annualSetupMaterialWasteCost !== null ? formatCurrency(results.annualSetupMaterialWasteCost) : 'N/A'}\n`;
-    text += `  • Annual plate cost: ${results.annualPlateCost !== null ? formatCurrency(results.annualPlateCost) : '$0'}\n`;
-
     text += `  • Total documented setup tax: ${formatCurrency(setupTax)}\n\n`;
     text += `Modeled improvement scenario (40% setup reduction):\n`;
     text += `  • Recovered press hours: ${formatNumber(results.recoveredHours)} hours/year\n`;
