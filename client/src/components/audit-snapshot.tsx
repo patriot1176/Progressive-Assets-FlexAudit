@@ -826,6 +826,9 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
                 <li>Annual plate cost is approximately <span className="font-bold">{formatCurrency(results.annualPlateCost)}</span> per year (= <span className="font-bold">{formatCurrency(results.plateCostPerChangeover)}</span> per changeover), based on <span className="font-bold">${inputs.avgPlateCostPerColor}</span>/color across full plate set changeovers (<span className="font-bold">{inputs.avgColorsPerJob ?? 0}</span> colors, <span className="font-bold">{inputs.pctJobsRequiringNewPlates ?? 0}%</span> of changeovers) and copy change only changeovers (<span className="font-bold">{inputs.avgPlatesChangedPerCopyChange ?? 0}</span> plates, <span className="font-bold">{inputs.pctJobsWithCopyChangesOnly ?? 0}%</span> of changeovers).</li>
               )}
             </ul>
+            <p className="text-[10px] text-muted-foreground italic leading-relaxed mt-3">
+              Note: Recovered linear feet and opportunity values represent theoretical production capacity at full press utilization. Actual realized revenue depends on market demand, scheduling constraints, and finishing capacity. In practice, press capacity equivalents — presses consumed by setup — are typically the more actionable metric.
+            </p>
           </CardContent>
         </Card>
 
