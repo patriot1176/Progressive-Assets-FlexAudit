@@ -286,3 +286,37 @@
     inset: -1px;
   }
 }
+
+/* ── Mobile-only overrides (max-width: 768px) ── */
+@media (max-width: 768px) {
+  /* Tab bar: hide scrollbar but keep scroll functionality */
+  .mobile-tab-scroll {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .mobile-tab-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide native number input spinners on mobile since +/- buttons replace them */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  /* Reduce specific Tailwind padding utilities on mobile for card content */
+  .p-5 { padding: 0.875rem; }
+  .p-6 { padding: 1rem; }
+  .sm\:p-6 { padding: 1rem; }
+
+  /* Tighten main page horizontal padding */
+  main {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+}

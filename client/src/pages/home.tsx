@@ -110,15 +110,15 @@ export default function Home() {
               Show Benchmark
             </Label>
           </div>
-          <TabsList className="grid w-full grid-cols-8 print:hidden" data-testid="tab-list">
-            <TabsTrigger value="inputs" data-testid="tab-inputs">Plant Config</TabsTrigger>
-            <TabsTrigger value="results" data-testid="tab-results">Setup Tax</TabsTrigger>
-            <TabsTrigger value="run-length" data-testid="tab-run-length">Job Economics</TabsTrigger>
-            <TabsTrigger value="plate-cost" data-testid="tab-plate-cost">Plate Cost</TabsTrigger>
-            <TabsTrigger value="market-risk" data-testid="tab-market-risk">Market Risk</TabsTrigger>
-            <TabsTrigger value="ma-analysis" data-testid="tab-ma-analysis">Valuation</TabsTrigger>
-            <TabsTrigger value="snapshot" data-testid="tab-snapshot">Exec Report</TabsTrigger>
-            <TabsTrigger value="history" data-testid="tab-history">History</TabsTrigger>
+          <TabsList className="mobile-tab-scroll flex w-full overflow-x-auto md:grid md:grid-cols-8 print:hidden" data-testid="tab-list">
+            <TabsTrigger value="inputs" data-testid="tab-inputs" className="flex-shrink-0 whitespace-nowrap">Plant Config</TabsTrigger>
+            <TabsTrigger value="results" data-testid="tab-results" className="flex-shrink-0 whitespace-nowrap">Setup Tax</TabsTrigger>
+            <TabsTrigger value="run-length" data-testid="tab-run-length" className="flex-shrink-0 whitespace-nowrap">Job Economics</TabsTrigger>
+            <TabsTrigger value="plate-cost" data-testid="tab-plate-cost" className="flex-shrink-0 whitespace-nowrap">Plate Cost</TabsTrigger>
+            <TabsTrigger value="market-risk" data-testid="tab-market-risk" className="flex-shrink-0 whitespace-nowrap">Market Risk</TabsTrigger>
+            <TabsTrigger value="ma-analysis" data-testid="tab-ma-analysis" className="flex-shrink-0 whitespace-nowrap">Valuation</TabsTrigger>
+            <TabsTrigger value="snapshot" data-testid="tab-snapshot" className="flex-shrink-0 whitespace-nowrap">Exec Report</TabsTrigger>
+            <TabsTrigger value="history" data-testid="tab-history" className="flex-shrink-0 whitespace-nowrap">History</TabsTrigger>
           </TabsList>
 
           <div className="mt-5 sm:mt-6">

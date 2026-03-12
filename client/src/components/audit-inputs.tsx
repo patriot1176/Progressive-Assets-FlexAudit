@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info, RotateCcw, Shield, Target, Zap, ChevronUp, ChevronDown } from "lucide-react";
+import { Info, RotateCcw, Shield, Target, Zap, ChevronUp, ChevronDown, Plus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type AuditInputs, type OperatingMode, getModePresets, formatNumber } from "@/lib/calculations";
 
@@ -369,35 +369,53 @@ function NumberField({ label, value, onChange, onBlur, min = 0, max, suffix, pre
           </Tooltip>
         )}
       </div>
-      <div className="relative">
-        {prefix && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">{prefix}</span>
-        )}
-        <Input
-          type="number"
-          inputMode="numeric"
-          min={min}
-          max={max}
-          step={step}
-          value={value}
-          onFocus={handleSelectAll}
-          onChange={(e) => {
-            const v = e.target.valueAsNumber;
-            if (!isNaN(v) && v >= min && (max === undefined || v <= max)) onChange(v);
-          }}
-          onBlur={(e) => {
-            if (onBlur) {
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={decrement}
+          aria-label={`Decrease ${label}`}
+          className="mobile-stepper-btn flex-shrink-0 md:hidden h-9 w-9 rounded-md border border-input bg-background flex items-center justify-center text-muted-foreground hover:bg-muted active:bg-muted"
+        >
+          <Minus className="w-3.5 h-3.5" />
+        </button>
+        <div className="relative flex-1">
+          {prefix && (
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">{prefix}</span>
+          )}
+          <Input
+            type="number"
+            inputMode="numeric"
+            min={min}
+            max={max}
+            step={step}
+            value={value}
+            onFocus={handleSelectAll}
+            onChange={(e) => {
               const v = e.target.valueAsNumber;
-              if (!isNaN(v)) onBlur(v);
-            }
-          }}
-          className={cn("pointer-events-auto", prefix && "pl-7", suffix && "pr-16")}
-          style={{ touchAction: "manipulation" }}
-          data-testid={testId}
-        />
-        {suffix && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs pointer-events-none">{suffix}</span>
-        )}
+              if (!isNaN(v) && v >= min && (max === undefined || v <= max)) onChange(v);
+            }}
+            onBlur={(e) => {
+              if (onBlur) {
+                const v = e.target.valueAsNumber;
+                if (!isNaN(v)) onBlur(v);
+              }
+            }}
+            className={cn("pointer-events-auto", prefix && "pl-7", suffix && "pr-16")}
+            style={{ touchAction: "manipulation" }}
+            data-testid={testId}
+          />
+          {suffix && (
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs pointer-events-none">{suffix}</span>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={increment}
+          aria-label={`Increase ${label}`}
+          className="mobile-stepper-btn flex-shrink-0 md:hidden h-9 w-9 rounded-md border border-input bg-background flex items-center justify-center text-muted-foreground hover:bg-muted active:bg-muted"
+        >
+          <Plus className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   );
@@ -421,29 +439,47 @@ function OptionalNumberField({ label, value, onChange, suffix, prefix, step = 1,
   return (
     <div className="space-y-1.5">
       <Label className="text-sm font-medium">{label}</Label>
-      <div className="relative">
-        {prefix && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">{prefix}</span>
-        )}
-        <Input
-          type="number"
-          inputMode={isDecimal ? "decimal" : "numeric"}
-          min={0}
-          step={step}
-          value={value !== null ? String(value) : ''}
-          placeholder="\u2014"
-          onFocus={handleSelectAll}
-          onChange={(e) => {
-            const raw = e.target.value;
-            onChange(raw === '' ? null : Math.max(0, Number(raw)));
-          }}
-          className={cn("pointer-events-auto", prefix && "pl-7", suffix && "pr-16")}
-          style={{ touchAction: "manipulation" }}
-          data-testid={testId}
-        />
-        {suffix && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs pointer-events-none">{suffix}</span>
-        )}
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={decrement}
+          aria-label={`Decrease ${label}`}
+          className="mobile-stepper-btn flex-shrink-0 md:hidden h-9 w-9 rounded-md border border-input bg-background flex items-center justify-center text-muted-foreground hover:bg-muted active:bg-muted"
+        >
+          <Minus className="w-3.5 h-3.5" />
+        </button>
+        <div className="relative flex-1">
+          {prefix && (
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">{prefix}</span>
+          )}
+          <Input
+            type="number"
+            inputMode={isDecimal ? "decimal" : "numeric"}
+            min={0}
+            step={step}
+            value={value !== null ? String(value) : ''}
+            placeholder="\u2014"
+            onFocus={handleSelectAll}
+            onChange={(e) => {
+              const raw = e.target.value;
+              onChange(raw === '' ? null : Math.max(0, Number(raw)));
+            }}
+            className={cn("pointer-events-auto", prefix && "pl-7", suffix && "pr-16")}
+            style={{ touchAction: "manipulation" }}
+            data-testid={testId}
+          />
+          {suffix && (
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs pointer-events-none">{suffix}</span>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={increment}
+          aria-label={`Increase ${label}`}
+          className="mobile-stepper-btn flex-shrink-0 md:hidden h-9 w-9 rounded-md border border-input bg-background flex items-center justify-center text-muted-foreground hover:bg-muted active:bg-muted"
+        >
+          <Plus className="w-3.5 h-3.5" />
+        </button>
       </div>
       {helperText && <p className="text-[10px] text-muted-foreground leading-snug">{helperText}</p>}
     </div>
