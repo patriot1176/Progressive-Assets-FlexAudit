@@ -356,6 +356,7 @@ export function generateSummaryText(inputs: AuditInputs, results: AuditResults):
     text += `Opportunity Cost (Unused Production Capacity): ${formatCurrency(results.potentialRevenueCapacity)}\n`;
   }
   text += `\n${generateWhatThisMeans(inputs, results)}`;
+  text += `\n\nThis analysis is based on inputs provided by the user and is intended for internal diagnostic and planning purposes only. It does not constitute financial, operational, or investment advice. Results should be validated against actual plant data before use in business decisions.`;
   return text;
 }
 
