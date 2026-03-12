@@ -142,16 +142,6 @@ export function MarketRiskSection({ inputs, results }: Props) {
               <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">5-Year Cumulative Revenue Leakage</p>
               <p className="text-2xl font-bold text-red-600 dark:text-red-400">{formatCurrency(annualRevenueLost * 5)}</p>
             </div>
-            <div className="rounded-md border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 p-4 space-y-1" data-testid="card-v12-capture-50">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">V12 Capture Opportunity (50%)</p>
-              <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{formatCurrency(annualRevenueLost * 0.5)}</p>
-              <p className="text-[10px] text-muted-foreground">per year</p>
-            </div>
-            <div className="rounded-md border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 p-4 space-y-1" data-testid="card-v12-capture-75">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">V12 Capture Opportunity (75%)</p>
-              <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{formatCurrency(annualRevenueLost * 0.75)}</p>
-              <p className="text-[10px] text-muted-foreground">per year</p>
-            </div>
           </div>
         </CardContent>
       </Card>
@@ -166,14 +156,12 @@ export function MarketRiskSection({ inputs, results }: Props) {
           )}
           <div className="border rounded-md overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[560px] text-left border-collapse">
+              <table className="w-full min-w-[380px] text-left border-collapse">
                 <thead>
                   <tr className="bg-muted/50 border-b">
                     <th className="py-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Job Length</th>
                     <th className="py-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground text-right">Flexo Setup Cost/Job</th>
                     <th className="py-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground text-right">Flexo Eff. Cost/ft</th>
-                    <th className="py-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground text-right">V12 Setup Cost/Job</th>
-                    <th className="py-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground text-right">V12 Eff. Cost/ft</th>
                     <th className="py-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground text-right">Flexo Position</th>
                   </tr>
                 </thead>
@@ -195,10 +183,6 @@ export function MarketRiskSection({ inputs, results }: Props) {
                         </td>
                         <td className="py-2.5 px-3 text-right whitespace-nowrap">
                           {flexoEffCost !== null ? `$${flexoEffCost.toFixed(4)}/ft` : '—'}
-                        </td>
-                        <td className="py-2.5 px-3 text-right whitespace-nowrap text-emerald-600 dark:text-emerald-400 font-medium">$0</td>
-                        <td className="py-2.5 px-3 text-right whitespace-nowrap text-emerald-600 dark:text-emerald-400 font-medium">
-                          {pricePerFoot !== null ? `$${pricePerFoot.toFixed(4)}/ft` : '—'}
                         </td>
                         <td className="py-2.5 px-3 text-right whitespace-nowrap">
                           <PositionBadge pos={pos} />
@@ -231,7 +215,7 @@ export function MarketRiskSection({ inputs, results }: Props) {
         {hasRevenueLost ? (
           <>Based on your inputs this operation has an estimated <span className="font-semibold">{formatCurrency(annualRevenueLost)}</span> in annual revenue exposure to digital competition. The short run jobs most vulnerable to digital displacement represent your highest setup tax burden — the same jobs where your effective cost per foot is least competitive. The V12 eliminates this structural disadvantage entirely.</>
         ) : (
-          <>Enter your estimated lost job data above to quantify your revenue exposure. {breakEvenFt !== null ? <>Even without specific lost job data the structural pricing disadvantage on short runs under <span className="font-semibold">{formatNumber(breakEvenFt)} ft</span> is documented in the Job Economics tab.</> : 'Even without specific lost job data the structural pricing disadvantage on short runs is documented in the Job Economics tab.'}</>
+          <>Enter your estimated lost job data above to quantify your revenue exposure. Even without specific lost job data the structural pricing disadvantage on short runs is documented in the Job Economics tab.</>
         )}
       </div>
     </div>
