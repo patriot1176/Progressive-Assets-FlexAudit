@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -92,7 +92,18 @@ function fmtN(n: number, d = 0) { return n.toLocaleString('en-US', { minimumFrac
 
 const FIXED_LENGTHS = [500, 1000, 2500, 5000, 10000];
 
-export function PlateCostAnalysisSection() {
+export interface PlateCostData {
+  newJobsPerYear: number;
+  copyChangeEvents: number;
+  totalAnnualPlateCost: number;
+  annualTapeCost: number;
+  avgTapeCostPerMount: number;
+  breakEvenFootage: number | null;
+  numSkus: number;
+  skuCombinedFlexo: number;
+}
+
+export function PlateCostAnalysisSection({ onDataChange }: { onDataChange?: (data: PlateCostData) => void } = {}) {
   const [newJobsPerYear, setNewJobsPerYear] = useState('');
   const [avgColors, setAvgColors] = useState('');
   const [avgPlateCostPerColor, setAvgPlateCostPerColor] = useState('');
@@ -145,6 +156,19 @@ export function PlateCostAnalysisSection() {
   const skuTotalFlexo = nNumSkus * nColors * nPlateCostPerColor;
   const skuAnnualCopyChange = nNumSkus * avgPlatesPerCopyChange * nPlateCostPerCopyChangePlate;
   const skuCombinedFlexo = skuTotalFlexo + skuAnnualCopyChange;
+
+  useEffect(() => {
+    onDataChange?.({
+      newJobsPerYear: nNewJobsPerYear,
+      copyChangeEvents: nCopyChangeEvents,
+      totalAnnualPlateCost,
+      annualTapeCost,
+      avgTapeCostPerMount,
+      breakEvenFootage,
+      numSkus: nNumSkus,
+      skuCombinedFlexo,
+    });
+  }, [nNewJobsPerYear, nCopyChangeEvents, totalAnnualPlateCost, annualTapeCost, avgTapeCostPerMount, breakEvenFootage, nNumSkus, skuCombinedFlexo]);
 
   const flexoRedClass = (v: number) => v > 10000 ? 'text-red-600 dark:text-red-400 font-semibold' : '';
 

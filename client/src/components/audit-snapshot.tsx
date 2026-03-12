@@ -11,6 +11,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { BenchmarkPanel } from "@/components/benchmark-panel";
+import { type PlateCostData } from "@/components/plate-cost-analysis";
 import {
   type AuditInputs,
   type AuditResults,
@@ -33,6 +34,8 @@ interface Props {
   onStartOver: () => void;
   snapshotRef: RefObject<HTMLDivElement | null>;
   showBenchmark: boolean;
+  plateCostData?: PlateCostData | null;
+  onSwitchTab?: (tab: string) => void;
 }
 
 function CopyButton({ label, textFn, icon: Icon, testId }: {
@@ -337,7 +340,7 @@ function BenchmarkInterpretation() {
 
 const todayISO = new Date().toISOString().split('T')[0];
 
-export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snapshotRef, showBenchmark }: Props) {
+export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snapshotRef, showBenchmark, plateCostData, onSwitchTab }: Props) {
   const { toast } = useToast();
 
   const [saveCompanyName, setSaveCompanyName] = useState('');
@@ -878,6 +881,74 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             </p>
           </CardContent>
         </Card>
+
+        {(() => {
+          const hasData = plateCostData && (plateCostData.newJobsPerYear > 0 || plateCostData.copyChangeEvents > 0);
+          if (!hasData) {
+            return (
+              <Card data-testid="card-plate-cost-prompt">
+                <CardContent className="p-5 sm:p-6">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Plate Cost Analysis</h3>
+                  <p className="text-sm text-muted-foreground/70 italic">
+                    Complete the Plate Cost tab to include plate cost analysis in this report.
+                  </p>
+                  {onSwitchTab && (
+                    <button
+                      onClick={() => onSwitchTab('plate-cost')}
+                      className="mt-3 text-xs text-primary underline underline-offset-2 hover:text-primary/80 transition-colors print:hidden"
+                      data-testid="btn-go-to-plate-cost"
+                    >
+                      Go to Plate Cost tab →
+                    </button>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          }
+          const savings = plateCostData.totalAnnualPlateCost;
+          return (
+            <Card data-testid="card-plate-cost-analysis">
+              <CardContent className="p-5 sm:p-6">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Plate Cost Analysis</h3>
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-4 py-2 border-b border-border/40">
+                    <span className="text-sm text-foreground/80">Total Annual Plate Cost — Flexo</span>
+                    <span className="text-sm font-semibold text-red-600 dark:text-red-400 tabular-nums" data-testid="text-plate-cost-flexo">{formatCurrency(plateCostData.totalAnnualPlateCost)}</span>
+                  </div>
+                  <div className="flex items-start justify-between gap-4 py-2 border-b border-border/40">
+                    <span className="text-sm text-foreground/80">Total Annual Plate Cost — HP Indigo V12</span>
+                    <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums" data-testid="text-plate-cost-v12">$0 <span className="font-normal text-xs text-muted-foreground">(Eliminated)</span></span>
+                  </div>
+                  <div className="flex items-start justify-between gap-4 py-2 border-b border-border/40">
+                    <span className="text-sm font-medium text-foreground">Annual Plate Savings with V12</span>
+                    <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 tabular-nums" data-testid="text-plate-savings">{formatCurrency(savings)}</span>
+                  </div>
+                  {plateCostData.avgTapeCostPerMount > 0 && (
+                    <div className="flex items-start justify-between gap-4 py-2 border-b border-border/40">
+                      <span className="text-sm text-foreground/80">Tape Cost Eliminated</span>
+                      <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums" data-testid="text-tape-cost-eliminated">{formatCurrency(plateCostData.annualTapeCost)}</span>
+                    </div>
+                  )}
+                  {plateCostData.breakEvenFootage !== null && plateCostData.breakEvenFootage > 0 && (
+                    <div className="flex items-start justify-between gap-4 py-2 border-b border-border/40">
+                      <span className="text-sm text-foreground/80">Break-Even Run Length</span>
+                      <span className="text-sm font-semibold tabular-nums" data-testid="text-break-even-footage">
+                        {formatNumber(plateCostData.breakEvenFootage)} ft
+                        <span className="block text-xs font-normal text-muted-foreground text-right">Jobs under {formatNumber(plateCostData.breakEvenFootage)} ft don't cover their plate cost on flexo</span>
+                      </span>
+                    </div>
+                  )}
+                  {plateCostData.numSkus > 0 && (
+                    <div className="flex items-start justify-between gap-4 py-2">
+                      <span className="text-sm text-foreground/80">SKU Family Annual Plate Cost</span>
+                      <span className="text-sm font-semibold text-red-600 dark:text-red-400 tabular-nums" data-testid="text-sku-plate-cost">{formatCurrency(plateCostData.skuCombinedFlexo)}</span>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
 
         <AssumptionsSection showMaterialWaste={results.annualSetupMaterialWasteCost !== null} />
       </div>

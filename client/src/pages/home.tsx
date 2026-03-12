@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -6,7 +6,7 @@ import { AuditInputsSection } from "@/components/audit-inputs";
 import { AuditResultsSection } from "@/components/audit-results";
 import { AuditSnapshotSection } from "@/components/audit-snapshot";
 import { RunLengthAnalysisSection } from "@/components/run-length-analysis";
-import { PlateCostAnalysisSection } from "@/components/plate-cost-analysis";
+import { PlateCostAnalysisSection, type PlateCostData } from "@/components/plate-cost-analysis";
 import { MAAnalysisSection } from "@/components/ma-analysis";
 import { MarketRiskSection } from "@/components/market-risk";
 import { AuditHistorySection } from "@/components/audit-history";
@@ -26,7 +26,12 @@ export default function Home() {
   const [mode, setMode] = useState<OperatingMode>('typical');
   const [activeTab, setActiveTab] = useState('inputs');
   const [showBenchmark, setShowBenchmark] = useState(true);
+  const [plateCostData, setPlateCostData] = useState<PlateCostData | null>(null);
   const snapshotRef = useRef<HTMLDivElement>(null);
+
+  const handlePlateCostDataChange = useCallback((data: PlateCostData) => {
+    setPlateCostData(data);
+  }, []);
 
   const results = useMemo(() => calculate(inputs, mode), [inputs, mode]);
 
@@ -138,7 +143,7 @@ export default function Home() {
               <RunLengthAnalysisSection inputs={inputs} results={results} mode={mode} />
             </TabsContent>
             <TabsContent value="plate-cost" className="mt-0 print:hidden">
-              <PlateCostAnalysisSection />
+              <PlateCostAnalysisSection onDataChange={handlePlateCostDataChange} />
             </TabsContent>
             <TabsContent value="market-risk" className="mt-0 print:hidden">
               <MarketRiskSection inputs={inputs} results={results} />
@@ -154,6 +159,8 @@ export default function Home() {
                 onStartOver={handleStartOver}
                 snapshotRef={snapshotRef}
                 showBenchmark={showBenchmark}
+                plateCostData={plateCostData}
+                onSwitchTab={setActiveTab}
               />
             </TabsContent>
             <TabsContent value="history" className="mt-0 print:hidden">
