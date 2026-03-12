@@ -177,12 +177,42 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
             testId="card-annual-consumables-cost"
           />
         )}
+        {results.annualOvertimeCost !== null && (
+          <MetricCard
+            icon={DollarSign}
+            label="Annual Overtime Cost"
+            value={formatCurrency(results.annualOvertimeCost)}
+            description="setup-attributed overtime / year"
+            accent="loss"
+            testId="card-annual-overtime-cost"
+          />
+        )}
+        {results.premiumSubstrateWasteCostPerChangeover !== null && (
+          <MetricCard
+            icon={Trash2}
+            label="Premium Substrate Waste per Changeover"
+            value={formatCurrency(results.premiumSubstrateWasteCostPerChangeover)}
+            description="per changeover"
+            accent="loss"
+            testId="card-premium-substrate-per-changeover"
+          />
+        )}
+        {results.annualPremiumSubstrateWasteCost !== null && (
+          <MetricCard
+            icon={Trash2}
+            label="Annual Premium Substrate Waste Cost"
+            value={formatCurrency(results.annualPremiumSubstrateWasteCost)}
+            description="premium substrate waste / year"
+            accent="loss"
+            testId="card-annual-premium-substrate-waste"
+          />
+        )}
         {results.totalSetupCost !== null && (
           <MetricCard
             icon={DollarSign}
             label="Total Setup Cost"
             value={formatCurrency(results.totalSetupCost)}
-            description="labor + material waste + plate cost + consumables / year"
+            description="labor + material waste + plate cost + consumables + overtime + premium substrate / year"
             accent="loss"
             testId="card-total-setup-cost"
           />

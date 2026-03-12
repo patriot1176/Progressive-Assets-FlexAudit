@@ -125,6 +125,8 @@ export function MAAnalysisSection({ inputs, results }: Props) {
     text += `  • Annual setup material waste cost: ${results.annualSetupMaterialWasteCost !== null ? formatCurrency(results.annualSetupMaterialWasteCost) : 'N/A'}\n`;
     text += `  • Annual plate cost: ${results.annualPlateCost !== null ? formatCurrency(results.annualPlateCost) : '$0'}\n`;
     text += `  • Annual consumables cost: ${annualConsumables !== null ? formatCurrency(annualConsumables) : '$0'}\n`;
+    text += `  • Annual overtime cost (setup-attributed): ${results.annualOvertimeCost !== null ? formatCurrency(results.annualOvertimeCost) : '$0'}\n`;
+    text += `  • Annual premium substrate waste cost: ${results.annualPremiumSubstrateWasteCost !== null ? formatCurrency(results.annualPremiumSubstrateWasteCost) : '$0'}\n`;
     text += `  • Total documented setup tax: ${formatCurrency(setupTax)}\n\n`;
     text += `Modeled improvement scenario (40% setup reduction):\n`;
     text += `  • Recovered press hours: ${formatNumber(results.recoveredHours)} hours/year\n`;

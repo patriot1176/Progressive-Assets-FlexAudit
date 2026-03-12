@@ -73,10 +73,10 @@ export default function Home() {
             </div>
             <div className="min-w-0">
               <h1 className="text-sm sm:text-lg font-bold tracking-tight leading-tight" data-testid="text-app-title">
-                Flexo Setup Tax &mdash; Plant Capacity Audit
+                FlexAudit
               </h1>
               <p className="text-[11px] sm:text-xs text-muted-foreground leading-tight">
-                Quantify setup loss. Model recovered capacity.
+                Plant Capacity Diagnostic
               </p>
             </div>
           </div>
@@ -103,12 +103,12 @@ export default function Home() {
             </Label>
           </div>
           <TabsList className="grid w-full grid-cols-6 print:hidden" data-testid="tab-list">
-            <TabsTrigger value="inputs" data-testid="tab-inputs">Inputs</TabsTrigger>
-            <TabsTrigger value="results" data-testid="tab-results">Results</TabsTrigger>
-            <TabsTrigger value="run-length" data-testid="tab-run-length">Run Length</TabsTrigger>
+            <TabsTrigger value="inputs" data-testid="tab-inputs">Plant Config</TabsTrigger>
+            <TabsTrigger value="results" data-testid="tab-results">Setup Tax</TabsTrigger>
+            <TabsTrigger value="run-length" data-testid="tab-run-length">Job Economics</TabsTrigger>
             <TabsTrigger value="plate-cost" data-testid="tab-plate-cost">Plate Cost</TabsTrigger>
-            <TabsTrigger value="ma-analysis" data-testid="tab-ma-analysis">M&amp;A</TabsTrigger>
-            <TabsTrigger value="snapshot" data-testid="tab-snapshot">Snapshot</TabsTrigger>
+            <TabsTrigger value="ma-analysis" data-testid="tab-ma-analysis">Valuation</TabsTrigger>
+            <TabsTrigger value="snapshot" data-testid="tab-snapshot">Exec Report</TabsTrigger>
           </TabsList>
 
           <div className="mt-5 sm:mt-6">

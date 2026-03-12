@@ -252,6 +252,34 @@ export function AuditInputsSection({ inputs, mode, onInputChange, onModeChange, 
               testId="input-consumables-per-changeover"
               helperText="Estimated cost of mounting tape, anilox cleaning solvent, residual ink waste, and other press supplies consumed per changeover"
             />
+            <OptionalNumberField
+              label="Weekly Overtime Hours Attributed to Setup"
+              value={inputs.weeklyOvertimeHours}
+              onChange={(v) => onInputChange('weeklyOvertimeHours', v)}
+              suffix="hrs/wk"
+              step={1}
+              testId="input-weekly-overtime-hours"
+              helperText="Estimated overtime hours per week directly caused by setup activity consuming productive press time"
+            />
+            <OptionalNumberField
+              label="% of Jobs Using Premium Substrate"
+              value={inputs.pctJobsPremiumSubstrate}
+              onChange={(v) => onInputChange('pctJobsPremiumSubstrate', v)}
+              suffix="%"
+              step={1}
+              testId="input-pct-jobs-premium-substrate"
+              helperText="Percentage of jobs run on premium substrates such as foil, film, or specialty materials that cost significantly more than standard stock"
+            />
+            <OptionalNumberField
+              label="Premium Substrate Cost ($/MSI)"
+              value={inputs.premiumSubstrateCostPerMSI}
+              onChange={(v) => onInputChange('premiumSubstrateCostPerMSI', v)}
+              prefix="$"
+              suffix="/MSI"
+              step={0.1}
+              testId="input-premium-substrate-cost-msi"
+              helperText="Average cost per MSI of premium substrate materials — foil, film, and specialty stocks typically range from $2.00–$8.00/MSI"
+            />
           </div>
         </CardContent>
       </Card>

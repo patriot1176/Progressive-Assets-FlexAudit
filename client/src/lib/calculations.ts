@@ -19,6 +19,9 @@ export interface AuditInputs {
   avgPlatesChangedPerCopyChange: number | null;
   pctJobsWithCopyChangesOnly: number | null;
   consumablesPerChangeover: number | null;
+  weeklyOvertimeHours: number | null;
+  pctJobsPremiumSubstrate: number | null;
+  premiumSubstrateCostPerMSI: number | null;
   reductionPct: number;
 }
 
@@ -41,6 +44,9 @@ export interface AuditResults {
   plateCostPerChangeover: number | null;
   annualPlateCost: number | null;
   annualConsumablesCost: number | null;
+  annualOvertimeCost: number | null;
+  premiumSubstrateWasteCostPerChangeover: number | null;
+  annualPremiumSubstrateWasteCost: number | null;
   totalSetupCost: number | null;
   setupTaxPerChangeover: number | null;
   totalSetupImpact: number | null;
@@ -65,6 +71,9 @@ export const DEFAULT_INPUTS: AuditInputs = {
   avgPlatesChangedPerCopyChange: 0,
   pctJobsWithCopyChangesOnly: 0,
   consumablesPerChangeover: 0,
+  weeklyOvertimeHours: 0,
+  pctJobsPremiumSubstrate: 0,
+  premiumSubstrateCostPerMSI: 0,
   reductionPct: 40,
 };
 
@@ -117,6 +126,9 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
   let plateCostPerChangeover: number | null = null;
   let annualPlateCost: number | null = null;
   let annualConsumablesCost: number | null = null;
+  let annualOvertimeCost: number | null = null;
+  let premiumSubstrateWasteCostPerChangeover: number | null = null;
+  let annualPremiumSubstrateWasteCost: number | null = null;
   let totalSetupCost: number | null = null;
 
   if (hasWasteInputs) {
@@ -144,8 +156,24 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     annualConsumablesCost = inputs.consumablesPerChangeover * annualChangeovers;
   }
 
+  if (inputs.weeklyOvertimeHours !== null && inputs.weeklyOvertimeHours > 0 && inputs.laborRate !== null) {
+    annualOvertimeCost = inputs.weeklyOvertimeHours * 52 * inputs.laborRate * 1.5;
+  }
+
+  const hasPremiumInputs = inputs.setupWasteFt !== null && inputs.setupWasteFt > 0
+    && inputs.avgWebWidthIn !== null && inputs.avgWebWidthIn > 0
+    && inputs.premiumSubstrateCostPerMSI !== null && inputs.premiumSubstrateCostPerMSI > 0
+    && inputs.pctJobsPremiumSubstrate !== null && inputs.pctJobsPremiumSubstrate > 0;
+
+  if (hasPremiumInputs) {
+    const sqInPerSetup = inputs.setupWasteFt! * 12 * inputs.avgWebWidthIn!;
+    const msiPerSetup = sqInPerSetup / 1000;
+    premiumSubstrateWasteCostPerChangeover = msiPerSetup * inputs.premiumSubstrateCostPerMSI! * (inputs.pctJobsPremiumSubstrate! / 100);
+    annualPremiumSubstrateWasteCost = premiumSubstrateWasteCostPerChangeover * annualChangeovers * (inputs.pctJobsPremiumSubstrate! / 100);
+  }
+
   if (annualSetupLaborCost !== null && annualSetupMaterialWasteCost !== null) {
-    totalSetupCost = annualSetupLaborCost + annualSetupMaterialWasteCost + (annualPlateCost ?? 0) + (annualConsumablesCost ?? 0);
+    totalSetupCost = annualSetupLaborCost + annualSetupMaterialWasteCost + (annualPlateCost ?? 0) + (annualConsumablesCost ?? 0) + (annualOvertimeCost ?? 0) + (annualPremiumSubstrateWasteCost ?? 0);
   }
 
   let setupTaxPerChangeover: number | null = null;
@@ -178,6 +206,9 @@ export function calculate(inputs: AuditInputs, mode: OperatingMode): AuditResult
     plateCostPerChangeover,
     annualPlateCost,
     annualConsumablesCost,
+    annualOvertimeCost,
+    premiumSubstrateWasteCostPerChangeover,
+    annualPremiumSubstrateWasteCost,
     totalSetupCost,
     setupTaxPerChangeover,
     totalSetupImpact,
@@ -258,6 +289,9 @@ export function encodeInputsToParams(inputs: AuditInputs, mode: OperatingMode): 
   if (inputs.avgWebWidthIn !== null) params.set('ww', String(inputs.avgWebWidthIn));
   if (inputs.materialCostPerMSI !== null) params.set('msi', String(inputs.materialCostPerMSI));
   if (inputs.consumablesPerChangeover !== null) params.set('cons', String(inputs.consumablesPerChangeover));
+  if (inputs.weeklyOvertimeHours !== null) params.set('wot', String(inputs.weeklyOvertimeHours));
+  if (inputs.pctJobsPremiumSubstrate !== null) params.set('pps', String(inputs.pctJobsPremiumSubstrate));
+  if (inputs.premiumSubstrateCostPerMSI !== null) params.set('pscm', String(inputs.premiumSubstrateCostPerMSI));
   return params.toString();
 }
 
@@ -280,6 +314,9 @@ export function decodeParamsToInputs(search: string): { inputs: Partial<AuditInp
   if (params.has('ww')) result.avgWebWidthIn = Number(params.get('ww'));
   if (params.has('msi')) result.materialCostPerMSI = Number(params.get('msi'));
   if (params.has('cons')) result.consumablesPerChangeover = Number(params.get('cons'));
+  if (params.has('wot')) result.weeklyOvertimeHours = Number(params.get('wot'));
+  if (params.has('pps')) result.pctJobsPremiumSubstrate = Number(params.get('pps'));
+  if (params.has('pscm')) result.premiumSubstrateCostPerMSI = Number(params.get('pscm'));
 
   const mode = params.get('m') as OperatingMode | null;
   return { inputs: result, mode: mode ?? undefined };

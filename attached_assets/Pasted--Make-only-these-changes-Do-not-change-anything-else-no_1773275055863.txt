@@ -1,0 +1,45 @@
+
+"Make only these changes. Do not change anything else — no redesign, no restructuring, no changes to existing calculations or layout. Only these specific changes.
+Change 1 — Rename the product:
+
+Change the main title from 'Flexo Setup Tax — Plant Capacity Audit' to 'FlexAudit'
+Change the subtitle from 'Quantify setup loss. Model recovered capacity.' to 'Plant Capacity Diagnostic'
+
+Change 2 — Rename all tabs:
+
+'Inputs' → 'Plant Configuration'
+'Results' → 'Setup Tax Analysis'
+'Run Length' → 'Job Economics'
+'Plate Cost' → 'Plate Cost Analysis'
+'M&A' → 'Business Valuation'
+'Snapshot' → 'Executive Report'
+
+Change 3 — Add these three fields to the 'Plant Configuration' tab in the 'Optional — Financial & Speed' section:
+Field 1:
+
+Label: 'Weekly Overtime Hours Attributed to Setup'
+Default: 0
+Helper text: 'Estimated overtime hours per week directly caused by setup activity consuming productive press time'
+This value feeds into a new output card on the Setup Tax Analysis tab labeled 'Annual Overtime Cost' calculated as: (Weekly Overtime Hours × 52 weeks × Operator Labor Rate × 1.5 overtime multiplier)
+Annual Overtime Cost must be added to Total Setup Cost
+Update Total Setup Cost label to: 'labor + material waste + plate cost + consumables + overtime / year'
+Update all references to Total Setup Cost in Setup Tax Analysis tab, Executive Report tab, and Business Valuation tab to include this new component
+
+Field 2:
+
+Label: '% of Jobs Using Premium Substrate'
+Default: 0
+Helper text: 'Percentage of jobs run on premium substrates such as foil, film, or specialty materials that cost significantly more than standard stock'
+
+Field 3:
+
+Label: 'Premium Substrate Cost ($/MSI)'
+Default: 0
+Helper text: 'Average cost per MSI of premium substrate materials — foil, film, and specialty stocks typically range from $2.00-$8.00/MSI'
+Premium substrate waste cost per changeover = (Avg Setup Waste ft/changeover × Avg Press Web Width ÷ 12 ÷ 1000) × Premium Substrate Cost × (% of Jobs Using Premium Substrate ÷ 100)
+Annual Premium Substrate Waste Cost = Premium substrate waste cost per changeover × Annual Changeovers × (% of Jobs Using Premium Substrate ÷ 100)
+Add a new output card on Setup Tax Analysis tab labeled 'Annual Premium Substrate Waste Cost'
+Add this to Total Setup Cost
+Update Total Setup Cost label accordingly
+
+Do not touch any other calculations, fields, labels, layout, styling or logic anywhere in the app. Only these changes."
