@@ -568,6 +568,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
 <div class="section">
   <div class="section-title">Key Findings</div>
   <ul class="findings-list">${keyFindings}</ul>
+  <p style="font-size:8px;color:#888;font-style:italic;margin-top:6px;line-height:1.5;">Note: Recovered linear feet and opportunity values represent theoretical production capacity at full press utilization. Actual realized revenue depends on market demand, scheduling constraints, and finishing capacity. In practice, press capacity equivalents — presses consumed by setup — are typically the more actionable metric.</p>
 </div>
 
 <!-- 6. Capacity Opportunity / Press Fleet Equivalents -->
