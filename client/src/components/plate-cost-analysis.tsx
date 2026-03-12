@@ -98,6 +98,7 @@ export function PlateCostAnalysisSection() {
   const [avgPlateCostPerColor, setAvgPlateCostPerColor] = useState('');
   const [avgSellingPrice, setAvgSellingPrice] = useState(0.21);
   const [avgRunLength, setAvgRunLength] = useState('');
+  const [avgTapeCostPerMount, setAvgTapeCostPerMount] = useState(0);
 
   const [copyChangeEvents, setCopyChangeEvents] = useState('');
   const [avgPlatesPerCopyChange, setAvgPlatesPerCopyChange] = useState(1);
@@ -117,7 +118,13 @@ export function PlateCostAnalysisSection() {
   const copyChangePlateCostPerEvent = avgPlatesPerCopyChange * nPlateCostPerCopyChangePlate;
   const totalAnnualNewJobPlateCost = nNewJobsPerYear * newJobPlateCostPerJob;
   const totalAnnualCopyChangePlateCost = nCopyChangeEvents * copyChangePlateCostPerEvent;
-  const totalAnnualPlateCost = totalAnnualNewJobPlateCost + totalAnnualCopyChangePlateCost;
+
+  const newJobMounts = nNewJobsPerYear * nColors;
+  const copyChangeMounts = nCopyChangeEvents * avgPlatesPerCopyChange;
+  const totalMounts = newJobMounts + copyChangeMounts;
+  const annualTapeCost = totalMounts * avgTapeCostPerMount;
+
+  const totalAnnualPlateCost = totalAnnualNewJobPlateCost + totalAnnualCopyChangePlateCost + annualTapeCost;
 
   const breakEvenFootage = avgSellingPrice > 0 ? newJobPlateCostPerJob / avgSellingPrice : null;
 
@@ -175,6 +182,7 @@ export function PlateCostAnalysisSection() {
             <StrNumInput label="Number of New Jobs per Year" value={newJobsPerYear} onChange={setNewJobsPerYear} testId="pca-new-jobs-per-year" />
             <StrNumInput label="Avg Colors per Job" value={avgColors} onChange={setAvgColors} testId="pca-avg-colors-per-job" />
             <StrNumInput label="Avg Plate Cost per Color ($)" value={avgPlateCostPerColor} onChange={setAvgPlateCostPerColor} prefix="$" testId="pca-avg-plate-cost-per-color" />
+            <NumInput label="Avg Tape Cost per Plate Mount ($)" value={avgTapeCostPerMount} onChange={setAvgTapeCostPerMount} prefix="$" step={0.5} testId="pca-avg-tape-cost-per-mount" helperText="Cost of double-sided mounting tape per plate — typically $2–$8 per plate depending on tape type and size." />
             <NumInput label="Avg Selling Price ($/ft)" value={avgSellingPrice} onChange={setAvgSellingPrice} prefix="$" suffix="/ft" step={0.01} testId="pca-avg-selling-price" />
             <StrNumInput label="Avg Run Length per Job (ft)" value={avgRunLength} onChange={setAvgRunLength} suffix="ft" testId="pca-avg-run-length" />
           </CardContent>
@@ -209,8 +217,8 @@ export function PlateCostAnalysisSection() {
               {[
                 { label: 'New Job Plate Cost per Job', flexo: newJobPlateCostPerJob, formula: `${nColors} colors × $${nPlateCostPerColor}/color` },
                 { label: 'Copy Change Plate Cost per Event', flexo: copyChangePlateCostPerEvent, formula: `${avgPlatesPerCopyChange} plates × $${nPlateCostPerCopyChangePlate}/plate` },
-                { label: 'Total Annual New Job Plate Cost', flexo: totalAnnualNewJobPlateCost, formula: `${nNewJobsPerYear} jobs × ${nColors} colors × $${nPlateCostPerColor}` },
-                { label: 'Total Annual Copy Change Plate Cost', flexo: totalAnnualCopyChangePlateCost, formula: `${nCopyChangeEvents} events × ${avgPlatesPerCopyChange} plates × $${nPlateCostPerCopyChangePlate}` },
+                { label: 'Total Annual New Job Plate Cost', flexo: totalAnnualNewJobPlateCost, formula: `${fmtN(nNewJobsPerYear)} jobs × ${nColors} colors × $${nPlateCostPerColor}` },
+                { label: 'Total Annual Copy Change Plate Cost', flexo: totalAnnualCopyChangePlateCost, formula: `${fmtN(nCopyChangeEvents)} events × ${avgPlatesPerCopyChange} plates × $${nPlateCostPerCopyChangePlate}` },
               ].map(({ label, flexo, formula }) => (
                 <tr key={label} className="border-b border-border/50">
                   <td className="py-2.5 px-3 text-sm">
@@ -221,6 +229,14 @@ export function PlateCostAnalysisSection() {
                   <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap text-green-600 dark:text-green-400">$0</td>
                 </tr>
               ))}
+              <tr className="border-b border-border/50">
+                <td className="py-2.5 px-3 text-sm">
+                  <div className="font-medium">Tape Cost (Plate Mounts)</div>
+                  <div className="text-xs text-muted-foreground">{fmtN(totalMounts)} total mounts × ${avgTapeCostPerMount}/mount</div>
+                </td>
+                <td className={cn("py-2.5 px-3 text-sm text-right whitespace-nowrap", flexoRedClass(annualTapeCost))}>{fmtC(annualTapeCost)}</td>
+                <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap text-green-600 dark:text-green-400">$0</td>
+              </tr>
               <tr className="border-b border-border/50 bg-muted/30 font-semibold">
                 <td className="py-2.5 px-3 text-sm font-semibold">TOTAL ANNUAL PLATE COST</td>
                 <td className={cn("py-2.5 px-3 text-sm text-right whitespace-nowrap font-semibold", flexoRedClass(totalAnnualPlateCost))}>{fmtC(totalAnnualPlateCost)}</td>
