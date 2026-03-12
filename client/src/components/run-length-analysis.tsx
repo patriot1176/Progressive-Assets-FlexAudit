@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { type AuditInputs, type AuditResults, type OperatingMode, getModePresets, formatCurrency } from "@/lib/calculations";
+import { type AuditInputs, type AuditResults, type OperatingMode, getModePresets, formatCurrency, formatNumber } from "@/lib/calculations";
 
 interface Props {
   inputs: AuditInputs;
@@ -101,9 +101,16 @@ export function RunLengthAnalysisSection({ inputs, results, mode }: Props) {
     ? { runLengthFt: customFt, ...calcRow(customFt, inputs, results, mode) }
     : null;
 
-  const hasSpeedInput = inputs.pressSpeedFPM !== null;
+  const hasSpeedInput = inputs.pressSpeedFPM !== null && inputs.pressSpeedFPM > 0;
   const hasLaborOrCost = results.setupTaxPerChangeover !== null;
   const hasPriceInput = inputs.pricePerFoot !== null;
+
+  const { setupMultiplier } = getModePresets(mode);
+  const effectiveSetupMin = inputs.setupMinutesPerChangeover * setupMultiplier;
+  const canCalcCrossover = hasSpeedInput && effectiveSetupMin > 0;
+  const crossoverFt = canCalcCrossover
+    ? Math.round(effectiveSetupMin * inputs.pressSpeedFPM! / 0.25)
+    : null;
 
   return (
     <div className="space-y-5">
@@ -177,6 +184,22 @@ export function RunLengthAnalysisSection({ inputs, results, mode }: Props) {
               </tr>
             </tbody>
           </table>
+        </CardContent>
+      </Card>
+
+      <Card data-testid="card-crossover-threshold">
+        <CardContent className="p-4">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Flexo Economic Crossover Threshold</h4>
+          {crossoverFt !== null ? (
+            <p className="text-sm leading-relaxed text-foreground/85">
+              Based on your plant inputs, flexo setup economics become marginal below approximately{' '}
+              <span className="font-semibold">{formatNumber(crossoverFt, 0)} ft</span>. Jobs shorter than this threshold face structural cost disadvantage against competitors with lower or no setup costs.
+            </p>
+          ) : (
+            <p className="text-xs text-muted-foreground italic">
+              Enter Avg Press Speed and Setup Minutes per Changeover in Plant Config to calculate the economic crossover threshold.
+            </p>
+          )}
         </CardContent>
       </Card>
 
