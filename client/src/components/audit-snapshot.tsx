@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Copy, Mail, Link2, FileDown, RotateCcw, Check, ChevronDown, Save } from "lucide-react";
+import { Copy, Link2, FileDown, RotateCcw, Check, ChevronDown, Save } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -21,7 +21,6 @@ import {
   formatPercent,
   generateWhatThisMeans,
   generateSummaryText,
-  generateFollowUpEmail,
   encodeInputsToParams,
   getBenchmarks,
   bandLabel,
@@ -932,7 +931,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             )}
             {(results.totalSetupCost !== null || results.potentialRevenueCapacity !== null) && (
               <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
-                Direct setup costs include labor, substrate waste, plate costs, and other consumables incurred during press setup. Opportunity cost represents unrealized production value caused by setup downtime.
+                Direct setup costs include labor, substrate waste, and other consumables incurred during press setup. Opportunity cost represents unrealized production value caused by setup downtime.
               </p>
             )}
           </CardContent>
@@ -965,12 +964,7 @@ export function AuditSnapshotSection({ inputs, results, mode, onStartOver, snaps
             icon={Copy}
             testId="btn-copy-summary"
           />
-          <CopyButton
-            label="Copy AM Follow-Up Email"
-            textFn={() => generateFollowUpEmail(inputs, results)}
-            icon={Mail}
-            testId="btn-copy-email"
-          />
+
           <Button variant="secondary" onClick={handleShareLink} data-testid="btn-share-link" className="justify-start">
             <Link2 className="w-4 h-4 mr-2" />
             Share Link
