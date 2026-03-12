@@ -212,7 +212,7 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
             icon={DollarSign}
             label="Total Setup Cost"
             value={formatCurrency(results.totalSetupCost)}
-            description="labor + material waste + plate cost + consumables + overtime + premium substrate / year"
+            description="labor + material waste / year"
             accent="loss"
             testId="card-total-setup-cost"
           />
@@ -259,7 +259,7 @@ export function AuditResultsSection({ inputs, results, showBenchmark }: Props) {
             icon={AlertTriangle}
             label="Total Setup Impact"
             value={formatCurrency(results.totalSetupImpact)}
-            description="Direct setup costs plus unrealized production revenue resulting from press capacity lost to setup activity."
+            description="Direct setup costs plus opportunity cost of press capacity lost to setup activity."
             accent="loss"
             testId="card-total-setup-impact"
             large
