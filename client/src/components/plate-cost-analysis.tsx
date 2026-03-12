@@ -229,12 +229,11 @@ export function PlateCostAnalysisSection({ onDataChange }: { onDataChange?: (dat
           <CardTitle className="text-sm font-semibold">Annual Plate Cost Summary</CardTitle>
         </CardHeader>
         <CardContent className="pt-0 overflow-x-auto">
-          <table className="w-full min-w-[400px] text-left border-collapse">
+          <table className="w-full min-w-[280px] text-left border-collapse">
             <thead>
               <tr className="border-b border-border">
                 <th className="py-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Metric</th>
                 <th className="py-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right">Flexo</th>
-                <th className="py-2 px-3 text-xs font-semibold uppercase tracking-wider text-green-600 dark:text-green-400 text-right">HP Indigo V12</th>
               </tr>
             </thead>
             <tbody>
@@ -250,7 +249,6 @@ export function PlateCostAnalysisSection({ onDataChange }: { onDataChange?: (dat
                     <div className="text-xs text-muted-foreground">{formula}</div>
                   </td>
                   <td className={cn("py-2.5 px-3 text-sm text-right whitespace-nowrap", flexoRedClass(flexo))}>{fmtC(flexo)}</td>
-                  <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap text-green-600 dark:text-green-400">$0</td>
                 </tr>
               ))}
               <tr className="border-b border-border/50">
@@ -259,12 +257,10 @@ export function PlateCostAnalysisSection({ onDataChange }: { onDataChange?: (dat
                   <div className="text-xs text-muted-foreground">{fmtN(totalMounts)} total mounts × ${avgTapeCostPerMount}/mount</div>
                 </td>
                 <td className={cn("py-2.5 px-3 text-sm text-right whitespace-nowrap", flexoRedClass(annualTapeCost))}>{fmtC(annualTapeCost)}</td>
-                <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap text-green-600 dark:text-green-400">$0</td>
               </tr>
               <tr className="border-b border-border/50 bg-muted/30 font-semibold">
                 <td className="py-2.5 px-3 text-sm font-semibold">TOTAL ANNUAL PLATE COST</td>
                 <td className={cn("py-2.5 px-3 text-sm text-right whitespace-nowrap font-semibold", flexoRedClass(totalAnnualPlateCost))}>{fmtC(totalAnnualPlateCost)}</td>
-                <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap font-semibold text-green-600 dark:text-green-400">$0</td>
               </tr>
             </tbody>
           </table>
@@ -362,12 +358,11 @@ export function PlateCostAnalysisSection({ onDataChange }: { onDataChange?: (dat
             />
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[400px] text-left border-collapse">
+            <table className="w-full min-w-[280px] text-left border-collapse">
               <thead>
                 <tr className="border-b border-border">
                   <th className="py-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Cost Component</th>
                   <th className="py-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right">Flexo</th>
-                  <th className="py-2 px-3 text-xs font-semibold uppercase tracking-wider text-green-600 dark:text-green-400 text-right">HP Indigo V12</th>
                 </tr>
               </thead>
               <tbody>
@@ -377,7 +372,6 @@ export function PlateCostAnalysisSection({ onDataChange }: { onDataChange?: (dat
                     <div className="text-xs text-muted-foreground">{numSkus} SKUs × {nColors} colors × ${nPlateCostPerColor}/color</div>
                   </td>
                   <td className={cn("py-2.5 px-3 text-sm text-right whitespace-nowrap", flexoRedClass(skuTotalFlexo))}>{fmtC(skuTotalFlexo)}</td>
-                  <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap text-green-600 dark:text-green-400">$0</td>
                 </tr>
                 <tr className="border-b border-border/50">
                   <td className="py-2.5 px-3 text-sm">
@@ -385,12 +379,10 @@ export function PlateCostAnalysisSection({ onDataChange }: { onDataChange?: (dat
                     <div className="text-xs text-muted-foreground">{numSkus} SKUs × {avgPlatesPerCopyChange} plates × ${nPlateCostPerCopyChangePlate}/plate</div>
                   </td>
                   <td className={cn("py-2.5 px-3 text-sm text-right whitespace-nowrap", flexoRedClass(skuAnnualCopyChange))}>{fmtC(skuAnnualCopyChange)}</td>
-                  <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap text-green-600 dark:text-green-400">$0</td>
                 </tr>
                 <tr className="border-t-2 border-border font-semibold">
                   <td className="py-2.5 px-3 text-sm font-semibold">Combined Annual Plate Spend on this Job Family</td>
                   <td className={cn("py-2.5 px-3 text-sm text-right whitespace-nowrap font-semibold", flexoRedClass(skuCombinedFlexo))}>{fmtC(skuCombinedFlexo)}</td>
-                  <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap font-semibold text-green-600 dark:text-green-400">$0</td>
                 </tr>
               </tbody>
             </table>
