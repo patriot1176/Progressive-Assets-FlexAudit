@@ -82,11 +82,20 @@ export function MAAnalysisSection({ inputs, results }: Props) {
   const [copied, setCopied] = useState(false);
   const [reportedEBITDA, setReportedEBITDA] = useState('0');
   const [ebitdaMultiple, setEbitdaMultiple] = useState('6');
+  const [annualRevenue, setAnnualRevenue] = useState('0');
   const setupTax = results.totalSetupCost ?? 0;
   const hasSetupTax = setupTax > 0;
   const ebitda = n(reportedEBITDA);
   const multiple = n(ebitdaMultiple) || 6;
   const hasEBITDA = ebitda > 0;
+  const revenue = n(annualRevenue);
+  const hasRevenue = revenue > 0;
+  const effectivePresses = inputs.presses - results.pressEquivalentLost;
+  const revenuePerInstalledPress = hasRevenue ? revenue / inputs.presses : null;
+  const revenuePerEffectivePress = hasRevenue && effectivePresses > 0 ? revenue / effectivePresses : null;
+  const productivityReductionPct = revenuePerEffectivePress && revenuePerInstalledPress
+    ? (revenuePerEffectivePress - revenuePerInstalledPress) / revenuePerEffectivePress * 100
+    : null;
 
   const annualChangeovers = inputs.presses * inputs.changeoversPerPressPerDay * inputs.operatingDaysPerYear;
 
@@ -192,6 +201,22 @@ export function MAAnalysisSection({ inputs, results }: Props) {
               </div>
               <p className="text-[10px] text-muted-foreground leading-snug">Typical label converter multiples range from 5x–9x depending on size, growth, and customer concentration</p>
             </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium">Estimated Annual Revenue ($)</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">$</span>
+                <Input
+                  type="number"
+                  min={0}
+                  step={100000}
+                  value={annualRevenue}
+                  onChange={(e) => setAnnualRevenue(e.target.value)}
+                  className="pl-7"
+                  data-testid="input-annual-revenue"
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground leading-snug">Enter the plant's most recently reported annual revenue. Used to calculate asset productivity metrics.</p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -243,6 +268,37 @@ export function MAAnalysisSection({ inputs, results }: Props) {
           />
         </CardContent>
       </Card>
+
+      {hasRevenue && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Asset Productivity</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <MetricCard
+                label="Revenue per Installed Press"
+                value={revenuePerInstalledPress !== null ? formatCurrency(revenuePerInstalledPress) : '—'}
+                sub={`${inputs.presses} installed press${inputs.presses !== 1 ? 'es' : ''}`}
+                color="neutral"
+                testId="card-rev-per-installed-press"
+              />
+              <MetricCard
+                label="Revenue per Effective Press"
+                value={revenuePerEffectivePress !== null ? formatCurrency(revenuePerEffectivePress) : '—'}
+                sub={`${formatNumber(effectivePresses, 1)} effective press${effectivePresses !== 1 ? 'es' : ''} (after setup loss)`}
+                color="neutral"
+                testId="card-rev-per-effective-press"
+              />
+            </div>
+            {productivityReductionPct !== null && revenuePerEffectivePress !== null && revenuePerInstalledPress !== null && (
+              <div className="rounded-md border bg-muted/40 p-4 text-sm leading-relaxed text-foreground/80" data-testid="callout-asset-productivity">
+                Setup activity reduces effective press productivity from <span className="font-semibold">{formatCurrency(revenuePerEffectivePress)}</span> per press to <span className="font-semibold">{formatCurrency(revenuePerInstalledPress)}</span> per press — a <span className="font-semibold">{formatNumber(productivityReductionPct, 1)}%</span> reduction in asset utilization.
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader className="pb-3">
